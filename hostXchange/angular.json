@@ -29,7 +29,8 @@
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles.css",
-              "node_modules/@fortawesome/fontawesome-free/css/all.min.css"
+              "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
+              "node_modules/ngx-toastr/toastr.css"
             ],
             "scripts": []
           },
@@ -96,6 +97,6 @@
     }
   },
   "cli": {
-    "analytics": false
+    "analytics": "5d9f93e1-ec7c-4f58-925d-ba654b74d3ef"
   }
 }

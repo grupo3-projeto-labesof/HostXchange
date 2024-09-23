@@ -1,0 +1,15 @@
+.container {
+    height: 100vh;
+}
+
+.login{
+    width: 380px;
+}
+
+.cadastro{
+    width: 700px;
+}
+
+a {
+    cursor: pointer;
+}
