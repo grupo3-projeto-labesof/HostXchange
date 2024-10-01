@@ -10,7 +10,14 @@ import { Router } from '@angular/router';
 })
 export class MenuComponent {
 
+  public logado:any = false;
+
   constructor(private router: Router) {}
+
+  ngOnInit() {
+    debugger
+    localStorage.getItem("logado") ? this.logado = localStorage.getItem("logado") : this.logado = false;
+  }
 
   login(){
     this.router.navigate(['/login']);
