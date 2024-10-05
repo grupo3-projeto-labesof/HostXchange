@@ -184,10 +184,11 @@ export class FormHostComponent implements OnInit {
     if (this.formHost.valid) {
       this.hostService.enviarFormulario(this.formHost.value).subscribe({
         next: (response) => {
-          alert('Daos enviados com sucesso!');
+          console.log('Dados enviados com sucesso: ', response);
+          alert('Dados enviados com sucesso!');
         },
         error: (err) => {
-          alert('Erro ao enviar dados, tente novamente mais tarde!');
+          alert('Erro ao enviar dados, tente novamente mais tarde! ' + err);
         }
       });
     } else {
