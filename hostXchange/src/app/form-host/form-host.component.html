@@ -5,94 +5,112 @@
     </section>
 
     <section>
-        <form action="/cadastrar-host" method="POST">
+        <form (ngSubmit)="onSubmit()" [formGroup]="formHost">
 
             <div class="mb-3">
-                <label for="nome-propriedade" class="form-label">Nome da Propriedade:<span
-                        class="text-danger">*</span></label>
-                <input type="text" id="nome-propriedade" name="nome-propriedade" class="form-control" required>
+                <label for="nome-propriedade" class="form-label">Nome da Propriedade:<span class="text-danger">*</span></label>
+                <input type="text" (keypress)="onlyLetters($event)" id="nome-propriedade" formControlName="nomePropriedade" class="form-control" minlength="5" maxlength="60">
+                <div *ngIf="formHost.get('nomePropriedade')?.touched && formHost.get('nomePropriedade')?.invalid">
+                    <small *ngFor="let message of getErrorMessage('nomePropriedade')" class="text-danger">{{ message }}</small>
+                </div>
             </div>
 
             <div class="row mb-3">
-
                 <div class="col-md-7">
                     <label for="rua" class="form-label">Rua:<span class="text-danger">*</span></label>
-                    <input type="text" id="rua" name="rua" class="form-control" required>
+                    <input type="text" (keypress)="onlyLetters($event)" id="rua" formControlName="rua" class="form-control" minlength="5" maxlength="60">
+                    <div *ngIf="formHost.get('rua')?.touched && formHost.get('rua')?.invalid">
+                        <small *ngFor="let message of getErrorMessage('rua')" class="text-danger">{{ message }}</small>
+                    </div>
                 </div>
 
                 <div class="col-md-2">
                     <label for="numero" class="form-label">Número:<span class="text-danger">*</span></label>
-                    <input type="text" id="numero" name="numero" class="form-control" required>
+                    <input type="text" (keypress)="onlyNumbers($event)" id="numero" formControlName="numero" class="form-control">
+                    <div *ngIf="formHost.get('numero')?.touched && formHost.get('numero')?.invalid">
+                        <small *ngFor="let message of getErrorMessage('numero')" class="text-danger">{{ message }}</small>
+                    </div>
                 </div>
 
                 <div class="col-md-3">
-                    <label for="complemento" class="form-label">Complemento:<span class="text-danger">*</span></label>
-                    <input type="text" id="complemento" name="complemento" class="form-control" required>
+                    <label for="complemento" class="form-label">Complemento: <span class="text-danger">*</span></label>
+                    <input type="text" (keypress)="onlyLetters($event)" id="complemento" formControlName="complemento" class="form-control" minlength="4" maxlength="20">
+                    <div *ngIf="formHost.get('complemento')?.touched && formHost.get('complemento')?.invalid">
+                        <small *ngFor="let message of getErrorMessage('complemento')" class="text-danger">{{ message }}</small>
+                    </div>
                 </div>
-
             </div>
 
-            <div class="row mb-3">
-
-                <div class="col-md-6">
-                    <label for="cidade" class="form-label">Cidade:<span class="text-danger">*</span></label>
-                    <input type="text" id="cidade" name="cidade" class="form-control" required>
-                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="cidade" class="form-label">Cidade:<span class="text-danger">*</span></label>
+                        <select id="cidade" formControlName="cidade" class="form-select">
+                            <option value="" disabled>Selecione a cidade</option>
+                            <option *ngFor="let cidade of cidades" [value]="cidade.id">{{ cidade.nome }}</option>
+                        </select>
+                        <div *ngIf="formHost.get('cidade')?.invalid && formHost.get('cidade')?.touched">
+                            <small *ngFor="let message of getErrorMessage('cidade')" class="text-danger">{{message}}</small>
+                        </div>
+                    </div>
 
                 <div class="col-md-6">
                     <label for="estado" class="form-label">Estado:<span class="text-danger">*</span></label>
-                    <select id="estado" name="estado" class="form-select" required>
-                        <option value="" selected disabled>Selecione o estado</option>
-                        <option value="SP">São Paulo</option>
-                        <option value="RJ">Rio de Janeiro</option>
-                        <option value="MG">Minas Gerais</option>
-                        <option value="ES">Espírito Santo</option>
-                    
+                    <select id="estado" formControlName="estado" (change)="onEstadoChange(formHost.get('estado')?.value)" class="form-select">
+                        <option value="" disabled>Selecione o estado</option>
+                        <option *ngFor="let estado of estados" [value]="estado.id">{{ estado.nome }}</option>
                     </select>
+                    <div *ngIf="formHost.get('estado')?.invalid && formHost.get('estado')?.touched">
+                        <small *ngFor="let message of getErrorMessage('estado')" class="text-danger">{{message}}</small>
+                    </div>
                 </div>
-
             </div>
 
-
             <div class="row mb-3">
-
-
                 <div class="col-md-3">
                     <label for="cep" class="form-label">CEP:<span class="text-danger">*</span></label>
-                    <input type="text" id="cep" name="cep" class="form-control" 
-                        inputmode="numeric" placeholder="00000-000" required>
+                    <input type="text" id="cep" formControlName="cep" class="form-control" (blur)="buscarCep()" inputmode="numeric" mask="00000-000" placeholder="00000-000" maxlength="9">
+                    <div *ngIf="formHost.get('cep')?.invalid && formHost.get('cep')?.touched">
+                        <small *ngFor="let message of getErrorMessage('cep')" class="text-danger">{{message}}</small>
+                    </div>
                 </div>
 
                 <div class="col-md-5">
-                    <label for="tipo-propriedade" class="form-label">Tipo da Propriedade:<span
-                            class="text-danger">*</span></label>
-                    <select id="tipo-propriedade" name="tipo-propriedade" class="form-select" required>
-                        <option value="" selected disabled>Selecione o tipo da propriedade</option>
+                    <label for="tipo-propriedade" class="form-label">Tipo da Propriedade:<span class="text-danger">*</span></label>
+                    <select id="tipo-propriedade" formControlName="tipoPropriedade" class="form-select">
+                        <option value="" disabled>Selecione o tipo</option>
                         <option value="casa">Casa</option>
                         <option value="apartamento">Apartamento</option>
-                        <option value="quarto">Quarto</option>
+                        <option value="pousada">Pousada</option>
                     </select>
+                    <div *ngIf="formHost.get('tipoPropriedade')?.invalid && formHost.get('tipoPropriedade')?.touched">
+                        <small *ngFor="let message of getErrorMessage('tipoPropriedade')" class="text-danger">{{message}}</small>
+                    </div>
                 </div>
 
                 <div class="col-md-4">
                     <label for="telefone" class="form-label">Telefone:<span class="text-danger">*</span></label>
-                    <input type="tel" id="telefone" name="telefone" class="form-control"
-                        inputmode="numeric" placeholder="(00) 00000-0000" required>
+                    <input type="text" id="telefone" formControlName="telefone" class="form-control" mask="(00) 0 0000-0000" placeholder="(00) 0 0000-0000">
+                    <div *ngIf="formHost.get('telefone')?.invalid && formHost.get('telefone')?.touched">
+                        <small *ngFor="let message of getErrorMessage('telefone')" class="text-danger">{{message}}</small>
+                    </div>
                 </div>
             </div>
 
             <div class="mb-3">
-                <label for="email" class="form-label">E-mail: (opcional)</label>
-                <input type="email" id="email" name="email" class="form-control" placeholder="email@exemplo.com">
-              </div>
+                <label for="email" class="form-label">E-mail:</label>
+                <input type="email" id="email" formControlName="email" class="form-control" placeholder="seuemail@exemplo.com">
+                <div *ngIf="formHost.get('email')?.invalid && formHost.get('email')?.touched">
+                    <small *ngFor="let message of getErrorMessage('email')" class="text-danger">{{message}}</small>
+                </div>
+            </div>
 
-              <span class="text-danger">* Campos marcados com asterisco são obrigatórios.</span>
-              
+            <span class="text-danger">(*) Campos marcados com asterisco são de preenchimento obrigatório.</span>
 
             <div class="mt-3 d-flex justify-content-between gap-2">
                 <button class="btn btn-dark  align-self-center" type="button">Voltar</button>
-                <button class="btn btn-outline-dark  align-self-center" type="submit">Cadastrar Propriedade</button>
+                <button class="btn btn-outline-dark  align-self-center" type="submit" [disabled]="formHost.invalid">Cadastrar Propriedade</button>
             </div>
+           
         </form>
     </section>
 </main>
