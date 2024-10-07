@@ -7,4 +7,6 @@ export const routes: Routes = [
       { path: 'home'       , component: HomeComponent     }
     , { path: 'login'      , component: LoginComponent    }
     , { path: 'tornar-host', component: FormHostComponent }
+    , { path: '', redirectTo: 'home', pathMatch: 'full'   }
+    , { path: '**', redirectTo: 'home'                    }
 ];

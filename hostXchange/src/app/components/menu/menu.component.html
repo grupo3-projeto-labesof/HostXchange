@@ -4,6 +4,9 @@
     <span>HostXchange</span>
   </div>
   <div class="navbar-links">
-    <button (click)="login()">Entrar</button>
+    <button *ngIf="logado == false" (click)="login()">Entrar</button>
+    <a *ngIf="logado" href="/tornar-host">
+      <button>Tornar-se Host</button>
+    </a>
   </div>
 </nav>
