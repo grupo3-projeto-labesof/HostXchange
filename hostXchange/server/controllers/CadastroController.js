@@ -1,9 +1,9 @@
 const bcrypt = require('bcrypt');
-const userDAO = require('../dao/CadastroDAO');
+const cadastroDAO = require('../dao/CadastroDAO');
 const saltRounds = 10;
 
-const cadastroUsuario = (req, res)=>{
-  const { name, email, password, cpf, rg, nrpassa } = req.body; 
+const cadastroUsuario = (req, res) => {
+  const { name, email, password, cpf, rg, nrpassa } = req.body;
   let blOk = true, message = '';
 
   bcrypt.hash(password, saltRounds, (err, hash) => {
@@ -13,7 +13,7 @@ const cadastroUsuario = (req, res)=>{
       res.json({ blOk: false, message });
     }
 
-    userDAO.cadastroUsuario(name, email, hash, cpf, rg, nrpassa, (err) => {
+    cadastroDAO.cadastroUsuario(name, email, hash, cpf, rg, nrpassa, (err) => {
       if (err) {
         console.log(err);
         message = 'Erro ao criar usuário!';
@@ -24,5 +24,24 @@ const cadastroUsuario = (req, res)=>{
     });
   });
 }
+const cadastroHost = (req, res) => {
+  const { idUsuario, nome, endereco, cddestado, cep, tel, email } = req.body;
+  let blOk = true, message = '';
 
-module.exports = { cadastroUsuario };
+  cadastroDAO.cadastroHost(nome, endereco, cddestado, cep, tel, email, (err, idHost) => {
+    if (err) {
+      console.error('Erro ao criar notícia:', err);
+      return res.status(500).json({ message: 'Erro ao criar Contato', blok: false });
+    }
+    cadastroDAO.updateTipoUsuario(idUsuario, idHost, (err) => {
+      if (err) {
+        console.error('Erro ao alterar usuário:', err);
+        return res.status(500).json({ message: 'Erro ao alterar usuário', blok: false });
+      }
+      res.status(201).json({ message: 'Usuário alterado para Host com sucesso!', blok });
+    });
+  });
+  
+}
+
+module.exports = { cadastroUsuario, cadastroHost };
