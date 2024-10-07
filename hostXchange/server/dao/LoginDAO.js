@@ -15,9 +15,15 @@ db.connect((err) => {
     }
 });
 
-const cadastroUsuario = (nome, email, password, cpf, rg, nrpassa, callback) => {
-    const query = `INSERT INTO USUARIOS (nome, email, senha, STUSUARIO, TPUSUARI, CPF, RG, NRPASSA) VALUES (?, ?, ?, 'A', 'V', ?, ?, ?)`;
-    db.query(query, [nome, email, password, cpf, rg, nrpassa], callback);
+const login = (email, callback) => {
+    db.query(`SELECT * FROM usuarios WHERE email = '${email}'`, (error, results) => {
+      if (error) {
+        console.error('Erro na consulta:', error);
+        callback(error, null);
+      } else {
+        callback(null, results);
+      }
+    });
 };
 
-module.exports = { cadastroUsuario };
+module.exports = { login };

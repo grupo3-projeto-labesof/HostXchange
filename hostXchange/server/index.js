@@ -1,13 +1,24 @@
-const express = require('express');
-const cors    = require('cors'   );
+const express = require('express'             );
+const mysql   = require('mysql2'              );
+const session = require('express-session'     );
+const config  = require('./config/database.js');
+const cors    = require('cors'                );
+
+const routeCadastro   = require('./routes/CadastroRoute.js');
+const routeLogin      = require('./routes/LoginRoute.js'   );
 
 const app  = express();
 const PORT = 3000;
-
-const homeRoute = require('./server/route/HomeRoute');
+const db   = mysql.createConnection(config);
 
 app.use(cors());
 app.use(express.json());
+
+app.use(session({
+    secret           : 'aSxaefdb@#41'
+  , resave           : false
+  , saveUninitialized: true
+}));
 
 app.use(cors({
     origin        : 'http://localhost:4200'
@@ -15,10 +26,14 @@ app.use(cors({
   , allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
+app.use('/cadastro'  , routeCadastro);
+app.use('/login'     , routeLogin   );
 
-app.use('/', homeRoute);  // Rota principal
+db.connect((err) => {
+  if (err) throw err;
+  else console.log('Conectado ao banco de dados MySQL!');
+});
 
-// Inicia o servidor
 app.listen(PORT, () => {
-  console.log("Servidor rodando na porta " + PORT);
+  console.log('Servidor rodando na porta ' + PORT + '!');
 });
