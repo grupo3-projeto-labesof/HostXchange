@@ -7,6 +7,7 @@ const cors = require('cors');
 const routeCadastro = require('./routes/CadastroRoute.js');
 const routeLogin = require('./routes/LoginRoute.js');
 const routePerfil = require('./routes/PerfilRoute')
+const routeIntercambios = require('./routes/IntercambiosRoute')
 
 const app = express();
 const PORT = 3000;
@@ -29,6 +30,7 @@ app.use(cors({
 
 app.use('/cadastro'  , routeCadastro);
 app.use('/login'     , routeLogin   );
+app.use('/Intercambios', routeIntercambios);
 
 db.connect((err) => {
   if (err) throw err;
