@@ -16,7 +16,7 @@ db.connect((err) => {
 });
 
 const buscar = (callback) => {
-    db.query(`SELECT * FROM INTERCAMBIOS`, (error, results) => {
+    db.query(`SELECT * FROM INTERCAMBIOS JOIN CONTATO_HOST ON INTERCAMBIOS.IDHOST = CONTATO_HOST.IDCTT`, (error, results) => {
         if (error) {
             console.error('Erro ao buscar informações:', error);
             callback(error, null);

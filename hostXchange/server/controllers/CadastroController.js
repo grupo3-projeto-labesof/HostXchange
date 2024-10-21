@@ -24,24 +24,26 @@ const cadastroUsuario = (req, res) => {
     });
   });
 }
+
 const cadastroHost = (req, res) => {
   const { idUsuario, nome, endereco, cddestado, cep, tel, email } = req.body;
   let blOk = true, message = '';
 
   cadastroDAO.cadastroHost(nome, endereco, cddestado, cep, tel, email, (err, idHost) => {
     if (err) {
-      console.error('Erro ao criar notícia:', err);
-      return res.status(500).json({ message: 'Erro ao criar Contato', blok: false });
+      console.error('Erro ao criar host:', err);
+      message = 'Erro ao criar Host!', blOk = false;
+      return res.status(500).json({ message, blok });
     }
     cadastroDAO.updateTipoUsuario(idUsuario, idHost, (err) => {
       if (err) {
         console.error('Erro ao alterar usuário:', err);
-        return res.status(500).json({ message: 'Erro ao alterar usuário', blok: false });
+        message = 'Erro ao alterar tipo do usuário para Host!', blok = false;
+        return res.status(500).json({ message, blok });
       }
       res.status(201).json({ message: 'Usuário alterado para Host com sucesso!', blok });
     });
   });
-  
 }
 
 module.exports = { cadastroUsuario, cadastroHost };
