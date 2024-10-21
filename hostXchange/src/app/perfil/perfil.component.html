@@ -1,0 +1,387 @@
+<main class="container mt-3" *ngIf="!carregando(); else loadingContent">
+  <!-- Conteúdo da página principal -->
+
+  <!-- Seção de Capa e Perfil -->
+  <section class="profile-header position-relative rounded mb-4 shadow-sm">
+    <div class="cover-photo">
+      <img [src]="usuario().fotoCapa" alt="Capa" class="img-fluid w-100 h-100 object-cover">
+    </div>
+    <div class="profile-picture-container">
+      <div class="profile-picture" data-bs-toggle="modal" data-bs-target="#viewProfilePictureModal"
+        (click)="abrirModalFotoPerfil()">
+        <img [src]="usuario().fotoPerfil" alt="Foto de Perfil" class="img-fluid rounded-circle">
+      </div>
+      <h2 class="user-name">{{ usuario().nome }}</h2>
+    </div>
+    <button class="btn btn-light edit-btn position-absolute top-0 end-0 mt-2 me-2" data-bs-toggle="modal"
+      data-bs-target="#editCoverModal" (click)="abrirModalCapa()">
+      <i class="fa-solid fa-pen-to-square"></i> Editar Capa
+    </button>
+  </section>
+
+  <!-- Seção de Informações Pessoais -->
+  <section class="profile-info bg-white p-4 rounded shadow-sm position-relative mb-4">
+    <button class="btn btn-outline-dark edit-btn position-absolute top-0 end-0 mt-3 me-3" data-bs-toggle="modal"
+      data-bs-target="#editPersonalInfoModal" (click)="abrirModalInfo()">
+      <i class="fa-solid fa-user-pen"></i> Editar
+    </button>
+    <h2 class="section-title">Informações Pessoais</h2>
+    <ul class="list-unstyled mt-3">
+      <li class="d-flex align-items-center mb-2">
+        <i class="fas fa-phone-alt me-2"></i>
+        <span class="field-label fw-bold">Telefone:</span>
+        <span class="field-value ms-1">{{ usuario().telefone }}</span>
+      </li>
+      <li class="d-flex align-items-center mb-2">
+        <i class="fas fa-envelope me-2"></i>
+        <span class="field-label fw-bold">Email:</span>
+        <span class="field-value ms-1">{{ usuario().email }}</span>
+      </li>
+      <li class="d-flex align-items-center mb-2">
+        <i class="fas fa-id-card me-2"></i>
+        <span class="field-label fw-bold">CPF:</span>
+        <span class="field-value ms-1">{{ usuario().cpf }}</span>
+      </li>
+      <li class="d-flex align-items-center mb-2">
+        <i class="fas fa-id-badge me-2"></i>
+        <span class="field-label fw-bold">RG:</span>
+        <span class="field-value ms-1">{{ usuario().rg }}</span>
+      </li>
+      <li class="d-flex align-items-center mb-2">
+        <i class="fas fa-passport me-2"></i>
+        <span class="field-label fw-bold">Passaporte:</span>
+        <span class="field-value ms-1">{{ usuario().passaporte }}</span>
+      </li>
+    </ul>
+  </section>
+
+  <!-- Seção de Redes Sociais -->
+  <section class="social-section bg-white p-4 rounded shadow-sm position-relative mb-3">
+    <button class="btn btn-outline-dark edit-btn position-absolute top-0 end-0 mt-3 me-3" (click)="abrirModalSocial()"
+      data-bs-toggle="modal" data-bs-target="#editSocialModal">
+      <i class="fa-solid fa-pen-to-square"></i> Editar
+    </button>
+    <h2 class="section-title">Redes Sociais</h2>
+    <div class="social-icons row mt-3">
+      <div *ngFor="let rede of usuario().redesSociais" class="col-6 col-md-3 mb-3">
+        <a [href]="rede.link" class="social-icon d-flex align-items-center" target="_blank">
+          <i [class]="'fab fa-' + rede.nome.toLowerCase() + ' me-2'"></i> {{ rede.nome }}
+        </a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Loader para a página principal -->
+<ng-template #loadingContent>
+  <div class="text-center my-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Carregando...</span>
+    </div>
+    <p>Carregando informações do perfil...</p>
+  </div>
+</ng-template>
+
+<!-- Modal de Edição da Foto de Capa -->
+<div class="modal fade" id="editCoverModal" tabindex="-1" aria-labelledby="editCoverModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content bg-dark text-white">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="editCoverModalLabel">Editar Foto de Capa</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" *ngIf="!carregandoModalCapa(); else modalLoadingContent">
+        <input type="file" class="form-control bg-dark text-white" (change)="alterarFotoCapa($event)">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" (click)="salvarInfoPessoal()">Salvar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Edição da Foto de Perfil -->
+<div class="modal fade" id="viewProfilePictureModal" tabindex="-1" aria-labelledby="viewProfilePictureModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark text-white">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="viewProfilePictureModalLabel">Foto do Perfil</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center" *ngIf="!carregandoModalFotoPerfil(); else modalLoadingContent">
+        <img [src]="usuario().fotoPerfil" class="profile-picture-modal rounded-circle img-fluid mb-3"
+          alt="Foto de Perfil">
+      </div>
+      <div class="modal-footer d-flex justify-content-between">
+        <input type="file" class="form-control bg-dark text-white" (change)="alterarFotoPerfil($event)">
+        <button type="button" class="btn btn-light"><i class="fas fa-camera"></i> Alterar Foto</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" (click)="salvarInfoPessoal()">Salvar Alterações</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Edição de Informações Pessoais e Redefinição de Senha -->
+<div class="modal fade" id="editPersonalInfoModal" tabindex="-1" aria-labelledby="editPersonalInfoModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content bg-dark text-white">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="editPersonalInfoModalLabel"><strong>Editar Perfil</strong></h5>
+        <!-- Botão de fechar (X) no cabeçalho do modal -->
+        <button type="button" class="btn-close btn-close-white" (click)="confirmarFechamentoModal()" ></button>
+      </div>
+      <div class="modal-body" *ngIf="!carregandoModalInfo(); else modalLoadingContent">
+        <div class="row">
+          <!-- Menu Lateral com Abas -->
+          <div class="col-md-4">
+            <ul class="nav nav-pills flex-column mb-3" id="profile-tab" role="tablist">
+              <li class="nav-item">
+                <a class="nav-link active" id="info-tab" data-bs-toggle="pill" href="#info" role="tab"
+                  aria-controls="info" aria-selected="true">Informações Pessoais</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="password-tab" data-bs-toggle="pill" href="#password" role="tab"
+                  aria-controls="password" aria-selected="false">Redefinir Senha</a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Conteúdo das Abas -->
+          <div class="col-md-8">
+            <div class="tab-content" id="profile-tabContent">
+              <!-- Aba de Informações Pessoais -->
+              <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
+                <form [formGroup]="infoPessoalForm" (ngSubmit)="salvarInfoPessoal()">
+                  <div class="mb-3">
+                    <label for="nomeUsuario" class="form-label">Nome do usuário:</label>
+                    <input formControlName="nomeUsuario" type="text" class="form-control bg-dark text-white"
+                      id="nomeUsuario">
+                  </div>
+                  <div class="mb-3">
+                    <label for="telefoneUsuario" class="form-label">Telefone:</label>
+                    <input formControlName="telefoneUsuario" type="text" class="form-control bg-dark text-white"
+                      id="telefoneUsuario" mask="(00) 00000-0000">
+                  </div>
+                  <div class="mb-3">
+                    <label for="emailUsuario" class="form-label">Email:</label>
+                    <input formControlName="emailUsuario" type="email" class="form-control bg-dark text-white"
+                      id="emailUsuario">
+                  </div>
+                  <div class="mb-3">
+                    <label for="cpfUsuario" class="form-label">CPF:</label>
+                    <input formControlName="cpfUsuario" type="text" class="form-control bg-dark text-white"
+                      id="cpfUsuario" mask="000.000.000-00">
+                  </div>
+                  <div class="mb-3">
+                    <label for="rgUsuario" class="form-label">RG:</label>
+                    <input formControlName="rgUsuario" type="text" class="form-control bg-dark text-white"
+                      id="rgUsuario">
+                  </div>
+                  <div class="mb-3">
+                    <label for="passaporteUsuario" class="form-label">Passaporte:</label>
+                    <input formControlName="passaporteUsuario" type="text" class="form-control bg-dark text-white"
+                      id="passaporteUsuario">
+                  </div>
+                  <button type="submit" class="btn btn-primary" [disabled]="infoPessoalForm.invalid">Salvar
+                    Alterações</button>
+                  <!-- Botão de cancelar alterações -->
+                  <button type="button" class="btn btn-secondary ms-2" (click)="confirmarFechamentoModal()" 
+                    [disabled]="!infoPessoalForm.dirty">
+                    Cancelar Alterações
+                  </button>
+                </form>
+              </div>
+
+              <!-- Aba de Redefinição de Senha -->
+              <div class="tab-pane fade" id="password" role="tabpanel" aria-labelledby="password-tab">
+                <form [formGroup]="senhaForm" (ngSubmit)="redefinirSenha()">
+                  <div class="mb-3">
+                    <label for="senhaAtual" class="form-label">Senha Atual:</label>
+                    <div class="input-group">
+                      <input formControlName="senhaAtual" [type]="senhaAtualVisivel ? 'text' : 'password'"
+                        class="form-control bg-dark text-white" id="senhaAtual">
+                      <button type="button" class="btn btn-outline-light"
+                        (click)="senhaAtualVisivel = !senhaAtualVisivel">
+                        <i [class]="senhaAtualVisivel ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
+                      </button>
+                    </div>
+                    <div *ngIf="senhaForm.controls['senhaAtual'].invalid && senhaForm.controls['senhaAtual'].touched"
+                      class="text-danger">
+                      {{ getErroCampo('senhaAtual') }}
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="novaSenha" class="form-label">Nova Senha:</label>
+                    <div class="input-group">
+                      <input formControlName="novaSenha" [type]="novaSenhaVisivel ? 'text' : 'password'"
+                        class="form-control bg-dark text-white" id="novaSenha">
+                      <button type="button" class="btn btn-outline-light"
+                        (click)="novaSenhaVisivel = !novaSenhaVisivel">
+                        <i [class]="novaSenhaVisivel ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
+                      </button>
+                    </div>
+                    <div *ngIf="senhaForm.controls['novaSenha'].invalid && senhaForm.controls['novaSenha'].touched"
+                      class="text-danger">
+                      {{ getErroCampo('novaSenha') }}
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="confirmarSenha" class="form-label">Confirme a Nova Senha:</label>
+                    <div class="input-group">
+                      <input formControlName="confirmarSenha" [type]="confirmarSenhaVisivel ? 'text' : 'password'"
+                        class="form-control bg-dark text-white" id="confirmarSenha">
+                      <button type="button" class="btn btn-outline-light"
+                        (click)="confirmarSenhaVisivel = !confirmarSenhaVisivel">
+                        <i [class]="confirmarSenhaVisivel ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
+                      </button>
+                    </div>
+                    <div
+                      *ngIf="senhaForm.controls['confirmarSenha'].invalid && senhaForm.controls['confirmarSenha'].touched"
+                      class="text-danger">
+                      {{ getErroCampo('confirmarSenha') }}
+                    </div>
+                  </div>
+                  <button type="submit" class="btn btn-primary" [disabled]="senhaForm.invalid">Salvar Senha</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal de Redes Sociais -->
+<div class="modal fade" id="editSocialModal" tabindex="-1" aria-labelledby="editSocialMediaModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content bg-dark text-white">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="editSocialMediaModalLabel">Editar Redes Sociais</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" *ngIf="!carregandoModalSocial(); else modalLoadingContent">
+        <div class="row">
+          <!-- Menu Lateral com Abas -->
+          <div class="col-md-3">
+            <ul class="nav nav-pills flex-column mb-3" id="social-tab" role="tablist">
+              <li class="nav-item">
+                <a class="nav-link active" id="add-tab" data-bs-toggle="pill" href="#add" role="tab" aria-controls="add"
+                  aria-selected="true">
+                  Nova Rede Social
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="existing-tab" data-bs-toggle="pill" href="#existing" role="tab"
+                  aria-controls="existing" aria-selected="false">
+                  Redes Sociais Existentes
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Conteúdo das Abas -->
+          <div class="col-md-9">
+            <div class="tab-content" id="social-tabContent">
+              <!-- Aba de Adicionar Nova Rede Social -->
+              <div class="tab-pane fade show active" id="add" role="tabpanel" aria-labelledby="add-tab">
+                <form [formGroup]="redeSocialForm" (ngSubmit)="adicionarRedeSocial()">
+                  <h6><strong>Adicionar Nova Rede Social:</strong></h6>
+                  <div class="row g-2 align-items-center mb-3">
+                    <!-- Seletor de Rede Social -->
+                    <div class="col-md-4">
+                      <select formControlName="rede" class="form-select bg-dark text-white">
+                        <option *ngFor="let rede of redesDisponiveisFiltradas()" [value]="rede">{{ rede }}</option>
+                      </select>
+                    </div>
+                    <!-- Campo de Link -->
+                    <div class="col-md-6">
+                      <input formControlName="link" type="text" class="form-control bg-dark text-white"
+                        placeholder="Link da Rede Social">
+                    </div>
+                    <!-- Botão Adicionar -->
+                    <div class="col-md-2">
+                      <button class="btn btn-success w-100" type="submit" [disabled]="redeSocialForm.invalid"><i
+                          class="fas fa-plus"></i> Adicionar</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+
+              <!-- Aba de Redes Sociais Existentes -->
+              <div class="tab-pane fade" id="existing" role="tabpanel" aria-labelledby="existing-tab">
+                <h6><strong>Editar Rede Social:</strong></h6>
+                <!-- Formulário para editar a rede social selecionada -->
+                <form (ngSubmit)="salvarEdicaoRedeSocial()" class="mb-4">
+                  <div class="row g-2 align-items-center justify-content-between">
+                    <!-- Input para o nome da rede social -->
+                    <div class="col-md-3">
+                      <input [(ngModel)]="nomeEditando" name="nomeEditando" type="text"
+                        class="form-control bg-dark text-white" placeholder="Nome da Rede Social"
+                        [disabled]="!modoEdicao">
+                    </div>
+                    <!-- Input para o link da rede social -->
+                    <div class="col-md-6">
+                      <input [(ngModel)]="linkEditando" name="linkEditando" type="text"
+                        class="form-control bg-dark text-white" placeholder="Link da Rede Social"
+                        [disabled]="!modoEdicao">
+                    </div>
+                    <!-- Botões de salvar e cancelar -->
+                    <div class="col-md-3 g-2">
+                      <button class="btn btn-sm btn-outline-primary me-1" type="submit" [disabled]="!modoEdicao">
+                        <i class="fas fa-save"></i> Salvar
+                      </button>
+                      <button class="btn btn-sm btn-outline-secondary" type="button"
+                        (click)="cancelarEdicaoRedeSocial()" [disabled]="!modoEdicao">
+                        <i class="fas fa-times"></i> Cancelar
+                      </button>
+                    </div>
+                  </div>
+                </form>
+
+                <!-- Separador -->
+                <hr class="text-secondary mb-4">
+
+                <!-- Redes Sociais Existentes -->
+                <h6><strong>Redes Sociais Existentes:</strong></h6>
+                <div *ngFor="let rede of usuario().redesSociais; let i = index" class="mb-2">
+                  <div class="d-flex align-items-center justify-content-between">
+                    <span>
+                      <i [class]="'fab fa-' + rede.nome.toLowerCase() + ' me-2'"></i> <strong>{{ rede.nome }}</strong>
+                    </span>
+                    <span><strong>Link:</strong> {{ rede.link }}</span>
+                    <div>
+                      <!-- Botão para editar -->
+                      <button class="btn btn-sm btn-outline-secondary me-1" (click)="editarRedeSocial(i)">
+                        <i class="fas fa-pen"></i> Editar
+                      </button>
+                      <!-- Botão para remover -->
+                      <button class="btn btn-sm btn-outline-danger me-1" (click)="removerRedeSocial(rede.nome)">
+                        <i class="fas fa-trash"></i> Remover
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loader para todos os modais -->
+<ng-template #modalLoadingContent>
+  <div class="text-center">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Carregando...</span>
+    </div>
+  </div>
+</ng-template>

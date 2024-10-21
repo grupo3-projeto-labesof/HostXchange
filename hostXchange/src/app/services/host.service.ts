@@ -9,6 +9,6 @@ export class HostService {
   constructor(private http: HttpClient) { }
 
   enviarFormulario (formHostData: any){
-    return this.http.post('http://localhost:3000/enviarFormHost', formHostData);
+    return this.http.post('http://localhost:3000/perfil/enviarFormHost', formHostData);
   }
 }
