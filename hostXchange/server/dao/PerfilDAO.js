@@ -15,15 +15,25 @@ db.connect((err) => {
     }
 });
 
-
-// Função para atualizar o perfil do usuário (descrição e links de redes sociais)
-const atualizarPerfil = (userId, description, socialLinks, callback) => {
+// Função para atualizar todos os campos do perfil do usuário
+const atualizarPerfil = (userId, perfil, callback) => {
     const query = `
-        UPDATE USUARIOS 
-        SET DESCRICAO = ?, LINKS_REDES_SOCIAIS = ? 
-        WHERE ID = ?
+        UPDATE USUARIO 
+        SET 
+            nome = ?, 
+            email = ?, 
+            senha = ?, 
+            cpf = ?, 
+            rg = ?, 
+            nrpassa = ?, 
+            facebook = ?, 
+            twitter = ?, 
+            instagram = ?, 
+            linkedin = ? 
+        WHERE idusuario = ?
     `;
-    db.query(query, [description, JSON.stringify(socialLinks), userId], callback);
+    const { nome, email, senha, cpf, rg, nrpassa, facebook, twitter, instagram, linkedin } = perfil;
+    db.query(query, [nome, email, senha, cpf, rg, nrpassa, facebook, twitter, instagram, linkedin, userId], callback);
 };
 
 module.exports = { atualizarPerfil };

@@ -1,29 +1,18 @@
-const mysql = require('mysql2');
-const config = require('../config/database');
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
-const db = mysql.createConnection({
-    host: config.host,
-    user: config.user,
-    password: config.password,
-    database: config.database
-});
-
-db.connect((err) => {
-    if (err) {
-        console.error('Erro ao conectar ao banco de dados:', err);
-        return;
+const buscar = async () => {
+    try {
+        const intercambios = await prisma.intercambio.findMany({
+            include: {
+                contatoHost: true  // Relacionamento com a tabela ContatoHost
+            }
+        });
+        return intercambios;
+    } catch (error) {
+        console.error('Erro ao buscar intercâmbios:', error);
+        throw error;
     }
-});
-
-const buscar = (callback) => {
-    db.query(`SELECT * FROM INTERCAMBIOS JOIN CONTATO_HOST ON INTERCAMBIOS.IDHOST = CONTATO_HOST.IDCTT`, (error, results) => {
-        if (error) {
-            console.error('Erro ao buscar informações:', error);
-            callback(error, null);
-        } else {
-            callback(null, results);
-        }
-    });
 };
 
 module.exports = { buscar };
