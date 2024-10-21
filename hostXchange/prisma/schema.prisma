@@ -37,8 +37,7 @@ model ContatoHost {
   stcadast   String?  @db.VarChar(10)
   dtcadast   DateTime @default(now())
 
-  // Relacionamento com intercâmbios
-  intercambios Intercambio[]
+  intercambio Intercambio[]
 
   @@map("CONTATO_HOST")
 }
