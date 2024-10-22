@@ -107,7 +107,7 @@ export class LoginComponent {
     data.sexo = this.sexo;
     data.senha = this.password;
 
-    this.service.enviarEmail(data).subscribe({
+    this.service.cadastrar(data).subscribe({
       next: (res: any) => {
         if (res.blOk === true) {
           this.toastr.success(res.message, 'SUCESSO:');

@@ -1,4 +1,4 @@
-const mysql   = require('mysql2');
+/*const mysql   = require('mysql2');
 const config  = require('../config/database');
 
 const db = mysql.createConnection({
@@ -13,7 +13,7 @@ db.connect((err) => {
         console.error('Erro ao conectar ao banco de dados:', err);
         return;
     }
-});
+});*/
 
 const login = (email, callback) => {
     db.query(`SELECT * FROM usuarios WHERE email = '${email}'`, (error, results) => {
