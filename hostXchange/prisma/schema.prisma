@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  idusuario    Int      @id @default(autoincrement())
+  dtcadast     DateTime @default(now())
+  nome         String?  @db.VarChar(200)
+  email        String?  @db.VarChar(200)
+  senha        String?  @db.VarChar(200)
+  stusuario    String?  @db.VarChar(10)
+  tpusuario    String?  @db.VarChar(10)
+  cpf          String?  @db.VarChar(20)
+  rg           String?  @db.VarChar(20)
+  nrpassa      String?  @db.VarChar(20)
+  facebook     String?  @db.VarChar(255)
+  twitter      String?  @db.VarChar(255)
+  instagram    String?  @db.VarChar(255)
+  linkedin     String?  @db.VarChar(255)
+
+  @@map("USUARIO")
+}
+
+model ContatoHost {
+  idctt      Int      @id @default(autoincrement())
+  nmprop     String?  @db.VarChar(100)
+  endereco   String?  @db.VarChar(100)
+  cdestado   String?  @db.VarChar(100)
+  nrcep      String?  @db.VarChar(100)
+  nrtel      String?  @db.VarChar(100)
+  email      String?  @db.VarChar(100)
+  stcadast   String?  @db.VarChar(10)
+  dtcadast   DateTime @default(now())
+
+  intercambio Intercambio[]
+
+  @@map("CONTATO_HOST")
+}
+
+model Intercambio {
+  idinterc    Int      @id @default(autoincrement())
+  nmlocal     String   @db.VarChar(150)
+  titulo      String   @db.VarChar(200)
+  descricao   String   @db.LongText
+  servicos    String   @db.VarChar(250)
+  beneficios  String   @db.VarChar(250)
+  duracao     String   @db.VarChar(100)
+  img1        Bytes
+  img2        Bytes?
+  img3        Bytes?
+  img4        Bytes?
+  img5        Bytes?
+  img6        Bytes?
+  img7        Bytes?
+  img8        Bytes?
+  img9        Bytes?
+  img10       Bytes?
+  idhost      Int
+
+  // Relacionamento com ContatoHost
+  contatoHost ContatoHost @relation(fields: [idhost], references: [idctt], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("INTERCAMBIOS")
+  @@index([idhost], name: "IDHOST_idx")
+}

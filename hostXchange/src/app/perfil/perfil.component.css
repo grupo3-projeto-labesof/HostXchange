@@ -1,0 +1,145 @@
+
+body {
+    background-color: #f4f6f9;
+    font-family: 'Roboto', sans-serif;
+}
+
+
+.container {
+    max-width: 900px;
+    margin: auto;
+}
+
+.profile-header {
+    background-color: #ced4da;
+    height: 250px;
+    position: relative;
+    border-radius: 10px;
+    margin-bottom: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end; 
+}
+
+.cover-photo {
+    height: 100%;
+    background-color: #adb5bd;
+    width: 100%;
+    border-radius: 10px 10px 0 0;
+}
+
+.profile-picture-container {
+    position: absolute;
+    bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.profile-picture {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background-color: #6c757d;
+    border: 5px solid white;
+    object-fit: cover;
+}
+
+.profile-picture:hover{
+    cursor: pointer;
+}
+
+.user-name {
+    font-size: 22px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+    margin-top: 15px;
+    text-transform: uppercase;
+}
+
+.edit-btn {
+    font-size: 0.95rem;
+    padding: 6px 15px;
+    font-weight: bold;
+}
+
+.section-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: #343a40;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding-top: 8px;
+}
+
+ul {
+    padding: 0;
+    list-style: none;
+}
+
+ul li {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #495057;
+    margin-bottom: 10px;
+}
+
+ul li i {
+    color: #007bff;
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+    font-size: 18px;
+}
+
+.social-icons {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.social-icon {
+    font-size: 16px;
+    color: #495057;
+    text-decoration: none;
+    padding: 10px 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.social-icon:hover {
+    color: #007bff;
+    background-color: #e9ecef;
+    border-color: #ced4da;
+}
+
+.social-icon i {
+    font-size: 18px;
+    margin-right: 2px;
+}
+
+
+.shadow-sm {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem;
+}
+
+.profile-picture-modal {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+}
+
+.modal-footer .btn + .btn {
+    margin-left: 10px;
+}
+
+

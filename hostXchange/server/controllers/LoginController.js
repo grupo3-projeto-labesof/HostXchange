@@ -29,7 +29,7 @@ const login = (req, res) => {
       const verificar = result[0];
       bcrypt.compare(password, verificar.senha, (err, comparacao) => {
         if (err) {
-          console.error('Erro ao comparar senhas, tente:', err);
+          console.error('Erro ao comparar senhas:', err);
           res.status(500).send('Erro no servidor');
           return;
         }
