@@ -26,4 +26,21 @@ const login = (email, callback) => {
     });
 };
 
-module.exports = { login };
+const updateCodigo = (email, codigo, callback)=>{
+  db.query(`UPDATE usuarios SET CDRESET = '${codigo}' WHERE email = '${email}'`, (error)=>{
+    if (error) {
+      console.error('Erro na consulta:', error);
+      callback(error);
+    } else {
+      callback(null);
+    }
+  });
+};
+
+const atualizaSenha = (email, hash, callback) => {
+  const query = `UPDATE usuarios
+                   SET senha = '${hash}',
+                       WHERE email = '${email}'`;
+    db.query(query, [email, hash], callback);
+};
+module.exports = { login, updateCodigo, atualizaSenha };
