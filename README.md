@@ -6,7 +6,7 @@
 
 ### Professor: Mauro Borges
 
-## Intaladores
+## Instaladores
 
 <a href="https://nodejs.org/en/download/prebuilt-installer">NodeJs</a>
 <br><br>
