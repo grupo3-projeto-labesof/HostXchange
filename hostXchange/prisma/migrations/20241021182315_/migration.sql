@@ -1,5 +1,0 @@
--- DropForeignKey
-ALTER TABLE `intercambios` DROP FOREIGN KEY `intercambios_idhost_fkey`;
-
--- AddForeignKey
-ALTER TABLE `INTERCAMBIOS` ADD CONSTRAINT `INTERCAMBIOS_idhost_fkey` FOREIGN KEY (`idhost`) REFERENCES `CONTATO_HOST`(`idctt`) ON DELETE CASCADE ON UPDATE CASCADE;
