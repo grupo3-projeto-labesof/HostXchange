@@ -27,7 +27,7 @@ export class MenuComponent {
     localStorage.removeItem('id');
     localStorage.removeItem('nome');
     localStorage.removeItem('logado');
-    this.router.navigate(['/home']);
+    this.router.navigate(['/login']);
   }
 
 }
