@@ -1,29 +1,22 @@
-const mysql = require('mysql2');
-const config = require('../config/database');
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
-const db = mysql.createConnection({
-    host: config.host,
-    user: config.user,
-    password: config.password,
-    database: config.database
-});
+// Função para atualizar o perfil do usuário
+const atualizarPerfil = async (userId, data) => {
+  try {
+    // Atualiza o usuário no banco de dados, incluindo a senha criptografada se houver
+    const updatedUser = await prisma.usuario.update({
+      where: { id: parseInt(userId) },
+      data,
+    });
 
-db.connect((err) => {
-    if (err) {
-        console.error('Erro ao conectar ao banco de dados:', err);
-        return;
-    }
-});
-
-
-// Função para atualizar o perfil do usuário (descrição e links de redes sociais)
-const atualizarPerfil = (userId, description, socialLinks, callback) => {
-    const query = `
-        UPDATE USUARIOS 
-        SET DESCRICAO = ?, LINKS_REDES_SOCIAIS = ? 
-        WHERE ID = ?
-    `;
-    db.query(query, [description, JSON.stringify(socialLinks), userId], callback);
+    return updatedUser;
+  } catch (error) {
+    console.error('Erro ao atualizar o perfil:', error);
+    throw error;
+  }
 };
 
 module.exports = { atualizarPerfil };

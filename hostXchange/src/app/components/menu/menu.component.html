@@ -1,13 +1,13 @@
 <nav class="navbar">
-    <div class="navbar-logo">
-        <img src="assets/images/menu-footer/logo.jpeg" alt="Logo">
-        <span>HostXchange</span>
-    </div>
-    <div class="navbar-links">
-        <button *ngIf="logado == false" (click)="login()">Entrar</button>
-        <a *ngIf="logado" href="/tornar-host">
-            <button>Tornar-se Host</button>
-        </a>
-        <button *ngIf="logado" class="" (click)="logout()">Sair</button>
-    </div>
+  <div class="navbar-logo">
+    <img src="assets/images/menu-footer/logo.jpeg" alt="Logo">
+    <span>HostXchange</span>
+  </div>
+  <div class="navbar-links">
+    <button *ngIf="logado == false" (click)="login()">Entrar</button>
+    <a *ngIf="logado" href="/tornar-host">
+      <button>Tornar-se Host</button>
+    </a>
+    <button *ngIf="logado" class="" (click)="logout()">Sair</button>
+  </div>
 </nav>
