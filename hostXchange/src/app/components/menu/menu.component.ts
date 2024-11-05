@@ -23,4 +23,11 @@ export class MenuComponent {
     this.router.navigate(['/login']);
   }
 
+  logout() {
+    localStorage.removeItem('id');
+    localStorage.removeItem('nome');
+    localStorage.removeItem('logado');
+    this.router.navigate(['/login']);
+  }
+
 }

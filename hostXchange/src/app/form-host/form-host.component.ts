@@ -86,8 +86,6 @@ export class FormHostComponent implements OnInit {
     }
   }
 
-
-
   async buscarCep(): Promise<void> {
     let cep = this.formHost.get('cep')?.value;
 
@@ -182,7 +180,9 @@ export class FormHostComponent implements OnInit {
 
   onSubmit(): void {
     if (this.formHost.valid) {
-      this.hostService.enviarFormulario(this.formHost.value).subscribe({
+      let data = this.formHost.value;
+      data.idUsuario = localStorage.getItem("id");
+      this.hostService.enviarFormulario(data).subscribe({
         next: (response) => {
           console.log('Dados enviados com sucesso: ', response);
           alert('Dados enviados com sucesso!');

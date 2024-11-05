@@ -13,7 +13,7 @@ export class LoginService {
   }
 
   cadastrar(user: any) {
-    return this.http.post('http://localhost:3000/cadastrar', user);
+    return this.http.post('http://localhost:3000/cadastro/cadastroUsuario', user);
   }
 
   enviarEmail(email:string) {
