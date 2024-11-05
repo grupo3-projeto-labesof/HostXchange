@@ -1,0 +1,54 @@
+<app-menu></app-menu> <!-- Componente de Menu -->
+
+<div class="search-container">
+    <header>
+        <h1>Busque seu Intercâmbio</h1>
+        <div class="search-bar">
+            <input type="text" placeholder="Buscar intercâmbio" />
+            <button>Buscar</button>
+        </div>
+    </header>
+
+    <section class="filters">
+        <h2>Filtros</h2>
+        <div class="filter-options">
+            <select>
+                <option value="">Localização</option>
+                <option value="brasil">Brasil</option>
+                <option value="europa">Europa</option>
+            </select>
+            <select>
+                <option value="">Duração</option>
+                <option value="curto">Curto prazo</option>
+                <option value="longo">Longo prazo</option>
+            </select>
+            <select>
+                <option value="">Tipo de Trabalho</option>
+                <option value="cultural">Cultural</option>
+                <option value="social">Social</option>
+            </select>
+            <select>
+                <option value="">Horas Semanais</option>
+                <option value="menos20">Menos de 20h</option>
+                <option value="mais20">Mais de 20h</option>
+            </select>
+        </div>
+    </section>
+
+    <section class="exchange-cards">
+        <article class="exchange-card">
+            <img src="assets/images/exchange/lugar.webp" alt="Imagem do intercâmbio" />
+            <h3>Título do Intercâmbio</h3>
+            <p>Descrição breve do intercâmbio, ideal para quem busca imersão cultural e aprendizado.</p>
+            <div class="details">
+                <span>Horas semanais: 20h</span>
+                <span>Tipo de atividade: Cultural</span>
+                <span>Avaliações: ★★★★☆</span>
+            </div>
+            <button class="details-button">Ver detalhes</button>
+        </article>
+        <!-- Repita .exchange-card para cada intercâmbio -->
+    </section>
+</div>
+
+<app-footer></app-footer> <!-- Componente de Footer -->
