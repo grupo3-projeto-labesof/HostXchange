@@ -118,12 +118,14 @@ export class LoginComponent implements OnInit {
   
   entrar(): void {
     if (this.formLogin.valid) {
-      this.service.enviarEmail(this.formLogin.value.email).subscribe({
+      const data = { email: this.formLogin.value.email, password: this.formLogin.value.password }
+      this.service.entrar(data).subscribe({
         next: (res: any) => {
           if (res.blOk === true) {
             const user = res.user[0];
-            localStorage.setItem('id', user.ID_USUARIO);
-            localStorage.setItem('nome', user.NOME);
+            debugger
+            localStorage.setItem('id', user.idusuario);
+            localStorage.setItem('nome', user.nome);
             localStorage.setItem('logado', "true");
             this.toastr.success(res.message, 'SUCESSO:');
             this.router.navigate(['/home']);

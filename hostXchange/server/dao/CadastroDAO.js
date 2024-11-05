@@ -12,7 +12,7 @@ const cadastroUsuario = async (nome, email, password, cpf, rg, sexo, nacionalida
         rg,
         sexo,
         nrpassa: passaporte,
-        nacionalidade,
+        nacional: nacionalidade,
         stusuario: 'A',  // Usuário
         tpusuario: 'V'   // Tipo de usuário padrão viajante
       }
@@ -24,15 +24,19 @@ const cadastroUsuario = async (nome, email, password, cpf, rg, sexo, nacionalida
   }
 };
 
-const cadastroHost = async (nome, endereco, cddestado, cep, tel, email) => {
+const cadastroHost = async (nomePropriedade, rua, numero, complemento, cidade, estado, cep, telefone, tipoPropriedade, email) => {
   try {
     const host = await prisma.contatoHost.create({
       data: {
-        nmprop: nome,
-        endereco,
-        cdestado: cddestado,
+        nmprop: nomePropriedade,
+        endereco: rua,
+        numero,
+        complem: complemento,
+        cidade,
+        cdestado: estado,
         nrcep: cep,
-        nrtel: tel,
+        nrtel: telefone,
+        tipoProp: tipoPropriedade,
         email,
         stcadast: 'A'
       }

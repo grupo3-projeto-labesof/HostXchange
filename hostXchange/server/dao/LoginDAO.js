@@ -1,29 +1,45 @@
-/*const mysql   = require('mysql2');
-const config  = require('../config/database');
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
-const db = mysql.createConnection({
-  host: config.host,
-  user: config.user,
-  password: config.password,
-  database: config.database
-});
-
-db.connect((err) => {
-    if (err) {
-        console.error('Erro ao conectar ao banco de dados:', err);
-        return;
-    }
-});*/
-
-const login = (email, callback) => {
-    db.query(`SELECT * FROM usuarios WHERE email = '${email}'`, (error, results) => {
-      if (error) {
-        console.error('Erro na consulta:', error);
-        callback(error, null);
-      } else {
-        callback(null, results);
-      }
+// Função para buscar o usuário pelo e-mail
+const login = async (email, callback) => {
+  try {
+    const user = await prisma.usuario.findUnique({
+      where: { email: email },
     });
+    callback(null, user ? [user] : []);
+  } catch (error) {
+    console.error('Erro na consulta:', error);
+    callback(error, null);
+  }
 };
 
-module.exports = { login };
+// Função para atualizar o código de reset de senha do usuário
+const updateCodigo = async (email, codigo, callback) => {
+  try {
+    await prisma.usuario.update({
+      where: { email: email },
+      data: { CDRESET: codigo },
+    });
+    callback(null);
+  } catch (error) {
+    console.error('Erro ao atualizar o código de reset:', error);
+    callback(error);
+  }
+};
+
+// Função para atualizar a senha do usuário
+const atualizaSenha = async (email, hash, callback) => {
+  try {
+    await prisma.usuario.update({
+      where: { email: email },
+      data: { senha: hash },
+    });
+    callback(null);
+  } catch (error) {
+    console.error('Erro ao atualizar a senha:', error);
+    callback(error);
+  }
+};
+
+module.exports = { login, updateCodigo, atualizaSenha };
