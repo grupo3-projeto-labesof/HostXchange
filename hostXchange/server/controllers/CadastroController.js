@@ -24,7 +24,7 @@ const cadastroHost = async (req, res) => {
   try {
     const resultHost = await cadastroDAO.cadastroHost(nomePropriedade, rua, numero, complemento, cidade, estado, cep, telefone, tipoPropriedade, email);
     if (resultHost.success) {
-      const resultUpdate = await cadastroDAO.updateTipoUsuario(idUsuario, resultHost.idHost);
+      const resultUpdate = await cadastroDAO.updateTipoUsuario(idUsuario, resultHost.idHost.toString());
       if (resultUpdate.success) {
         res.status(201).json(resultUpdate);
       } else {

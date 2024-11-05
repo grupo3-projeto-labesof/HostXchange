@@ -27,6 +27,9 @@ model Usuario {
   linkedin      String?  @db.VarChar(255)
   CDRESET      String?  @db.VarChar(6)
 
+ // contatoHostId Int?          // Campo para chave estrangeira (opcional, se permitido)
+ // contatoHost   ContatoHost?  @relation(fields: [contatoHostId], references: [idctt])
+
   @@map("USUARIO")
 }
 
