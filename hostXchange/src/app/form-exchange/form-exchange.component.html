@@ -1,0 +1,123 @@
+<app-menu></app-menu>
+
+<main class="py-5">
+    <header class="text-center mb-5">
+        <h1>Cadastrar Novo intercâmbio</h1>
+        <p class="lead">Preencha os detalhes abaixo para cadastrar seu intercâmbio.</p>
+    </header>
+
+    <form class="form" action="/api/exchanges" method="POST" enctype="multipart/form-data">
+        <!-- Campo para inserir imagens do local -->
+        <div class="form-group mb-4">
+            <label for="localImage">Imagem do Local</label>
+            <div class="mt-4">
+                <input type="file" id="localImage" name="localImage" accept="image/*" multiple required>
+            </div>
+        </div>
+
+        <!-- Campo do nome do local -->
+        <div class="form-group mb-4">
+            <label class="mb-4" for="localName">Nome do Local:<span class="text-danger"> *</span></label>
+            <input type="text" id="localName" name="localName" placeholder="Nome do Local" class="form-control"
+                required>
+        </div>
+
+        <!-- Campo de Título do card -->
+        <div class="form-group mb-4">
+            <label for="cardTitle">Título do Card</label>
+            <input type="text" id="cardTitle" name="cardTitle" placeholder="Título do Card" class="form-control"
+                required>
+        </div>
+
+        <!-- Campo para descrição -->
+        <div class="form-group mb-4">
+            <label for="description">Descrição</label>
+            <textarea id="description" name="description" placeholder="Descrição da Viagem" class="form-control"
+                rows="4" required></textarea>
+        </div>
+
+        <!-- Campo para descrever como será o serviço -->
+        <div class="form-group mb-4">
+            <label for="serviceDescription">Descrição do Serviço</label>
+            <textarea id="serviceDescription" name="serviceDescription" placeholder="Detalhes sobre o serviço"
+                class="form-control" rows="4" required></textarea>
+        </div>
+
+        <!-- Campo para informar tags sobre o serviço -->
+        <div class="form-group mb-4">
+            <label for="serviceTags">Tags do Serviço</label>
+            <input type="text" id="serviceTags" name="serviceTags" placeholder="Tags (Ex.: Agricultura, Cozinha)"
+                class="form-control" required>
+        </div>
+
+        <!-- Campo para informar as tags sobre o que o Host oferece pelo serviço -->
+        <div class="form-group mb-4">
+            <label for="hostOffers">O que o Host oferece</label>
+            <input type="text" id="hostOffers" name="hostOffers"
+                placeholder="O que o Host oferece (Ex.: Alojamento, Alimentação)" class="form-control" required>
+        </div>
+
+        <!-- Campo para informar a duração do trabalho -->
+        <div class="form-group mb-4">
+            <label for="workDuration">Duração do Trabalho</label>
+            <input type="text" id="workDuration" name="workDuration" placeholder="Duração do trabalho (Ex.: 2 semanas)"
+                class="form-control" required>
+        </div>
+
+        <!-- Campos para inserir toda informação de endereço -->
+        <fieldset class="mb-4">
+            <legend>Endereço do Local</legend>
+            <div class="form-row mb-2">
+                <div class="col">
+                    <label for="cep">CEP</label>
+                    <input type="text" id="cep" name="cep" placeholder="CEP" class="form-control" required>
+                </div>
+                <div class="col">
+                    <label for="logradouro">Logradouro</label>
+                    <input type="text" id="logradouro" name="logradouro" placeholder="Logradouro" class="form-control"
+                        required>
+                </div>
+            </div>
+
+            <div class="form-row mb-2">
+                <div class="col">
+                    <label for="numero">Número</label>
+                    <input type="text" id="numero" name="numero" placeholder="Número" class="form-control" required>
+                </div>
+                <div class="col">
+                    <label for="bairro">Bairro</label>
+                    <input type="text" id="bairro" name="bairro" placeholder="Bairro" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="col">
+                    <label for="cidade">Cidade</label>
+                    <input type="text" id="cidade" name="cidade" placeholder="Cidade" class="form-control" required>
+                </div>
+                <div class="col">
+                    <label for="estado">Estado</label>
+                    <input type="text" id="estado" name="estado" placeholder="Estado" class="form-control" required>
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- Campo para selecionar a atividade -->
+        <div class="form-group mb-4">
+            <label for="activity">Atividade</label>
+            <select id="activity" name="activity" class="form-control" required>
+                <option value="agricultura">Agricultura</option>
+                <option value="construcao">Construção</option>
+                <option value="cozinha">Cozinha</option>
+                <option value="limpeza">Limpeza</option>
+                <option value="outros">Outros</option>
+            </select>
+        </div>
+
+        <!-- Botão para submeter o formulário -->
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">Cadastrar Intercâmbio</button>
+        </div>
+    </form>
+
+</main>

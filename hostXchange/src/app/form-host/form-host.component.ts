@@ -4,15 +4,17 @@ import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 import { HostService } from '../services/host.service';
+import { MenuComponent } from '../components/menu/menu.component';
+import { FooterComponent } from '../components/footer/footer.component';
 
 
 @Component({
   selector: 'app-form-host',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, CommonModule, NgxMaskDirective],
+  imports: [ReactiveFormsModule, FormsModule, CommonModule, NgxMaskDirective, MenuComponent, FooterComponent],
   providers: [provideNgxMask()],
   templateUrl: './form-host.component.html',
-  styleUrls: ['./form-host.component.css']
+  styleUrl: './form-host.component.css'
 })
 export class FormHostComponent implements OnInit {
 
