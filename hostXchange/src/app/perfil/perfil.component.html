@@ -1,0 +1,227 @@
+<app-menu></app-menu>
+<main class="container mt-5 mb-5">
+  <!-- Seção de Visualização do Perfil -->
+  <section *ngIf="!editMode" id="profile-view" class="mb-5">
+    <article class="card bg-dark text-white">
+      <div class="card cover-card mt-4 mb-4 mx-3">
+        <div class="cover-photo" [style.backgroundImage]="'url(' + usuario?.fotoCapa + ')'">
+          <div class="profile-picture-container">
+            <img [src]="usuario?.fotoPerfil" alt="Foto de Perfil" class="rounded-circle profile-picture">
+          </div>
+        </div>
+      </div>
+      <div class="card-body text-center">
+        <h1 class="mt-4">{{ usuario?.nome }}</h1>
+      </div>
+
+      <div class="card bg-secondary mb-4 mx-3">
+        <div class="card-body">
+          <h2 class="card-title">
+            Informações Pessoais
+            <button class="btn btn-outline-light float-end" (click)="toggleEditMode()">
+              <i class="fas fa-edit"></i> Editar
+            </button>
+          </h2>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item bg-secondary text-white d-flex align-items-center">
+              <i class="fas fa-user me-3 icon-fixed-width"></i>
+              Nome: {{ usuario?.nome }}
+            </li>
+            <li class="list-group-item bg-secondary text-white d-flex align-items-center">
+              <i class="fas fa-at me-3 icon-fixed-width"></i>
+              Username: {{ usuario?.username }}
+            </li>
+            <li class="list-group-item bg-secondary text-white d-flex align-items-center">
+              <i class="fas fa-id-card me-3 icon-fixed-width"></i>
+              RG: {{ usuario?.rg }}
+            </li>
+            <li class="list-group-item bg-secondary text-white d-flex align-items-center">
+              <i class="fas fa-id-badge me-3 icon-fixed-width"></i>
+              CPF: {{ usuario?.cpf }}
+            </li>
+            <li class="list-group-item bg-secondary text-white d-flex align-items-center">
+              <i class="fas fa-passport me-3 icon-fixed-width"></i>
+              Passaporte: {{ usuario?.passaporte }}
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card bg-secondary mb-4 mx-4">
+        <div class="card-body">
+          <h2 class="card-title">Redes Sociais</h2>
+          <div class="row row-cols-2 row-cols-md-4 g-2 mt-3">
+            <div *ngFor="let rede of usuario?.redesSociais" class="col">
+              <a [href]="rede.url" target="_blank" class="btn btn-outline-light w-100 social-btn">
+                <i [class]="'fab fa-' + rede.nome.toLowerCase()"></i> {{ rede.nome }}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- Seção de Edição do Perfil -->
+  <section *ngIf="editMode" id="profile-edit">
+    <form [formGroup]="perfilForm" (ngSubmit)="salvarAlteracoes()" class="card bg-dark text-white">
+      <div class="card-body">
+        <h2 class="card-title mb-4">Editar Perfil</h2>
+
+        <!-- Seção de Fotos -->
+        <div class="mb-4">
+          <h3>Fotos</h3>
+          <div class="mb-3">
+            <label for="fotoPerfil" class="form-label">Foto de Perfil</label>
+            <input type="file" id="fotoPerfil" (change)="onFileSelected($event, 'perfil')"
+              class="form-control bg-secondary text-white" accept="image/*">
+          </div>
+          <div class="mb-3">
+            <label for="fotoCapa" class="form-label">Foto de Capa</label>
+            <input type="file" id="fotoCapa" (change)="onFileSelected($event, 'capa')"
+              class="form-control bg-secondary text-white" accept="image/*">
+          </div>
+        </div>
+
+        <!-- Campos de Edição do Usuário -->
+        <div class="mb-3">
+          <label for="nome" class="form-label">Nome:</label>
+          <input type="text" id="nome" formControlName="nome" class="form-control bg-secondary text-white" required>
+        </div>
+        <div class="mb-3">
+          <label for="username" class="form-label">Username:</label>
+          <input type="text" id="username" formControlName="username" class="form-control bg-secondary text-white"
+            required>
+        </div>
+        <div class="mb-3">
+          <label for="rg" class="form-label">RG:</label>
+          <input type="text" id="rg" formControlName="rg" mask="00.000.000-0"
+            class="form-control bg-secondary text-white" required>
+        </div>
+        <div class="mb-3">
+          <label for="cpf" class="form-label">CPF:</label>
+          <input type="text" id="cpf" formControlName="cpf" mask="000.000.000-00"
+            class="form-control bg-secondary text-white" required>
+        </div>
+        <div class="mb-3">
+          <label for="passaporte" class="form-label">Passaporte:</label>
+          <input type="text" id="passaporte" formControlName="passaporte" mask="AAA000000"
+            class="form-control bg-secondary text-white" required>
+        </div>
+
+        <!-- Redes Sociais -->
+        <div class="mb-4">
+          <h3>Redes Sociais</h3>
+          <div id="social-media-list" class="mb-3">
+            <!-- Redes Sociais Cadastradas -->
+            <div class="card bg-secondary mb-3">
+              <div class="card-body">
+                <h4 class="card-title">Redes Sociais Cadastradas</h4>
+
+                <!-- Listagem das redes sociais com nome, URL e botão de remover -->
+                <div *ngFor="let rede of usuario?.redesSociais; let i = index"
+                  class="social-media-item mb-2 pb-2 border-bottom border-light">
+                  <div class="row g-2 align-items-center">
+                    <div class="col-3 border-end">
+                      <span class="badge bg-primary">
+                        <i [class]="'fab fa-' + rede.nome.toLowerCase()"></i> {{ rede.nome }}
+                      </span>
+                    </div>
+                    <div class="col-7 border-end">
+                      <a [href]="rede.url" target="_blank" class="text-truncate text-light">{{ rede.url }}</a>
+                    </div>
+                    <div class="col-2 text-end">
+                      <button class="btn btn-outline-danger btn-sm" type="button" (click)="removeSocialMedia(i)">
+                        Remover
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                
+              </div>
+            </div>
+          </div>
+
+          <!-- Adicionar Nova Rede Social -->
+          <div class="card bg-secondary">
+            <div class="card-body">
+              <h4 class="card-title">Adicionar Nova Rede Social</h4>
+              <div [formGroup]="novaRedeForm" class="social-media-item">
+                <div class="row g-3 align-items-center">
+                  <div class="col-auto">
+                    <label for="social-media-select" class="col-form-label">Rede Social:</label>
+                  </div>
+                  <div class="col-auto">
+                    <select formControlName="nome" class="form-select bg-dark text-white" id="social-media-select"
+                      style="width: 150px;">
+                      <option value="" disabled>Escolha</option>
+                      @for (social of availableSocials; track $index) {
+                      <option [value]="social.value" [disabled]="isSocialMediaDuplicate(social.value)">
+                        {{ social.label }}
+                      </option>
+                      }
+                    </select>
+                  </div>
+                  <div class="col-auto">
+                    <label for="social-media-url" class="col-form-label">Link:</label>
+                  </div>
+                  <div class="col">
+                    <input formControlName="url" type="url" id="social-media-url"
+                      class="form-control bg-dark text-white" placeholder="https://">
+                  </div>
+                  <div class="col-auto">
+                    <button class="btn btn-outline-success" type="button" (click)="addSocialMedia()"
+                      [disabled]="!novaRedeForm.valid || isSocialMediaDuplicate(novaRedeForm.get('nome')?.value)">
+                      <i class="fas fa-plus"></i> Adicionar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Campos de senha com máscaras e toggles de visibilidade -->
+        <div class="mb-4">
+          <h3>Redefinir Senha</h3>
+          <div class="mb-3">
+            <label for="currentPassword" class="form-label">Senha Atual</label>
+            <div class="input-group">
+              <input type="{{ passwordVisible.current ? 'text' : 'password' }}" id="currentPassword"
+                formControlName="currentPassword" class="form-control bg-secondary text-white">
+              <button class="btn btn-outline-secondary" type="button" (click)="togglePasswordVisibility('current')">
+                <i [class]="passwordVisible.current ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+              </button>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="newPassword" class="form-label">Nova Senha</label>
+            <div class="input-group">
+              <input type="{{ passwordVisible.new ? 'text' : 'password' }}" id="newPassword"
+                formControlName="newPassword" class="form-control bg-secondary text-white">
+              <button class="btn btn-outline-secondary" type="button" (click)="togglePasswordVisibility('new')">
+                <i [class]="passwordVisible.new ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+              </button>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="confirmPassword" class="form-label">Confirmar Nova Senha</label>
+            <div class="input-group">
+              <input type="{{ passwordVisible.confirm ? 'text' : 'password' }}" id="confirmPassword"
+                formControlName="confirmPassword" class="form-control bg-secondary text-white">
+              <button class="btn btn-outline-secondary" type="button" (click)="togglePasswordVisibility('confirm')">
+                <i [class]="passwordVisible.confirm ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botões de Ação -->
+        <button type="submit" class="btn btn-primary" [disabled]="perfilForm.invalid">Salvar Alterações</button>
+        <button type="button" class="btn btn-secondary ms-2" (click)="toggleEditMode()">Cancelar</button>
+      </div> <!-- Fim de card-body -->
+    </form>
+  </section>
+</main>
+<app-footer></app-footer>

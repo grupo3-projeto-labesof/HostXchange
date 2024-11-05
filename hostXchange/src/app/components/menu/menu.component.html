@@ -8,5 +8,6 @@
     <a *ngIf="logado" href="/tornar-host">
       <button>Tornar-se Host</button>
     </a>
+    <button *ngIf="logado" class="" (click)="logout()">Sair</button>
   </div>
 </nav>

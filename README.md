@@ -6,7 +6,7 @@
 
 ### Professor: Mauro Borges
 
-## Intaladores
+## Instaladores
 
 <a href="https://nodejs.org/en/download/prebuilt-installer">NodeJs</a>
 <br><br>
@@ -15,16 +15,17 @@ Angular: npm install -g @angular/cli@18.2.0
 
 ## Para rodar
 
-- Na raiz principal rodar `npm i --force`
+- Na raiz principal rodar `npm i --force`.
 
-Banco:
+#### Banco MySQL:
 
-- Pegar as informações do arquivo SQL.md e rodar no banco.
+- Ajustar o arquivo `.env` com as configurações do seu banco (o arquivo `envconfig` tem o exemplo).
+- Rodar `npx prisma migrate dev`.
 
-Backend: 
+#### Backend: 
 
-- Entrar na pasta server e rodar `node index.js`
+- Entrar na pasta server e rodar `node index.js`.
 
-Frontend: 
+#### Frontend: 
 
-- Na pasta principal rodar `ng s ou ng server`
+- Na pasta principal rodar `ng s` ou `ng server`.

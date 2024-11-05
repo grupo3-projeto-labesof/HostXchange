@@ -1,55 +1,67 @@
-const mysql = require('mysql2');
-const config = require('../config/database');
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
-const db = mysql.createConnection({
-    host: config.host,
-    user: config.user,
-    password: config.password,
-    database: config.database
-});
-
-db.connect((err) => {
-    if (err) {
-        console.error('Erro ao conectar ao banco de dados:', err);
-        return;
-    }
-});
-
-const cadastroUsuario = (nome, email, password, cpf, rg, nrpassa, callback) => {
-    const query = `INSERT INTO USUARIOS (NOME, EMIAL, SENHA, STUSUARIO, TPUSUARI, CPF, RG, NRPASSA) VALUES (?, ?, ?, 'A', 'V', ?, ?, ?)`;
-    db.query(query, [nome, email, password, cpf, rg, nrpassa], callback);
-};
-
-const cadastroHost = (nome, endereco, cddestado, cep, tel, email, callback) => {
-    db.query(`INSERT INTO CONTATO_HOST (NMPROP, ENDERECO, CDDESTADO, NRCEP, TEL, EMAIL, STCADAST) VALUES (
-        '${nome}', '${endereco}', '${cddestado}', '${cep}', '${tel}', '${email}')`, (error, results) => {
-        if (error) {
-            return callback(error);
-        }
-        callback(null, results.insertId);
+const cadastroUsuario = async (nome, email, password, cpf, rg, sexo, nacionalidade, passaporte) => {
+  try {
+    await prisma.usuario.create({
+      data: {
+        nome,
+        email,
+        senha: password,
+        cpf,
+        rg,
+        sexo,
+        nrpassa: passaporte,
+        nacional: nacionalidade,
+        stusuario: 'A',  // Usuário
+        tpusuario: 'V'   // Tipo de usuário padrão viajante
+      }
     });
+    return { success: true, message: 'Usuário cadastrado com sucesso!' };
+  } catch (error) {
+    console.error('Erro ao cadastrar usuário:', error);
+    return { success: false, message: 'Erro ao cadastrar usuário!' };
+  }
 };
 
-const updateTipoUsuario = (idUsuario, idHost, callback) => {
-    const query = `UPDATE USUARIO
-                   SET TPUSUARIO = 'H',
-                       IDCONTATO = '${idHost}',
-                       WHERE coluna = '${idUsuario}'`;
-    db.query(query, [idUsuario, idHost], callback);
+const cadastroHost = async (nomePropriedade, rua, numero, complemento, cidade, estado, cep, telefone, tipoPropriedade, email) => {
+  try {
+    const host = await prisma.contatoHost.create({
+      data: {
+        nmprop: nomePropriedade,
+        endereco: rua,
+        numero,
+        complem: complemento,
+        cidade,
+        cdestado: estado,
+        nrcep: cep,
+        nrtel: telefone,
+        tipoProp: tipoPropriedade,
+        email,
+        stcadast: 'A'
+      }
+    });
+    return { success: true, idHost: host.idctt };
+  } catch (error) {
+    console.error('Erro ao cadastrar host:', error);
+    return { success: false, message: 'Erro ao cadastrar host!' };
+  }
 };
+
+const updateTipoUsuario = async (idUsuario, idHost) => {
+  try {
+    await prisma.usuario.update({
+      where: { idusuario: idUsuario },
+      data: {
+        tpusuario: 'H',
+        contatoHostId: idHost
+      }
+    });
+    return { success: true, message: 'Tipo de usuário atualizado para Host!' };
+  } catch (error) {
+    console.error('Erro ao atualizar tipo de usuário:', error);
+    return { success: false, message: 'Erro ao atualizar tipo de usuário!' };
+  }
+};
+
 module.exports = { cadastroUsuario, cadastroHost, updateTipoUsuario };
-
-/* PARA A BASE TESTE
-CREATE TABLE CONTATO_HOST(
-	IDCTT INT AUTO_INCREMENT,
-    NMPROP VARCHAR(100),
-    ENDERECO VARCHAR(100),
-    CDDESTADO VARCHAR(100),
-    NRCEP VARCHAR(100),
-    NRTEL VARCHAR(100),
-    EMAIL VARCHAR(100), 
-    STCADAST VARCHAR(10),
-  	DTCADAST TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (IDCTT)
-);
-*/
