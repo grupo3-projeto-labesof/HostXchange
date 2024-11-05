@@ -1,26 +1,28 @@
 <app-menu></app-menu>
 
-<main class="container py-5">
+<main class="py-5">
     <header class="text-center mb-5">
-        <h1>Cadastrar Novo Intercâmbio</h1>
+        <h1>Cadastrar Novo intercâmbio</h1>
         <p class="lead">Preencha os detalhes abaixo para cadastrar seu intercâmbio.</p>
     </header>
 
-    <form action="/api/exchanges" method="POST" enctype="multipart/form-data">
+    <form class="form" action="/api/exchanges" method="POST" enctype="multipart/form-data">
         <!-- Campo para inserir imagens do local -->
         <div class="form-group mb-4">
             <label for="localImage">Imagem do Local</label>
-            <input type="file" id="localImage" name="localImage" accept="image/*" multiple required>
+            <div class="mt-4">
+                <input type="file" id="localImage" name="localImage" accept="image/*" multiple required>
+            </div>
         </div>
 
         <!-- Campo do nome do local -->
         <div class="form-group mb-4">
-            <label for="localName">Nome do Local</label>
+            <label class="mb-4" for="localName">Nome do Local:<span class="text-danger"> *</span></label>
             <input type="text" id="localName" name="localName" placeholder="Nome do Local" class="form-control"
                 required>
         </div>
 
-        <!-- Campo de título do card -->
+        <!-- Campo de Título do card -->
         <div class="form-group mb-4">
             <label for="cardTitle">Título do Card</label>
             <input type="text" id="cardTitle" name="cardTitle" placeholder="Título do Card" class="form-control"
@@ -34,35 +36,35 @@
                 rows="4" required></textarea>
         </div>
 
-        <!-- Campo para descrição do serviço -->
+        <!-- Campo para descrever como será o serviço -->
         <div class="form-group mb-4">
             <label for="serviceDescription">Descrição do Serviço</label>
             <textarea id="serviceDescription" name="serviceDescription" placeholder="Detalhes sobre o serviço"
                 class="form-control" rows="4" required></textarea>
         </div>
 
-        <!-- Campo para tags sobre o serviço -->
+        <!-- Campo para informar tags sobre o serviço -->
         <div class="form-group mb-4">
             <label for="serviceTags">Tags do Serviço</label>
             <input type="text" id="serviceTags" name="serviceTags" placeholder="Tags (Ex.: Agricultura, Cozinha)"
                 class="form-control" required>
         </div>
 
-        <!-- Campo para o que o host oferece -->
+        <!-- Campo para informar as tags sobre o que o Host oferece pelo serviço -->
         <div class="form-group mb-4">
             <label for="hostOffers">O que o Host oferece</label>
             <input type="text" id="hostOffers" name="hostOffers"
                 placeholder="O que o Host oferece (Ex.: Alojamento, Alimentação)" class="form-control" required>
         </div>
 
-        <!-- Campo para duração do trabalho -->
+        <!-- Campo para informar a duração do trabalho -->
         <div class="form-group mb-4">
             <label for="workDuration">Duração do Trabalho</label>
             <input type="text" id="workDuration" name="workDuration" placeholder="Duração do trabalho (Ex.: 2 semanas)"
                 class="form-control" required>
         </div>
 
-        <!-- Campos de endereço -->
+        <!-- Campos para inserir toda informação de endereço -->
         <fieldset class="mb-4">
             <legend>Endereço do Local</legend>
             <div class="form-row mb-2">
@@ -117,4 +119,5 @@
             <button type="submit" class="btn btn-primary">Cadastrar Intercâmbio</button>
         </div>
     </form>
+
 </main>
