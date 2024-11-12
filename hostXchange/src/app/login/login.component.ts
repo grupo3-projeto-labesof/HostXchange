@@ -127,6 +127,7 @@ export class LoginComponent implements OnInit {
             localStorage.setItem('id', user.idusuario);
             localStorage.setItem('nome', user.nome);
             localStorage.setItem('logado', "true");
+            localStorage.setItem('tipo_user', user.tpusuario);
             this.toastr.success(res.message, 'SUCESSO:');
             this.router.navigate(['/home']);
           } else {

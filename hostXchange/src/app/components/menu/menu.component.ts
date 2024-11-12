@@ -11,23 +11,24 @@ import { Router } from '@angular/router';
 })
 export class MenuComponent {
 
-    public logado: any = false;
+  public logado: any = false;
 
-    constructor(private router: Router) { }
+  constructor(private router: Router) { }
 
-    ngOnInit() {
-        localStorage.getItem("logado") ? this.logado = localStorage.getItem("logado") : this.logado = false;
-    }
+  ngOnInit() {
+    localStorage.getItem("logado") ? this.logado = localStorage.getItem("logado") : this.logado = false;
+  }
 
-    login() {
-        this.router.navigate(['/login']);
-    }
+  login() {
+    this.router.navigate(['/login']);
+  }
 
-    logout() {
-        localStorage.removeItem('id');
-        localStorage.removeItem('nome');
-        localStorage.removeItem('logado');
-        this.router.navigate(['/login']);
-    }
+  logout() {
+    localStorage.removeItem('id');
+    localStorage.removeItem('nome');
+    localStorage.removeItem('logado');
+    localStorage.removeItem('tipo_user');
+    this.router.navigate(['/login']);
+  }
 
 }
