@@ -8,45 +8,50 @@ datasource db {
 }
 
 model Usuario {
-  idusuario    Int      @id @default(autoincrement())
-  dtcadast      DateTime @default(now())
-  nome          String?  @db.VarChar(200)
-  email         String?  @unique @db.VarChar(200)
-  sexo          String?  @db.VarChar(40)
-  nacionali     String?  @db.VarChar(100)
-  senha         String?  @db.VarChar(200)
-  stusuario     String?  @db.VarChar(10)
-  tpusuario     String?  @db.VarChar(10)
-  cpf           String?  @db.VarChar(20)
-  rg            String?  @db.VarChar(20)
-  nrpassa       String?  @db.VarChar(20)
-  nacional      String?  @db.VarChar(40)
-  facebook      String?  @db.VarChar(255)
-  twitter       String?  @db.VarChar(255)
-  instagram     String?  @db.VarChar(255)
-  linkedin      String?  @db.VarChar(255)
-  CDRESET      String?  @db.VarChar(6)
+  idusuario Int      @id @default(autoincrement())
+  dtcadast  DateTime @default(now())
+  nome      String?  @db.VarChar(200)
+  email     String?  @unique @db.VarChar(200)
+  sexo      String?  @db.VarChar(40)
+  nacionali String?  @db.VarChar(100)
+  senha     String?  @db.VarChar(200)
+  stusuario String?  @db.VarChar(10)
+  tpusuario String?  @db.VarChar(10)
+  cpf       String?  @db.VarChar(20)
+  rg        String?  @db.VarChar(20)
+  nrpassa   String?  @db.VarChar(20)
+  nacional  String?  @db.VarChar(40)
+  facebook  String?  @db.VarChar(255)
+  twitter   String?  @db.VarChar(255)
+  instagram String?  @db.VarChar(255)
+  linkedin  String?  @db.VarChar(255)
+  CDRESET   String?  @db.VarChar(6)
+  idhost    Int?     @unique // Campo único para relação 1-1
 
- // contatoHostId Int?          // Campo para chave estrangeira (opcional, se permitido)
- // contatoHost   ContatoHost?  @relation(fields: [contatoHostId], references: [idctt])
+  contatoHost ContatoHost? @relation(fields: [idhost], references: [idctt], onDelete: Cascade, onUpdate: Cascade)
 
+  idavaliacao Int? // Referência ao ID da Avaliacao (opcional)
+
+  @@index([idhost], name: "IDHOST_idx")
   @@map("USUARIO")
 }
 
 model ContatoHost {
-  idctt      Int      @id @default(autoincrement())
-  nmprop     String?  @db.VarChar(100)
-  endereco   String?  @db.VarChar(100)
-  numero     String?  @db.VarChar(10)
-  complem    String?  @db.VarChar(100)
-  cdestado   String?  @db.VarChar(100)
-  cidade     String?  @db.VarChar(100)
-  nrcep      String?  @db.VarChar(100)
-  nrtel      String?  @db.VarChar(100)
-  tipoProp   String?  @db.VarChar(40)
-  email      String?  @db.VarChar(100)
-  stcadast   String?  @db.VarChar(10)
-  dtcadast   DateTime @default(now())
+  idctt    Int      @id @default(autoincrement())
+  nmprop   String?  @db.VarChar(100)
+  endereco String?  @db.VarChar(100)
+  numero   String?  @db.VarChar(10)
+  complem  String?  @db.VarChar(100)
+  cdestado String?  @db.VarChar(100)
+  cidade   String?  @db.VarChar(100)
+  nrcep    String?  @db.VarChar(100)
+  nrtel    String?  @db.VarChar(100)
+  tipoProp String?  @db.VarChar(40)
+  email    String?  @db.VarChar(100)
+  stcadast String?  @db.VarChar(10)
+  dtcadast DateTime @default(now())
+
+  usuario Usuario? @relation
 
   intercambio Intercambio[]
 
@@ -54,28 +59,41 @@ model ContatoHost {
 }
 
 model Intercambio {
-  idinterc    Int      @id @default(autoincrement())
-  nmlocal     String   @db.VarChar(150)
-  titulo      String   @db.VarChar(200)
-  descricao   String   @db.LongText
-  servicos    String   @db.VarChar(250)
-  beneficios  String   @db.VarChar(250)
-  duracao     String   @db.VarChar(100)
-  img1        Bytes
-  img2        Bytes?
-  img3        Bytes?
-  img4        Bytes?
-  img5        Bytes?
-  img6        Bytes?
-  img7        Bytes?
-  img8        Bytes?
-  img9        Bytes?
-  img10       Bytes?
-  idhost      Int
+  idinterc   Int    @id @default(autoincrement())
+  nmlocal    String @db.VarChar(150)
+  titulo     String @db.VarChar(200)
+  descricao  String @db.LongText
+  servicos   String @db.VarChar(250)
+  beneficios String @db.VarChar(250)
+  duracao    String @db.VarChar(100)
+  img1       Bytes
+  img2       Bytes?
+  img3       Bytes?
+  img4       Bytes?
+  img5       Bytes?
+  img6       Bytes?
+  img7       Bytes?
+  img8       Bytes?
+  img9       Bytes?
+  img10      Bytes?
+  idhost     Int
 
-  // Relacionamento com ContatoHost
   contatoHost ContatoHost @relation(fields: [idhost], references: [idctt], onDelete: Cascade, onUpdate: Cascade)
 
-  @@map("INTERCAMBIOS")
   @@index([idhost], name: "IDHOST_idx")
+  @@map("INTERCAMBIOS")
+}
+
+model Avaliacao {
+  idavaliacao Int      @id @default(autoincrement())
+  avaliadoId  Int
+  avaliadorId Int
+  avaliacao   Int      @default(0) // Nota da avaliação (ex: 1 a 5)
+  snaval      Boolean? // Sim ou não para algo
+  descricao   String?  @db.Text
+
+  avaliado  Usuario @relation(fields: [avaliadoId], references: [idusuario], onDelete: Cascade)
+  avaliador Usuario @relation(fields: [avaliadorId], references: [idusuario], onDelete: Cascade)
+
+  @@map("AVALIACAO")
 }
