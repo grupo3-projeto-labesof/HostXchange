@@ -1,45 +1,36 @@
-/* Estilo Geral */
+/* Geral */
 .search-container {
-    font-family: Arial, sans-serif;
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
-    color: #333;
 }
 
-/* Cabeçalho e Barra de Pesquisa */
-header {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-header h1 {
-    font-size: 2rem;
-    color: #007bff;
-}
-
+/* Barra de pesquisa */
 .search-bar {
     display: flex;
     justify-content: center;
-    margin-top: 15px;
+    margin-bottom: 20px;
+    gap: 10px;
 }
 
 .search-bar input {
+    flex: 1;
+    max-width: 600px;
+    /* Define a largura máxima da barra de pesquisa */
     padding: 10px;
-    font-size: 1rem;
+    font-size: 16px;
     border: 1px solid #ccc;
     border-radius: 4px 0 0 4px;
-    width: 300px;
 }
 
 .search-bar button {
-    padding: 10px 15px;
-    font-size: 1rem;
-    background-color: #007bff;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    background-color: #007BFF;
     color: white;
-    border: 1px solid #007bff;
-    border-radius: 0 4px 4px 0;
     cursor: pointer;
+    border-radius: 0 4px 4px 0;
 }
 
 .search-bar button:hover {
@@ -48,99 +39,91 @@ header h1 {
 
 /* Filtros */
 .filters {
-    text-align: center;
     margin-bottom: 20px;
-}
-
-.filters h2 {
-    color: #333;
-    font-size: 1.5rem;
-    margin-bottom: 10px;
+    text-align: center;
 }
 
 .filter-options {
     display: flex;
-    gap: 10px;
-    justify-content: center;
     flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
 }
 
 .filter-options select {
     padding: 10px;
-    font-size: 1rem;
+    font-size: 14px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    width: 150px;
+    min-width: 200px;
+    /* Largura mínima para melhor acomodação dos textos */
 }
 
-/* Cartões de Intercâmbio */
+/* Cards */
 .exchange-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    /* Garante responsividade */
     gap: 20px;
+    justify-content: center;
 }
 
 .exchange-card {
+    background: white;
     border: 1px solid #ddd;
     border-radius: 8px;
-    overflow: hidden;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s;
-    background-color: #fff;
-}
-
-.exchange-card:hover {
-    transform: translateY(-5px);
+    padding: 20px;
+    text-align: center;
+    max-width: 300px;
+    /* Limita a largura dos cards */
+    margin: 0 auto;
+    /* Centraliza cards menores */
 }
 
 .exchange-card img {
     width: 100%;
-    height: 180px;
+    border-radius: 4px;
+    height: 150px;
+    /* Define altura fixa para imagens consistentes */
     object-fit: cover;
 }
 
 .exchange-card h3 {
-    font-size: 1.25rem;
-    color: #007bff;
-    padding: 10px;
+    margin: 10px 0;
+    font-size: 18px;
 }
 
 .exchange-card p {
-    padding: 0 10px;
-    color: #555;
-}
-
-.details {
-    padding: 10px;
-    color: #555;
-}
-
-.details span {
-    display: block;
-    margin-bottom: 5px;
-}
-
-.details-button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    text-align: center;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 0 0 8px 8px;
-    cursor: pointer;
-}
-
-.details-button:hover {
-    background-color: #218838;
-}
-
-/* Rodapé */
-footer {
-    text-align: center;
-    margin-top: 30px;
-    padding: 10px 0;
+    font-size: 14px;
     color: #666;
-    border-top: 1px solid #ddd;
+}
+
+.exchange-card .details {
+    margin: 10px 0;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    /* Espaçamento entre os detalhes */
+}
+
+.exchange-card .details span {
+    font-size: 12px;
+    color: #555;
+}
+
+.exchange-card .details-button {
+    padding: 10px 20px;
+    font-size: 14px;
+    color: white;
+    background-color: #28a745;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.exchange-card .details-button:hover {
+    background-color: #218838;
 }

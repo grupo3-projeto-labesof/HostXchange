@@ -25,8 +25,9 @@ export class MapComponent implements OnInit {
         });
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            // Omitindo o parâmetro attribution
         }).addTo(this.map);
+
 
         // Adicionando marcadores
         L.marker([-23.5505, -46.6333]).addTo(this.map).bindPopup('São Paulo');
