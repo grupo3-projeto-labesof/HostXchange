@@ -6,6 +6,7 @@ const routeCadastro     = require('./routes/CadastroRoute.js');
 const routeLogin        = require('./routes/LoginRoute.js');
 const routePerfil       = require('./routes/PerfilRoute');
 const routeIntercambios = require('./routes/IntercambiosRoute');
+const routeAvaliacao    = require('./routes/AvaliacaoRoute');
 
 const app  = express();
 const PORT = 3000;
@@ -29,6 +30,7 @@ app.use('/cadastro'    , routeCadastro);
 app.use('/login'       , routeLogin);
 app.use('/intercambios', routeIntercambios);
 app.use('/perfil'      , routePerfil);
+app.use('/avaliacao'   , routeAvaliacao);
 
 app.listen(PORT, () => {
   console.log('Servidor rodando na porta ' + PORT + '!');

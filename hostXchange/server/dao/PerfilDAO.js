@@ -19,4 +19,18 @@ const atualizarPerfil = async (userId, data) => {
   }
 };
 
-module.exports = { atualizarPerfil };
+const perfil = async (userId) => {
+
+  try {
+    const buscaPerfil = await prisma.usuario.findUnique({
+      where: { id: parseInt(userId) }, include: {contatoHost: true }
+    });
+
+    return buscaPerfil;
+  } catch (error) {
+    console.error('Erro ao buscar perfil:', error);
+    throw error;
+  }
+}
+
+module.exports = { atualizarPerfil, perfil };
