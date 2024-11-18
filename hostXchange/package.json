@@ -27,6 +27,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express-session": "^1.18.0",
+    "multer": "^1.4.5-lts.1",
     "mysql2": "^3.11.3",
     "ngx-mask": "^18.0.0",
     "ngx-toastr": "^19.0.0",
