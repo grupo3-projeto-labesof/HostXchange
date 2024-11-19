@@ -119,26 +119,33 @@
                 <h4 class="card-title">Redes Sociais Cadastradas</h4>
 
                 <!-- Listagem das redes sociais com nome, URL e botão de remover -->
-                <div *ngFor="let rede of usuario?.redesSociais; let i = index"
-                  class="social-media-item mb-2 pb-2 border-bottom border-light">
-                  <div class="row g-2 align-items-center">
-                    <div class="col-3 border-end">
-                      <span class="badge bg-primary">
-                        <i [class]="'fab fa-' + rede.nome.toLowerCase()"></i> {{ rede.nome }}
-                      </span>
-                    </div>
-                    <div class="col-7 border-end">
-                      <a [href]="rede.url" target="_blank" class="text-truncate text-light">{{ rede.url }}</a>
-                    </div>
-                    <div class="col-2 text-end">
-                      <button class="btn btn-outline-danger btn-sm" type="button" (click)="removeSocialMedia(i)">
-                        Remover
-                      </button>
+                <div formArrayName="redesSociais">
+                  @for (rede of usuarioEditando?.redesSociais; track $index; let i = $index) {
+                  <div [formGroupName]="i" class="social-media-item mb-2 pb-2 border-bottom border-light">
+                    <div class="row g-2 align-items-center">
+                      <div class="col-3 border-end">
+                        <span class="badge bg-primary d-inline-block">
+                          <i [class]="'fab fa-' + rede.nome.toLowerCase()"></i> {{ rede.nome }}
+                        </span>
+                      </div>
+                      <div class="col-7 border-end">
+                        <a [href]="rede.url" target="_blank" class="text-truncate text-light d-block">{{ rede.url }}</a>
+                      </div>
+                      <div class="col-2 text-end">
+                        <button class="btn btn-outline-danger btn-sm" type="button" (click)="removeSocialMedia(i)">
+                          Remover
+                        </button>
+                      </div>
                     </div>
                   </div>
+                  } @empty {
+                  <div class="alert alert-info">
+                    Nenhuma rede social cadastrada
+                  </div>
+                  }
                 </div>
 
-                
+
               </div>
             </div>
           </div>
@@ -147,18 +154,17 @@
           <div class="card bg-secondary">
             <div class="card-body">
               <h4 class="card-title">Adicionar Nova Rede Social</h4>
-              <div [formGroup]="novaRedeForm" class="social-media-item">
+              <form [formGroup]="novaRedeSocial" class="social-media-item">
                 <div class="row g-3 align-items-center">
                   <div class="col-auto">
                     <label for="social-media-select" class="col-form-label">Rede Social:</label>
                   </div>
                   <div class="col-auto">
-                    <select formControlName="nome" class="form-select bg-dark text-white" id="social-media-select"
-                      style="width: 150px;">
-                      <option value="" disabled>Escolha</option>
-                      @for (social of availableSocials; track $index) {
-                      <option [value]="social.value" [disabled]="isSocialMediaDuplicate(social.value)">
-                        {{ social.label }}
+                    <select formControlName="nome" class="form-select bg-dark text-white" id="social-media-select">
+                      <option value="">Escolha</option>
+                      @for (social of redesSociaisDisponiveis; track social) {
+                      <option [value]="social">
+                        {{ social }}
                       </option>
                       }
                     </select>
@@ -171,13 +177,13 @@
                       class="form-control bg-dark text-white" placeholder="https://">
                   </div>
                   <div class="col-auto">
-                    <button class="btn btn-outline-success" type="button" (click)="addSocialMedia()"
-                      [disabled]="!novaRedeForm.valid || isSocialMediaDuplicate(novaRedeForm.get('nome')?.value)">
+                    <button class="btn btn-outline-success" type="button" (click)="addRedeSocial()"
+                      [disabled]="!novaRedeSocial.valid || redesSociaisDisponiveis.length === 0">
                       <i class="fas fa-plus"></i> Adicionar
                     </button>
                   </div>
                 </div>
-              </div>
+              </form>
             </div>
           </div>
         </div>
@@ -186,30 +192,30 @@
         <div class="mb-4">
           <h3>Redefinir Senha</h3>
           <div class="mb-3">
-            <label for="currentPassword" class="form-label">Senha Atual</label>
+            <label for="senhaAtual" class="form-label">Senha Atual</label>
             <div class="input-group">
               <input type="{{ passwordVisible.current ? 'text' : 'password' }}" id="currentPassword"
-                formControlName="currentPassword" class="form-control bg-secondary text-white">
+                formControlName="senhaAtual" class="form-control bg-secondary text-white">
               <button class="btn btn-outline-secondary" type="button" (click)="togglePasswordVisibility('current')">
                 <i [class]="passwordVisible.current ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
               </button>
             </div>
           </div>
           <div class="mb-3">
-            <label for="newPassword" class="form-label">Nova Senha</label>
+            <label for="novaSenha" class="form-label">Nova Senha</label>
             <div class="input-group">
-              <input type="{{ passwordVisible.new ? 'text' : 'password' }}" id="newPassword"
-                formControlName="newPassword" class="form-control bg-secondary text-white">
+              <input type="{{ passwordVisible.new ? 'text' : 'password' }}" id="newPassword" formControlName="novaSenha"
+                class="form-control bg-secondary text-white">
               <button class="btn btn-outline-secondary" type="button" (click)="togglePasswordVisibility('new')">
                 <i [class]="passwordVisible.new ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
               </button>
             </div>
           </div>
           <div class="mb-3">
-            <label for="confirmPassword" class="form-label">Confirmar Nova Senha</label>
+            <label for="confirmarNovaSenha" class="form-label">Confirmar Nova Senha</label>
             <div class="input-group">
               <input type="{{ passwordVisible.confirm ? 'text' : 'password' }}" id="confirmPassword"
-                formControlName="confirmPassword" class="form-control bg-secondary text-white">
+                formControlName="confirmarNovaSenha" class="form-control bg-secondary text-white">
               <button class="btn btn-outline-secondary" type="button" (click)="togglePasswordVisibility('confirm')">
                 <i [class]="passwordVisible.confirm ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
               </button>
@@ -218,7 +224,8 @@
         </div>
 
         <!-- Botões de Ação -->
-        <button type="submit" class="btn btn-primary" [disabled]="perfilForm.invalid">Salvar Alterações</button>
+        <button type="submit" class="btn btn-primary" [disabled]="perfilForm.invalid"
+          (click)="salvarAlteracoes()">Salvar Alterações</button>
         <button type="button" class="btn btn-secondary ms-2" (click)="toggleEditMode()">Cancelar</button>
       </div> <!-- Fim de card-body -->
     </form>

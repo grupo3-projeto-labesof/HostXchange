@@ -7,6 +7,7 @@ export interface Usuario {
   username: string;
   rg: string;
   cpf: string;
+  senhaAtual: string;
   passaporte: string;
   fotoPerfil: string;
   fotoCapa: string;
@@ -24,14 +25,15 @@ export class PerfilService {
     username: 'joaosilva',
     rg: '12.345.678-9',
     cpf: '123.456.789.00',
+    senhaAtual: '123456',
     passaporte: 'AB123456',
     fotoCapa: 'assets/images/perfil/capa.jpg',
     fotoPerfil: 'assets/images/perfil/perfil.jpg',
     redesSociais: [
       {nome: 'LinkedIn', url: 'https://www.linkedin.com/in/joaosilva'},
       {nome: 'Twitter', url: 'https://www.twitter.com/joaosilva'},
-      {nome: 'GitHub', url: 'https://www.github.com/joaosilva'},
       {nome: 'Instagram', url: 'https://www.instagram.com/joaosilva'},
+      {nome: 'Facebook', url: 'https://www.facebook.com/joaosilva'},
     ]
   };
 
@@ -43,6 +45,12 @@ export class PerfilService {
 
   atualizarUsuarioMock(dadosAtualizados: Partial<Usuario>) {
     this.mockUsuario = { ...this.mockUsuario, ...dadosAtualizados };
+    return of(this.mockUsuario);
+  }
+
+  atualizarSenha (novaSenha: string): Observable<boolean> {
+    this.mockUsuario.senhaAtual = novaSenha;
+    return of(true);
   }
 
   getUsuario(): Observable<Usuario> {

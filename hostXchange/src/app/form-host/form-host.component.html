@@ -63,6 +63,16 @@
                         <small *ngFor="let message of getErrorMessage('cidade')" class="text-danger">{{message}}</small>
                     </div>
                 </div>
+                <div class="col-md-6">
+                    <label for="cidade" class="form-label">Cidade:<span class="text-danger">*</span></label>
+                    <select id="cidade" formControlName="cidade" class="form-select">
+                        <option value="" disabled>Selecione a cidade</option>
+                        <option *ngFor="let cidade of cidades" [value]="cidade.nome">{{ cidade.nome }}</option>
+                    </select>
+                    <div *ngIf="formHost.get('cidade')?.invalid && formHost.get('cidade')?.touched">
+                        <small *ngFor="let message of getErrorMessage('cidade')" class="text-danger">{{message}}</small>
+                    </div>
+                </div>
             </div>
 
             <div class="col-md-6">
