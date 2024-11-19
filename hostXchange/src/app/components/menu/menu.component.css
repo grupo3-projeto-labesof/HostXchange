@@ -11,6 +11,13 @@
   align-items: center;
 }
 
+.navbar-logo a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  /* Remove a linha embaixo do link */
+}
+
 .navbar-logo img {
   height: 40px;
   margin-right: 10px;

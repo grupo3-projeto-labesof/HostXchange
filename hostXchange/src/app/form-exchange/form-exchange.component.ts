@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { MenuComponent } from '../components/menu/menu.component';
@@ -9,13 +9,14 @@ import { ExchangeService } from '../services/exchange.service';
 @Component({
     selector: 'app-form-exchange',
     standalone: true,
-    imports: [ReactiveFormsModule, FormsModule, CommonModule, MenuComponent, FooterComponent],
+    imports: [CommonModule, ReactiveFormsModule, FormsModule, MenuComponent, FooterComponent],
     templateUrl: './form-exchange.component.html',
-    styleUrl: './form-exchange.component.css'
+    styleUrls: ['./form-exchange.component.css']
 })
 export class FormExchangeComponent implements OnInit {
 
     formExchange!: FormGroup;
+    selectedImage: File | null = null; // Para armazenar a imagem selecionada
 
     constructor(private fb: FormBuilder, private http: HttpClient, private exchangeService: ExchangeService) { }
 
@@ -34,9 +35,30 @@ export class FormExchangeComponent implements OnInit {
         });
     }
 
+    // Função para lidar com a mudança do arquivo
+    onFileChange(event: any): void {
+        const file = event.target.files[0]; // Obtém o primeiro arquivo selecionado
+        if (file) {
+            this.selectedImage = file; // Armazena o arquivo selecionado
+            console.log('Imagem selecionada: ', file.name);
+            // Aqui você pode adicionar lógica para pré-visualizar a imagem, se necessário
+        }
+    }
+
     onSubmit(): void {
         if (this.formExchange.valid) {
-            this.exchangeService.cadastrarIntercambio(this.formExchange.value).subscribe({
+            const formData = new FormData();
+            formData.append('titulo', this.formExchange.value.titulo);
+            formData.append('descricao', this.formExchange.value.descricao);
+            formData.append('horasSemanais', this.formExchange.value.horasSemanais);
+            formData.append('tipoAtividade', this.formExchange.value.tipoAtividade);
+            formData.append('cidade', this.formExchange.value.cidade);
+            formData.append('estado', this.formExchange.value.estado);
+            if (this.selectedImage) {
+                formData.append('imagem', this.selectedImage); // Adiciona a imagem ao FormData
+            }
+
+            this.exchangeService.cadastrarIntercambio(formData).subscribe({
                 next: (response) => {
                     console.log('Intercâmbio cadastrado com sucesso: ', response);
                     alert('Intercâmbio cadastrado com sucesso!');
