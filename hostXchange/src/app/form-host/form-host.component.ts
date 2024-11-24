@@ -21,6 +21,8 @@ export class FormHostComponent implements OnInit {
   formHost!: FormGroup;
   estados: any[] = [];
   cidades: any[] = [];
+  cidadeNome: string = '';
+  estadoNome: string = '';
 
   constructor(private fb: FormBuilder, private http: HttpClient, private hostService: HostService) { }
 
@@ -41,7 +43,9 @@ export class FormHostComponent implements OnInit {
       cep: ['', Validators.required],
       tipoPropriedade: ['', Validators.required],
       telefone: ['', Validators.required],
-      email: ['', [Validators.email]]
+      email: ['', [Validators.email]],
+      latitude: '',
+      longitude: ''
     });
   }
 
@@ -78,10 +82,39 @@ export class FormHostComponent implements OnInit {
     }
   }
 
+  async getLatLngFromForm(): Promise<{ lat: number; lng: number } | null> {
+    const rua = this.formHost.get('rua')?.value;
+    const numero = this.formHost.get('numero')?.value;
+    const cidade = this.formHost.get('cidade')?.value;
+    const estado = this.formHost.get('estado')?.value;
+    const cep = this.formHost.get('cep')?.value;
+  
+    // Monta o endereço completo
+    const enderecoCompleto = `${rua}, ${numero}, ${cidade}, ${estado}, ${cep}`;
+  
+    try {
+      const apiKey = "80cb33d04dc744f7bac3064fb2d0fb3a"; // Carrega a chave de API
+      const response = await this.http
+        .get<any>(`https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(enderecoCompleto)}&key=${apiKey}`)
+        .toPromise();
+  
+      if (response.results.length > 0) {
+        const location = response.results[0].geometry;
+        return { lat: location.lat, lng: location.lng };
+      } else {
+        console.error('Nenhuma localização encontrada para o endereço fornecido.');
+        return null;
+      }
+    } catch (error) {
+      console.error('Erro ao buscar latitude e longitude:', error);
+      return null;
+    }
+  }
+  
+
   async onEstadoChange(estadoId: string): Promise<void> {
     try {
       const cidadesData = await this.http.get<any[]>(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${estadoId}/municipios`).toPromise();
-
       cidadesData ? this.cidades = cidadesData.sort((a, b) => a.nome.localeCompare(b.nome)) : alert("Erro ao pesquisar CEP.");
     } catch (error) {
       alert('Erro ao buscar cidades. Tente novamente mais tarde.');
@@ -106,6 +139,7 @@ export class FormHostComponent implements OnInit {
           const estadoCorrespondente = this.estados.find((e) => e.sigla === dados.uf);
           if (estadoCorrespondente) {
             this.formHost.patchValue({ estado: estadoCorrespondente.id });
+            this.estadoNome = estadoCorrespondente.nome;
             await Promise.all([
               this.onEstadoChange(estadoCorrespondente.id),
               new Promise(resolve => setTimeout(resolve, 100))
@@ -119,6 +153,7 @@ export class FormHostComponent implements OnInit {
           const cidadeCorrespondente = this.cidades.find(c => c.nome.toLowerCase() === dados.localidade.toLowerCase());
           if (cidadeCorrespondente) {
             this.formHost.patchValue({ cidade: cidadeCorrespondente.id });
+            this.cidadeNome = cidadeCorrespondente.nome;
           } else {
             alert('Cidade não encontrada na lista para o nome: ' + dados.localidade);
           }
@@ -180,10 +215,29 @@ export class FormHostComponent implements OnInit {
     }
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (this.formHost.valid) {
+      this.formHost.patchValue({cidade: this.cidadeNome, estado: this.estadoNome});
+      try {
+        // Buscar latitude e longitude
+        const location = await this.getLatLngFromForm();
+  
+        if (location) {
+          // Atualizar o formulário com latitude e longitude
+          this.formHost.patchValue({
+            latitude: location.lat,
+            longitude: location.lng,
+          });
+        } else {
+          console.log('Não foi possível encontrar a localização exata.');
+        }
+      } catch (error) {
+        console.error('Erro ao buscar latitude e longitude:', error);
+      }
       let data = this.formHost.value;
+      
       data.idUsuario = localStorage.getItem("id");
+      
       this.hostService.enviarFormulario(data).subscribe({
         next: (response) => {
           console.log('Dados enviados com sucesso: ', response);
@@ -193,6 +247,7 @@ export class FormHostComponent implements OnInit {
           alert('Erro ao enviar dados, tente novamente mais tarde! ' + err);
         }
       });
+      
     } else {
       alert('Formulário inválido!');
     }

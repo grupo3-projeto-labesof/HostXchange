@@ -92,8 +92,8 @@ model Avaliacao {
   snaval      Boolean? // Sim ou não para algo
   descricao   String?  @db.Text
 
-  avaliado  Usuario @relation(fields: [avaliadoId], references: [idusuario], onDelete: Cascade)
-  avaliador Usuario @relation(fields: [avaliadorId], references: [idusuario], onDelete: Cascade)
+ // avaliado  Usuario @relation(fields: [avaliadoId], references: [idusuario], onDelete: Cascade)
+ // avaliador Usuario @relation(fields: [avaliadorId], references: [idusuario], onDelete: Cascade)
 
   @@map("AVALIACAO")
 }

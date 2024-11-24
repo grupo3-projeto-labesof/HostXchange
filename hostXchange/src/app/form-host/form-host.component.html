@@ -43,7 +43,7 @@
 
                 <div class="col-md-3">
                     <label for="complemento" class="form-label">Complemento: <span class="text-danger">*</span></label>
-                    <input type="text" (keypress)="onlyLetters($event)" id="complemento" formControlName="complemento"
+                    <input type="text" id="complemento" formControlName="complemento"
                         class="form-control" minlength="4" maxlength="20">
                     <div *ngIf="formHost.get('complemento')?.touched && formHost.get('complemento')?.invalid">
                         <small *ngFor="let message of getErrorMessage('complemento')" class="text-danger">{{ message
@@ -57,48 +57,24 @@
                     <label for="cidade" class="form-label">Cidade:<span class="text-danger">*</span></label>
                     <select id="cidade" formControlName="cidade" class="form-select">
                         <option value="" disabled>Selecione a cidade</option>
-                        <option *ngFor="let cidade of cidades" [value]="cidade.nome">{{ cidade.nome }}</option>
+                        <option *ngFor="let cidade of cidades" [value]="cidade.id">{{ cidade.nome }}</option>
                     </select>
                     <div *ngIf="formHost.get('cidade')?.invalid && formHost.get('cidade')?.touched">
                         <small *ngFor="let message of getErrorMessage('cidade')" class="text-danger">{{message}}</small>
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <label for="cidade" class="form-label">Cidade:<span class="text-danger">*</span></label>
-                    <select id="cidade" formControlName="cidade" class="form-select">
-                        <option value="" disabled>Selecione a cidade</option>
-                        <option *ngFor="let cidade of cidades" [value]="cidade.nome">{{ cidade.nome }}</option>
+                    <label for="estado" class="form-label">Estado:<span class="text-danger">*</span></label>
+                    <select id="estado" formControlName="estado" (change)="onEstadoChange(formHost.get('estado')?.value)"
+                        class="form-select">
+                        <option value="" disabled>Selecione o estado</option>
+                        <option *ngFor="let estado of estados" [value]="estado.id">{{ estado.nome }}</option>
                     </select>
-                    <div *ngIf="formHost.get('cidade')?.invalid && formHost.get('cidade')?.touched">
-                        <small *ngFor="let message of getErrorMessage('cidade')" class="text-danger">{{message}}</small>
+                    <div *ngIf="formHost.get('estado')?.invalid && formHost.get('estado')?.touched">
+                        <small *ngFor="let message of getErrorMessage('estado')" class="text-danger">{{message}}</small>
                     </div>
                 </div>
             </div>
-
-            <div class="col-md-6">
-                <label for="estado" class="form-label">Estado:<span class="text-danger">*</span></label>
-                <select id="estado" formControlName="estado" (change)="onEstadoChange(formHost.get('estado')?.value)"
-                    class="form-select">
-                    <option value="" disabled>Selecione o estado</option>
-                    <option *ngFor="let estado of estados" [value]="estado.nome">{{ estado.nome }}</option>
-                </select>
-                <div *ngIf="formHost.get('estado')?.invalid && formHost.get('estado')?.touched">
-                    <small *ngFor="let message of getErrorMessage('estado')" class="text-danger">{{message}}</small>
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <label for="estado" class="form-label">Estado:<span class="text-danger">*</span></label>
-                <select id="estado" formControlName="estado" (change)="onEstadoChange(formHost.get('estado')?.value)"
-                    class="form-select">
-                    <option value="" disabled>Selecione o estado</option>
-                    <option *ngFor="let estado of estados" [value]="estado.nome">{{ estado.nome }}</option>
-                </select>
-                <div *ngIf="formHost.get('estado')?.invalid && formHost.get('estado')?.touched">
-                    <small *ngFor="let message of getErrorMessage('estado')" class="text-danger">{{message}}</small>
-                </div>
-            </div>
-
 
             <div class="row mb-3">
                 <div class="col-md-3">
