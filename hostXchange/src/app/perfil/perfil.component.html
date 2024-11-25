@@ -50,6 +50,7 @@
       <div class="card bg-secondary mb-4 mx-4">
         <div class="card-body">
           <h2 class="card-title">Redes Sociais</h2>
+          @if (hasRedesSociais()) {
           <div class="row row-cols-2 row-cols-md-4 g-2 mt-3">
             <div *ngFor="let rede of usuario?.redesSociais" class="col">
               <a [href]="rede.url" target="_blank" class="btn btn-outline-light w-100 social-btn">
@@ -57,6 +58,11 @@
               </a>
             </div>
           </div>
+          } @else {
+          <div class="alert alert-warning mt-3">
+            Nenhuma rede social cadastrada para o usuário:  {{ usuario?.nome }}
+          </div>
+          }
         </div>
       </div>
     </article>
@@ -83,30 +89,109 @@
           </div>
         </div>
 
+        <!-- Previews das Fotos -->
+        <div class="row mb-4">
+          <div class="col-md-6">
+            <div class="card bg-secondary">
+              <div class="card-body">
+                <h4>Preview Foto de Perfil</h4>
+                <div class="preview-container position-relative">
+                  @if (fotoPerfilFile) {
+                    <div class="preview-image-wrapper">
+                      <div class="preview-image" [style.backgroundImage]="'url(' + getFotoPreviewUrl(fotoPerfilFile) + ')'"></div>
+                      <button class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1" (click)="removerFoto('perfil')">×</button>
+                    </div>
+                  } @else {
+                    <div class="preview-placeholder d-flex align-items-center justify-content-center">
+                      Nenhuma imagem selecionada
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        
+          <div class="col-md-6">
+            <div class="card bg-secondary">
+              <div class="card-body">
+                <h4>Preview Foto de Capa</h4>
+                <div class="preview-container position-relative">
+                  @if (fotoCapaFile) {
+                    <div class="preview-image-wrapper">
+                      <div class="preview-image" [style.backgroundImage]="'url(' + getFotoPreviewUrl(fotoCapaFile) + ')'"></div>
+                      <button class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1" (click)="removerFoto('capa')">×</button>
+                    </div>
+                  } @else {
+                    <div class="preview-placeholder d-flex align-items-center justify-content-center">
+                      Nenhuma imagem selecionada
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Campos de Edição do Usuário -->
         <div class="mb-3">
           <label for="nome" class="form-label">Nome:</label>
           <input type="text" id="nome" formControlName="nome" class="form-control bg-secondary text-white" required>
+          <div *ngIf="perfilForm.get('nome')?.errors?.['required'] && perfilForm.get('nome')?.touched" class="text-danger mt-1">
+            Nome é obrigatório.
+          </div>
+          <div *ngIf="perfilForm.get('nome')?.errors?.['minlength']" class="text-danger mt-1">
+            Nome deve ter no mínimo 5 caracteres.
+          </div>
+          <div *ngIf="perfilForm.get('nome')?.errors?.['maxlength']" class="text-danger mt-1">
+            Nome deve ter no máximo 60 caracteres.
+          </div>
         </div>
         <div class="mb-3">
           <label for="username" class="form-label">Username:</label>
           <input type="text" id="username" formControlName="username" class="form-control bg-secondary text-white"
             required>
+            <div *ngIf="perfilForm.get('username')?.errors?.['required'] && perfilForm.get('username')?.touched" class="text-danger mt-1">
+              O nome de usuário é obrigatório.
+            </div>
+            <div *ngIf="perfilForm.get('username')?.errors?.['minlength']" class="text-danger mt-1">
+              O nome de usuário deve ter no mínimo 5 caracteres.
+            </div>
+            <div *ngIf="perfilForm.get('username')?.errors?.['maxlength']" class="text-danger mt-1">
+              O nome de usuário deve ter no máximo 20 caracteres.
+            </div>
         </div>
         <div class="mb-3">
           <label for="rg" class="form-label">RG:</label>
           <input type="text" id="rg" formControlName="rg" mask="00.000.000-0"
             class="form-control bg-secondary text-white" required>
+            <div *ngIf="perfilForm.get('rg')?.errors?.['required'] && perfilForm.get('rg')?.touched" class="text-danger mt-1">
+              O RG é obrigatório.
+            </div>
+            <div *ngIf="perfilForm.get('rg')?.errors?.['minlength']" class="text-danger mt-1">
+              O RG deve ter no mínimo 7 caracteres.
+            </div>
         </div>
         <div class="mb-3">
           <label for="cpf" class="form-label">CPF:</label>
           <input type="text" id="cpf" formControlName="cpf" mask="000.000.000-00"
             class="form-control bg-secondary text-white" required>
+            <div *ngIf="perfilForm.get('cpf')?.errors?.['required'] && perfilForm.get('cpf')?.touched" class="text-danger mt-1">
+              O CPF é obrigatório.
+            </div>
+            <div *ngIf="perfilForm.get('cpf')?.errors?.['minlength']" class="text-danger mt-1">
+              O CPF deve ter no mínimo 11 caracteres.
+            </div>
         </div>
         <div class="mb-3">
           <label for="passaporte" class="form-label">Passaporte:</label>
           <input type="text" id="passaporte" formControlName="passaporte" mask="AAA000000"
             class="form-control bg-secondary text-white" required>
+            <div *ngIf="perfilForm.get('passaporte')?.errors?.['required'] && perfilForm.get('passaporte')?.touched" class="text-danger mt-1">
+              O passaporte é obrigatório.
+            </div>
+            <div *ngIf="perfilForm.get('passaporte')?.errors?.['minlength']" class="text-danger mt-1">
+              O passaporte deve ter no mínimo 8 caracteres.
+            </div>
         </div>
 
         <!-- Redes Sociais -->
@@ -144,8 +229,6 @@
                   </div>
                   }
                 </div>
-
-
               </div>
             </div>
           </div>
@@ -200,6 +283,9 @@
                 <i [class]="passwordVisible.current ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
               </button>
             </div>
+            <div *ngIf="perfilForm.hasError('senhaAtualIncorreta')" class="text-danger mt-1">
+              Senha atual está incorreta.
+            </div>
           </div>
           <div class="mb-3">
             <label for="novaSenha" class="form-label">Nova Senha</label>
@@ -209,6 +295,12 @@
               <button class="btn btn-outline-secondary" type="button" (click)="togglePasswordVisibility('new')">
                 <i [class]="passwordVisible.new ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
               </button>
+            </div>
+            <div *ngIf="perfilForm.get('novaSenha')?.hasError('minlength')" class="text-danger mt-1">
+              A nova senha deve ter no mínimo 6 caracteres.
+            </div>
+            <div *ngIf="perfilForm.get('novaSenha')?.hasError('pattern')" class="text-danger mt-1">
+              A nova senha deve conter pelo menos uma letra e um número.
             </div>
           </div>
           <div class="mb-3">
@@ -221,11 +313,13 @@
               </button>
             </div>
           </div>
+          <div *ngIf="perfilForm.hasError('senhasNaoCompativeis')" class="text-danger mt-1">
+            As novas senhas não são iguais.
+          </div>
         </div>
 
         <!-- Botões de Ação -->
-        <button type="submit" class="btn btn-primary" [disabled]="perfilForm.invalid"
-          (click)="salvarAlteracoes()">Salvar Alterações</button>
+        <button type="submit" class="btn btn-primary" [disabled]="!perfilForm.valid || !perfilForm.dirty">Salvar Alterações</button>
         <button type="button" class="btn btn-secondary ms-2" (click)="toggleEditMode()">Cancelar</button>
       </div> <!-- Fim de card-body -->
     </form>

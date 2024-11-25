@@ -30,6 +30,8 @@ body {
     width: 150px;
     height: 150px;
     border: 5px solid #343a40;
+    object-fit: cover;
+    object-position: center;
 }
 
 .card {
@@ -113,6 +115,48 @@ body {
     width: 20px;
     text-align: center;
     font-size: 1.1em;
+}
+
+/* Adicione ao perfil.component.css */
+
+.preview-container {
+    width: 100%;
+    height: 150px;
+    border: 2px dashed #6c757d;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.preview-image-wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.preview-image {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.preview-placeholder {
+    width: 100%;
+    height: 100%;
+    color: #adb5bd;
+    text-align: center;
+    padding: 1rem;
+}
+
+/* Ajuste o estilo do botão de remover */
+.preview-container .btn-danger {
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.preview-container .btn-danger:hover {
+    opacity: 1;
 }
 
 /* Estilos para telas menores */
