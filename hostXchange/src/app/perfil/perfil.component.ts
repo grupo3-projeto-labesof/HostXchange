@@ -44,20 +44,39 @@ export class PerfilComponent implements OnInit {
 
   todasRedesSociais: string[] = ['LinkedIn', 'Twitter', 'Facebook', 'Instagram'];
   redesSociaisDisponiveis: string[] = [];
-  
+
   passwordVisible: PasswordVisibility = {
     current: false,
     new: false,
     confirm: false
   };
 
-  constructor (private toastr : ToastrService) {
-    
+  constructor(private toastr: ToastrService) {
+
   }
-  
+
 
   ngOnInit(): void {
     this.obterUsuario();
+    this.initForm();
+    this.perfilForm.statusChanges.subscribe(status => {
+      console.log('Form status:', status);
+    });
+    this.perfilForm.valueChanges.subscribe(value => {
+      console.log('Form value:', value);
+    });
+    // Adicione logs para cada controle individual
+    Object.entries(this.perfilForm.controls).forEach(([name, control]: [string, AbstractControl]) => {
+      control.statusChanges.subscribe((status: string) => {
+        console.log(`Control ${name} status:`, status);
+      });
+    });
+
+    // Monitor de status do FormArray
+    (this.perfilForm.get('redesSociais') as FormArray).statusChanges
+      .subscribe(status => {
+        console.log('Status do FormArray redesSociais:', status);
+      });
   }
 
   obterUsuario() {
@@ -97,11 +116,8 @@ export class PerfilComponent implements OnInit {
       passaporte: [this.usuario?.passaporte, [Validators.required, Validators.minLength(8)]],
       redesSociais: this.fb.array([]),
       novaRedeSocial: this.fb.group({
-        nome: ['', Validators.required],
-        url: ['https://', [
-          Validators.required,
-          Validators.pattern('^https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$')
-        ]]
+        nome: [null],
+        url: ['https://']
       }),
       senhaAtual: ['', Validators.minLength(6)],
       novaSenha: ['', [
@@ -121,20 +137,19 @@ export class PerfilComponent implements OnInit {
   }
 
   setRedesSociais() {
-    if (this.usuario?.redesSociais) {
+    const formArray = this.perfilForm.get('redesSociais') as FormArray;
+
+    if (this.usuario?.redesSociais?.length) {
       this.usuario.redesSociais.forEach((rede: RedeSocial) => {
-        this.redesSociais.push(
+        formArray.push(
           this.fb.group({
-            nome: [rede.nome, Validators.required],
-            url: [rede.url, [
-              Validators.required,
-              Validators.pattern('^https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$')
-            ]]
+            nome: [rede.nome],
+            url: [rede.url]
           })
         );
       });
-      this.atualizarRedesSociaisDisponiveis();
     }
+    this.atualizarRedesSociaisDisponiveis();
   }
 
   get redesSociais(): FormArray {
@@ -154,11 +169,8 @@ export class PerfilComponent implements OnInit {
 
       // Add to form array
       const novaRedeGroup = this.fb.group({
-        nome: [novaRede.nome, Validators.required],
-        url: [novaRede.url, [
-          Validators.required,
-          Validators.pattern('^https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$')
-        ]]
+        nome: [novaRede.nome],
+        url: [novaRede.url]
       });
       this.redesSociais.push(novaRedeGroup);
 
@@ -169,6 +181,7 @@ export class PerfilComponent implements OnInit {
         }
         this.usuarioEditando.redesSociais.push(novaRede);
       }
+
 
       this.novaRedeSocial.reset({ url: 'https://' });
       this.atualizarRedesSociaisDisponiveis();
@@ -185,11 +198,11 @@ export class PerfilComponent implements OnInit {
 
   atualizarRedesSociaisDisponiveis() {
     const redesCadastradas = this.usuario?.redesSociais?.map(rede => rede.nome) || [];
-    this.redesSociaisDisponiveis = this.todasRedesSociais.filter(rede => 
+    this.redesSociaisDisponiveis = this.todasRedesSociais.filter(rede =>
       !redesCadastradas.includes(rede)
     );
   }
-  
+
   passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
     const novaSenha = control.get('novaSenha')?.value;
     const confirmarNovaSenha = control.get('confirmarNovaSenha')?.value;
@@ -216,7 +229,7 @@ export class PerfilComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
-      
+
       // Verify file type
       if (!file.type.startsWith('image/')) {
         this.toastr.error('Por favor, selecione apenas arquivos de imagem.');
@@ -238,7 +251,7 @@ export class PerfilComponent implements OnInit {
       img.onload = () => {
         const maxWidth = 800;
         const maxHeight = 800;
-        
+
         if (img.width > maxWidth || img.height > maxHeight) {
           this.toastr.error(`A imagem deve ter no máximo ${maxWidth}x${maxHeight} pixels.`);
           input.value = '';
@@ -265,7 +278,7 @@ export class PerfilComponent implements OnInit {
     }
     return '';
   }
-  
+
   // Modifique o método removerFoto existente para:
   removerFoto(tipo: 'perfil' | 'capa') {
     if (tipo === 'perfil') {
@@ -287,7 +300,7 @@ export class PerfilComponent implements OnInit {
   salvarAlteracoes() {
     if (this.perfilForm.valid) {
       const formValue = this.perfilForm.value;
-      
+
       // Remover subformulário de nova rede social dos dados
       const { novaRedeSocial, ...dadosAtualizados } = formValue;
 
