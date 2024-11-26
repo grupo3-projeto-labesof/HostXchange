@@ -1,7 +1,7 @@
 <app-menu></app-menu>
 <main class="container mt-5 mb-5">
   <!-- Seção de Visualização do Perfil -->
-  <section *ngIf="!editMode" id="profile-view" class="mb-5">
+  <section *ngIf="!editMode && !mostrarAvaliacoes && !avaliarUsuario" id="profile-view" class="mb-5">
     <article class="card bg-dark text-white">
       <div class="card cover-card mt-4 mb-4 mx-3">
         <div class="cover-photo" [style.backgroundImage]="'url(' + usuario?.fotoCapa + ')'">
@@ -11,14 +11,29 @@
         </div>
       </div>
       <div class="card-body text-center">
-        <h1 class="mt-4">{{ usuario?.nome }}</h1>
+        <h1 class="mt-5">{{ usuario?.nome }}</h1>
+
+        <div class="user-rating mt-3">
+          <h5>Avaliação do Usuário:</h5>
+          <div class="stars">
+            <ng-container *ngFor="let star of [1, 2, 3, 4, 5]; let i = index">
+              <i class="fas"
+                [ngClass]="{'fa-star': i < notaAvaliacaoUsuario, 'fa-star-half-alt': i < notaAvaliacaoUsuario && i + 1 > notaAvaliacaoUsuario, 'fa-star-o': i >= notaAvaliacaoUsuario}"></i>
+            </ng-container>
+            <span class="ms-2">{{ notaAvaliacaoUsuario > 0 ? getNotaFormatada() + '/5' : 'O usuário ' + usuario?.nome +
+              ' ainda não foi avaliado' }}</span>
+          </div>
+          <button class="btn btn-outline-light mt-2" (click)="mostrarAvaliacoes = true">Ver mais</button>
+        </div>
+
       </div>
 
       <div class="card bg-secondary mb-4 mx-3">
         <div class="card-body">
           <h2 class="card-title">
             Informações Pessoais
-            <button class="btn btn-outline-light float-end" (click)="toggleEditMode()">
+            <button *ngIf="usuario?.idusuario === usuarioLogado?.idusuario" class="btn btn-outline-light float-end"
+              (click)="editMode = true">
               <i class="fas fa-edit"></i> Editar
             </button>
           </h2>
@@ -41,7 +56,7 @@
             </li>
             <li class="list-group-item bg-secondary text-white d-flex align-items-center">
               <i class="fas fa-passport me-3 icon-fixed-width"></i>
-              Passaporte: {{ usuario?.passaporte }}
+              Passaporte: {{ usuario?.nrpassa }}
             </li>
           </ul>
         </div>
@@ -60,9 +75,31 @@
           </div>
           } @else {
           <div class="alert alert-warning mt-3">
-            Nenhuma rede social cadastrada para o usuário:  {{ usuario?.nome }}
+            Nenhuma rede social cadastrada para o usuário: {{ usuario?.nome }}
           </div>
           }
+        </div>
+      </div>
+
+      <div class="card bg-secondary mb-4 mx-4" *ngIf="temAvaliacaoPendente()">
+        <div class="card-body">
+          <h2 class="card-title">Avaliações Pendentes</h2>
+          <div class="avaliacoes-pendentes-lista">
+            <div *ngFor="let avaliacao of AvaliacaoPendente" class="card bg-secondary mb-3">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div class="d-flex align-items-center">
+                    <i class="fas fa-user-circle fa-2x me-2"></i>
+                    <div>
+                      <h5 class="mb-0">{{ avaliacao.nomeUsuario }}</h5>
+                    </div>
+                  </div>
+                  <button class="btn btn-outline-light"
+                    (click)="acaoAvaliarUsuario(avaliacao.idAvaliar)">Avaliar</button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </article>
@@ -97,34 +134,38 @@
                 <h4>Preview Foto de Perfil</h4>
                 <div class="preview-container position-relative">
                   @if (fotoPerfilFile) {
-                    <div class="preview-image-wrapper">
-                      <div class="preview-image" [style.backgroundImage]="'url(' + getFotoPreviewUrl(fotoPerfilFile) + ')'"></div>
-                      <button class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1" (click)="removerFoto('perfil')">×</button>
-                    </div>
+                  <div class="preview-image-wrapper">
+                    <div class="preview-image"
+                      [style.backgroundImage]="'url(' + getFotoPreviewUrl(fotoPerfilFile) + ')'"></div>
+                    <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1"
+                      (click)="removerFoto('perfil')">×</button>
+                  </div>
                   } @else {
-                    <div class="preview-placeholder d-flex align-items-center justify-content-center">
-                      Nenhuma imagem selecionada
-                    </div>
+                  <div class="preview-placeholder d-flex align-items-center justify-content-center">
+                    Nenhuma imagem selecionada
+                  </div>
                   }
                 </div>
               </div>
             </div>
           </div>
-        
+
           <div class="col-md-6">
             <div class="card bg-secondary">
               <div class="card-body">
                 <h4>Preview Foto de Capa</h4>
                 <div class="preview-container position-relative">
                   @if (fotoCapaFile) {
-                    <div class="preview-image-wrapper">
-                      <div class="preview-image" [style.backgroundImage]="'url(' + getFotoPreviewUrl(fotoCapaFile) + ')'"></div>
-                      <button class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1" (click)="removerFoto('capa')">×</button>
+                  <div class="preview-image-wrapper">
+                    <div class="preview-image" [style.backgroundImage]="'url(' + getFotoPreviewUrl(fotoCapaFile) + ')'">
                     </div>
+                    <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1"
+                      (click)="removerFoto('capa')">×</button>
+                  </div>
                   } @else {
-                    <div class="preview-placeholder d-flex align-items-center justify-content-center">
-                      Nenhuma imagem selecionada
-                    </div>
+                  <div class="preview-placeholder d-flex align-items-center justify-content-center">
+                    Nenhuma imagem selecionada
+                  </div>
                   }
                 </div>
               </div>
@@ -136,7 +177,8 @@
         <div class="mb-3">
           <label for="nome" class="form-label">Nome:<span class="text-danger">*</span></label>
           <input type="text" id="nome" formControlName="nome" class="form-control bg-secondary text-white" required>
-          <div *ngIf="perfilForm.get('nome')?.errors?.['required'] && perfilForm.get('nome')?.touched" class="text-danger mt-1">
+          <div *ngIf="perfilForm.get('nome')?.errors?.['required'] && perfilForm.get('nome')?.touched"
+            class="text-danger mt-1">
             <small>Nome é obrigatório.</small>
           </div>
           <div *ngIf="perfilForm.get('nome')?.errors?.['minlength']" class="text-danger mt-1">
@@ -150,48 +192,53 @@
           <label for="username" class="form-label">Username:<span class="text-danger">*</span></label>
           <input type="text" id="username" formControlName="username" class="form-control bg-secondary text-white"
             required>
-            <div *ngIf="perfilForm.get('username')?.errors?.['required'] && perfilForm.get('username')?.touched" class="text-danger mt-1">
-              <small>O nome de usuário é obrigatório.</small>
-            </div>
-            <div *ngIf="perfilForm.get('username')?.errors?.['minlength']" class="text-danger mt-1">
-              <small>O nome de usuário deve ter no mínimo 5 caracteres.</small>
-            </div>
-            <div *ngIf="perfilForm.get('username')?.errors?.['maxlength']" class="text-danger mt-1">
-              <small>O nome de usuário deve ter no máximo 20 caracteres.</small>
-            </div>
+          <div *ngIf="perfilForm.get('username')?.errors?.['required'] && perfilForm.get('username')?.touched"
+            class="text-danger mt-1">
+            <small>O nome de usuário é obrigatório.</small>
+          </div>
+          <div *ngIf="perfilForm.get('username')?.errors?.['minlength']" class="text-danger mt-1">
+            <small>O nome de usuário deve ter no mínimo 5 caracteres.</small>
+          </div>
+          <div *ngIf="perfilForm.get('username')?.errors?.['maxlength']" class="text-danger mt-1">
+            <small>O nome de usuário deve ter no máximo 20 caracteres.</small>
+          </div>
         </div>
         <div class="mb-3">
           <label for="rg" class="form-label">RG:<span class="text-danger">*</span></label>
           <input type="text" id="rg" formControlName="rg" mask="00.000.000-0"
             class="form-control bg-secondary text-white" required>
-            <div *ngIf="perfilForm.get('rg')?.errors?.['required'] && perfilForm.get('rg')?.touched" class="text-danger mt-1">
-              <small>O RG é obrigatório.</small>
-            </div>
-            <div *ngIf="perfilForm.get('rg')?.errors?.['minlength']" class="text-danger mt-1">
-              <small>O RG deve ter no mínimo 7 caracteres.</small>
-            </div>
+          <div *ngIf="perfilForm.get('rg')?.errors?.['required'] && perfilForm.get('rg')?.touched"
+            class="text-danger mt-1">
+            <small>O RG é obrigatório.</small>
+          </div>
+          <div *ngIf="perfilForm.get('rg')?.errors?.['minlength']" class="text-danger mt-1">
+            <small>O RG deve ter no mínimo 7 caracteres.</small>
+          </div>
         </div>
         <div class="mb-3">
           <label for="cpf" class="form-label">CPF:<span class="text-danger">*</span></label>
           <input type="text" id="cpf" formControlName="cpf" mask="000.000.000-00"
             class="form-control bg-secondary text-white" required>
-            <div *ngIf="perfilForm.get('cpf')?.errors?.['required'] && perfilForm.get('cpf')?.touched" class="text-danger mt-1">
-              <small>O CPF é obrigatório.</small>
-            </div>
-            <div *ngIf="perfilForm.get('cpf')?.errors?.['minlength']" class="text-danger mt-1">
-              <small>O CPF deve ter no mínimo 11 caracteres.</small>
-            </div>
+          <div *ngIf="perfilForm.get('cpf')?.errors?.['required'] && perfilForm.get('cpf')?.touched"
+            class="text-danger mt-1">
+            <small>O CPF é obrigatório.</small>
+          </div>
+          <div *ngIf="perfilForm.get('cpf')?.errors?.['minlength']" class="text-danger mt-1">
+            <small>O CPF deve ter no mínimo 11 caracteres.</small>
+          </div>
         </div>
         <div class="mb-3">
           <label for="passaporte" class="form-label">Passaporte:<span class="text-danger">*</span></label>
           <input type="text" id="passaporte" formControlName="passaporte" mask="AA000000"
             class="form-control bg-secondary text-white" required>
-            <div *ngIf="perfilForm.get('passaporte')?.errors?.['required'] && perfilForm.get('passaporte')?.touched" class="text-danger mt-1">
-              <small>O passaporte é obrigatório.</small>
-            </div>
-            <div *ngIf="perfilForm.get('passaporte')?.errors?.['minlength']" class="text-danger mt-1">
-              <small>O passaporte deve ter no mínimo 8 caracteres e ser formado por pelo menos duas letras e 6 dígitos, exemplo: AZ123456.</small>
-            </div>
+          <div *ngIf="perfilForm.get('passaporte')?.errors?.['required'] && perfilForm.get('passaporte')?.touched"
+            class="text-danger mt-1">
+            <small>O passaporte é obrigatório.</small>
+          </div>
+          <div *ngIf="perfilForm.get('passaporte')?.errors?.['minlength']" class="text-danger mt-1">
+            <small>O passaporte deve ter no mínimo 8 caracteres e ser formado por pelo menos duas letras e 6 dígitos,
+              exemplo: AZ123456.</small>
+          </div>
         </div>
 
         <!-- Redes Sociais -->
@@ -319,16 +366,99 @@
         </div>
 
         <div class="mb-2">
-          
+
           <span class="text-danger">(*) Campos marcados com asterisco são de preenchimento obrigatório.</span>
 
         </div>
 
         <!-- Botões de Ação -->
-        <button type="submit" class="btn btn-primary" [disabled]="!perfilForm.valid || !perfilForm.dirty">Salvar Alterações</button>
-        <button type="button" class="btn btn-secondary ms-2" (click)="toggleEditMode()">Cancelar</button>
+        <button type="submit" class="btn btn-primary" [disabled]="!perfilForm.valid || !perfilForm.dirty">Salvar
+          Alterações</button>
+        <button type="button" class="btn btn-secondary ms-2" (click)="cancelarAlteracoes()">Cancelar</button>
       </div> <!-- Fim de card-body -->
     </form>
   </section>
+
+  <!-- Seção de Avaliações -->
+  <section *ngIf="mostrarAvaliacoes" id="avaliacoes" class="mb-5">
+    <div class="card bg-dark text-white">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h2>Avaliações</h2>
+          <button class="btn btn-outline-light" (click)="mostrarAvaliacoes = false">
+            <i class="fas fa-times"></i> Fechar
+          </button>
+        </div>
+
+        @if (Avaliacao.length) {
+        <div class="avaliacoes-lista">
+          @for (avaliacao of Avaliacao; track avaliacao.idAvaliacao) {
+          <div class="card bg-secondary mb-3">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start">
+                <div class="d-flex align-items-center">
+                  <i class="fas fa-user-circle fa-2x me-2"></i>
+                  <div>
+                    <h5 class="mb-0">{{ avaliacao.nomeAvaliador }}</h5>
+                    <div class="stars">
+                      @for (star of [1,2,3,4,5]; track star) {
+                      <i class="fas fa-star" [class.text-warning]="star <= avaliacao.avaliacao"></i>
+                      }
+                      {{ avaliacao.avaliacao }}/5
+                    </div>
+                  </div>
+                </div>
+                <small class="text-light">{{ avaliacao.data | date:'dd/MM/yyyy' }}</small>
+              </div>
+              <p *ngIf="avaliacao.descricao" class="mt-3 mb-0">{{ avaliacao.descricao }}</p>
+            </div>
+          </div>
+          }
+        </div>
+        } @else {
+        <div class="alert alert-info">
+          Nenhuma avaliação encontrada para este usuário.
+        </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Seção de Avaliação do Usuário -->
+  <section *ngIf="avaliarUsuario" id="avaliar-usuario" class="mb-5">
+    <div class="card bg-dark text-white">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h2>Avaliar Usuário</h2>
+          <button class="btn btn-outline-light" (click)="avaliarUsuario = false">
+            <i class="fas fa-times"></i> Fechar
+          </button>
+        </div>
+        <form [formGroup]="avaliacaoForm" (ngSubmit)="salvarAvaliacao()">
+          <div class="mb-3">
+            <label for="avaliacao" class="form-label">Avaliação:</label>
+            <div class="d-flex align-items-center">
+              <div class="stars text-secondary me-2">
+              <i *ngFor="let star of [1, 2, 3, 4, 5]" class="fas fa-star" 
+                 [class.text-warning]="star <= avaliacaoForm.get('avaliacao')?.value"
+                 (click)="avaliacaoForm.get('avaliacao')?.setValue(star)" 
+                 style="cursor: pointer">
+              </i>
+              </div>
+              <span>{{avaliacaoForm.get('avaliacao')?.value || 1}}/5</span>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="descricao" class="form-label">Descrição:</label>
+            <textarea id="descricao" formControlName="descricao" class="form-control bg-secondary text-white"
+              rows="3"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" [disabled]="!avaliacaoForm.valid">Salvar Avaliação</button>
+          <button type="button" class="btn btn-secondary ms-2" (click)="cancelarAvaliacao()">Cancelar</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
 </main>
 <app-footer></app-footer>

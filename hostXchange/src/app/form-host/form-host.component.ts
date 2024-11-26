@@ -93,7 +93,7 @@ export class FormHostComponent implements OnInit {
     const enderecoCompleto = `${rua}, ${numero}, ${cidade}, ${estado}, ${cep}`;
   
     try {
-      const apiKey = "80cb33d04dc744f7bac3064fb2d0fb3a"; // Carrega a chave de API
+      const apiKey = "80cb33d04dc744f7bac3064fb2d0fb3a";
       const response = await this.http
         .get<any>(`https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(enderecoCompleto)}&key=${apiKey}`)
         .toPromise();

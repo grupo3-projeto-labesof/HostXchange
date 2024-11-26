@@ -33,17 +33,46 @@ export class PerfilComponent implements OnInit {
   private perfilService = inject(PerfilService);
   private fb = inject(FormBuilder);
 
+  //isso aqui só existe para simular o backend
+  usuarioLogado: Usuario = {
+    idusuario: '1',
+    nome: 'Jax',
+    username: 'jaxtoplaner',
+    rg: '54.921.572-9',
+    cpf: '493.216.345.44',
+    senha: '995501',
+    nrpassa: 'AB12496',
+    fotoCapa: 'assets/images/perfil/capa.jpg',
+    fotoPerfil: 'assets/images/perfil/perfil.jpg',
+    redesSociais: [
+      { nome: 'LinkedIn', url: 'https://www.linkedin.com/in/jaxtoplaner' },
+      { nome: 'Twitter', url: 'https://www.twitter.com/jaxtoplaner' },
+    ]
+  };
+
+  //isso aqui deve ser mudado para o tipo que for recebido na service, provavel any(?)
   usuario: Usuario | null = null;
   usuarioEditando: Usuario | null = null;
   editMode = false;
   perfilForm!: FormGroup;
+  avaliacaoForm!: FormGroup;
   novaRedeForm!: FormGroup;
   fotoPerfilFile?: File;
   fotoCapaFile?: File;
   senhaAtualCorreta: string = '';
+  notaAvaliacaoUsuario: number = 4.7;
+  notaAvaliacao: number = 0;
+  comentarioAvaliacao: string = '';
+  mostrarAvaliacoes = false;
+  avaliarUsuario = false;
+  
 
   todasRedesSociais: string[] = ['LinkedIn', 'Twitter', 'Facebook', 'Instagram'];
   redesSociaisDisponiveis: string[] = [];
+
+  Avaliacao: any[] = [];
+  AvaliacaoPendente: any[] = [];
+  avaliacaoPendenteEspecifica: any;
 
   passwordVisible: PasswordVisibility = {
     current: false,
@@ -59,24 +88,6 @@ export class PerfilComponent implements OnInit {
   ngOnInit(): void {
     this.obterUsuario();
     this.initForm();
-    this.perfilForm.statusChanges.subscribe(status => {
-      console.log('Form status:', status);
-    });
-    this.perfilForm.valueChanges.subscribe(value => {
-      console.log('Form value:', value);
-    });
-    // Adicione logs para cada controle individual
-    Object.entries(this.perfilForm.controls).forEach(([name, control]: [string, AbstractControl]) => {
-      control.statusChanges.subscribe((status: string) => {
-        console.log(`Control ${name} status:`, status);
-      });
-    });
-
-    // Monitor de status do FormArray
-    (this.perfilForm.get('redesSociais') as FormArray).statusChanges
-      .subscribe(status => {
-        console.log('Status do FormArray redesSociais:', status);
-      });
   }
 
   obterUsuario() {
@@ -85,13 +96,26 @@ export class PerfilComponent implements OnInit {
     ).subscribe({
       next: (user) => {
         this.usuario = user;
-        this.senhaAtualCorreta = this.usuario.senhaAtual;
+        this.senhaAtualCorreta = this.usuario.senha;
         this.usuarioEditando = this.usuario;
         this.initForm();
         this.atualizarRedesSociaisDisponiveis();
       },
       error: (error) => {
-        console.error('Erro ao obter usuário:', error);
+        this.toastr.error('Erro ao obter usuário: ', error);
+        // Implementar notificação de erro
+      }
+    });
+
+    this.perfilService.getAvaliacoes().pipe(
+      finalize(() => console.log('Finalizado'))
+    ).subscribe({
+      next: (avaliacoes) => {
+        this.Avaliacao = avaliacoes.avaliacoes;
+        this.AvaliacaoPendente = avaliacoes.avaliacoesPendentes;
+      },
+      error: (error) => {
+        this.toastr.error('Erro ao obter avaliações: ', error);
         // Implementar notificação de erro
       }
     });
@@ -113,7 +137,7 @@ export class PerfilComponent implements OnInit {
       username: [this.usuario?.username, [Validators.required, Validators.minLength(5), Validators.maxLength(20)]],
       rg: [this.usuario?.rg, [Validators.required, Validators.minLength(7)]],
       cpf: [this.usuario?.cpf, [Validators.required, Validators.minLength(11)]],
-      passaporte: [this.usuario?.passaporte, [Validators.required, Validators.minLength(8)]],
+      passaporte: [this.usuario?.nrpassa, [Validators.required, Validators.minLength(8)]],
       redesSociais: this.fb.array([]),
       novaRedeSocial: this.fb.group({
         nome: [null],
@@ -130,6 +154,49 @@ export class PerfilComponent implements OnInit {
     });
 
     this.setRedesSociais();
+
+    this.avaliacaoForm = this.fb.group({
+      avaliacao: [null, Validators.required],
+      descricao: ['', Validators.maxLength(200)]
+    });
+  }
+
+  salvarAvaliacao() {
+    if (this.avaliacaoForm.valid) {
+      const avaliacao = this.avaliacaoForm.value;
+      this.perfilService.salvarAvaliacao(avaliacao).pipe(
+        finalize(() => console.log('Avaliação salva')),
+        catchError(error => {
+          this.toastr.error('Erro ao salvar avaliação. Tente novamente mais tarde.');
+          return throwError(() => error);
+        })
+      ).subscribe(() => {
+        this.toastr.success('Avaliação salva com sucesso');
+        this.avaliarUsuario = false;
+        this.avaliacaoForm.reset();
+        this.obterUsuario();
+      });
+    }
+  }
+
+  acaoAvaliarUsuario(idAvaliacao: string) {
+    this.avaliarUsuario = !this.avaliarUsuario;
+    this.avaliacaoPendenteEspecifica = this.AvaliacaoPendente.find(avaliacao => avaliacao.idAvaliar === idAvaliacao);
+  }
+
+  getNotaFormatada(): string {
+    return this.notaAvaliacaoUsuario.toFixed(1);
+  }
+  
+  cancelarAvaliacao() {
+    if (this.avaliacaoForm.dirty || this.avaliacaoForm.value.avaliacao || this.avaliacaoForm.value.descricao) {
+      if (!confirm('Existem alterações não salvas. Deseja realmente cancelar?')) {
+        return;
+      }
+    }
+    this.avaliacaoForm.reset();
+    this.avaliarUsuario = false;
+    this.avaliacaoPendenteEspecifica = null;
   }
 
   hasRedesSociais(): boolean {
@@ -150,6 +217,14 @@ export class PerfilComponent implements OnInit {
       });
     }
     this.atualizarRedesSociaisDisponiveis();
+  }
+
+  temAvaliacao(): boolean {
+    return this.Avaliacao.length > 0;
+  }
+
+  temAvaliacaoPendente(): boolean {
+    return this.AvaliacaoPendente.length > 0;
   }
 
   get redesSociais(): FormArray {
@@ -192,8 +267,11 @@ export class PerfilComponent implements OnInit {
     this.usuario?.redesSociais.splice(index, 1);
     this.redesSociais.removeAt(index);
     this.atualizarRedesSociaisDisponiveis();
+
+    /*
     console.log(this.usuario?.redesSociais);
     console.log(this.redesSociaisDisponiveis);
+    */
   }
 
   atualizarRedesSociaisDisponiveis() {
@@ -249,10 +327,10 @@ export class PerfilComponent implements OnInit {
       const img = new Image();
       img.src = URL.createObjectURL(file);
       img.onload = () => {
-        const maxWidth = 800;
-        const maxHeight = 800;
+        const maxWidth = 2048;
+        const maxHeight = 2048;
 
-        if (img.width > maxWidth || img.height > maxHeight) {
+        if (tipo === 'perfil' && img.width > maxWidth || img.height > maxHeight) {
           this.toastr.error(`A imagem deve ter no máximo ${maxWidth}x${maxHeight} pixels.`);
           input.value = '';
           URL.revokeObjectURL(img.src);
@@ -307,12 +385,12 @@ export class PerfilComponent implements OnInit {
       // Verificar alteração de senha
       if (formValue.senhaAtual || formValue.novaSenha || formValue.confirmarNovaSenha) {
         if (this.perfilForm.hasError('passwordFieldsRequired')) {
-          console.error('Todos os campos de senha são necessários');
+          this.toastr.warning('Todos os campos de senha são necessários');
           return;
         }
 
         if (this.perfilForm.hasError('passwordMismatch')) {
-          console.error('As senhas não coincidem');
+          this.toastr.warning('As senhas não coincidem');
           return;
         }
 
@@ -321,7 +399,7 @@ export class PerfilComponent implements OnInit {
           formValue.novaSenha
         ).pipe(
           catchError(error => {
-            console.error('Erro ao alterar senha:', error);
+            this.toastr.warning('Erro ao alterar senha: ', error);
             return throwError(() => error);
           })
         ).subscribe({
@@ -338,26 +416,28 @@ export class PerfilComponent implements OnInit {
     this.perfilService.atualizarUsuarioMock(dadosAtualizados).pipe(
       finalize(() => console.log('Finalizado')),
       catchError(error => {
-        console.error('Erro ao atualizar perfil:', error);
+        this.toastr.error('Erro ao atualizar perfil. Tente novamente mais tarde.');
         return throwError(() => error);
       })
     ).subscribe(() => {
-      console.log('Perfil atualizado com sucesso');
-      this.toggleEditMode();
+      this.toastr.success('Perfil atualizado com sucesso');
+      this.editMode = false;
     });
   }
 
-  toggleEditMode() {
-    if (this.editMode && this.perfilForm.dirty) {
-      if (confirm('Existem alterações não salvas. Deseja realmente cancelar?')) {
-        this.editMode = false;
-        this.perfilForm.reset();
-        this.initForm();
+  cancelarAlteracoes() {
+    if (this.perfilForm.dirty) {
+      if (!confirm('Existem alterações não salvas. Deseja realmente cancelar?')) {
+        return;
       }
-    } else {
-      this.editMode = !this.editMode;
     }
+    this.editMode = false;
+    this.perfilForm.reset();
+    this.initForm();
+    this.fotoPerfilFile = undefined;
+    this.fotoCapaFile = undefined;
   }
+
 
 
 }
