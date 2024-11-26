@@ -32,6 +32,10 @@ model Usuario {
 
   idavaliacao Int? // Referência ao ID da Avaliacao (opcional)
 
+  // Relações bidirecionais com Avaliacao
+  avaliacoesComoAvaliado Avaliacao[] @relation("avaliado_relation")
+  avaliacoesComoAvaliador Avaliacao[] @relation("avaliador_relation")
+
   @@index([idhost], name: "IDHOST_idx")
   @@map("USUARIO")
 }
@@ -94,8 +98,8 @@ model Avaliacao {
   snaval      Boolean? // Sim ou não para algo
   descricao   String?  @db.Text
 
-  //avaliado  Usuario @relation(fields: [avaliadoId], references: [idusuario], onDelete: Cascade)
-  //avaliador Usuario @relation(fields: [avaliadorId], references: [idusuario], onDelete: Cascade)
+  avaliado  Usuario @relation("avaliado_relation", fields: [avaliadoId], references: [idusuario], onDelete: Cascade)
+  avaliador Usuario @relation("avaliador_relation", fields: [avaliadorId], references: [idusuario], onDelete: Cascade)
 
   @@map("AVALIACAO")
 }
