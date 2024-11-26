@@ -37,19 +37,21 @@ model Usuario {
 }
 
 model ContatoHost {
-  idctt    Int      @id @default(autoincrement())
-  nmprop   String?  @db.VarChar(100)
-  endereco String?  @db.VarChar(100)
-  numero   String?  @db.VarChar(10)
-  complem  String?  @db.VarChar(100)
-  cdestado String?  @db.VarChar(100)
-  cidade   String?  @db.VarChar(100)
-  nrcep    String?  @db.VarChar(100)
-  nrtel    String?  @db.VarChar(100)
-  tipoProp String?  @db.VarChar(40)
-  email    String?  @db.VarChar(100)
-  stcadast String?  @db.VarChar(10)
-  dtcadast DateTime @default(now())
+  idctt     Int @id  @default(autoincrement())
+  nmprop    String?  @db.VarChar(100)
+  endereco  String?  @db.VarChar(100)
+  numero    String?  @db.VarChar(10)
+  complem   String?  @db.VarChar(100)
+  cdestado  String?  @db.VarChar(100)
+  cidade    String?  @db.VarChar(100)
+  nrcep     String?  @db.VarChar(100)
+  nrtel     String?  @db.VarChar(100)
+  tipoProp  String?  @db.VarChar(40)
+  email     String?  @db.VarChar(100)
+  latitude  String?  @db.VarChar(100)
+  longitude String?  @db.VarChar(100)
+  stcadast  String?  @db.VarChar(10)
+  dtcadast  DateTime @default(now())
 
   usuario Usuario? @relation
 
@@ -92,8 +94,8 @@ model Avaliacao {
   snaval      Boolean? // Sim ou não para algo
   descricao   String?  @db.Text
 
-  avaliado  Usuario @relation(fields: [avaliadoId], references: [idusuario], onDelete: Cascade)
-  avaliador Usuario @relation(fields: [avaliadorId], references: [idusuario], onDelete: Cascade)
+  //avaliado  Usuario @relation(fields: [avaliadoId], references: [idusuario], onDelete: Cascade)
+  //avaliador Usuario @relation(fields: [avaliadorId], references: [idusuario], onDelete: Cascade)
 
   @@map("AVALIACAO")
 }
