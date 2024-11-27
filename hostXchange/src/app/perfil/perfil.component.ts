@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { PerfilService, Usuario } from '../services/perfil.service';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
@@ -7,6 +7,7 @@ import { MenuComponent } from '../components/menu/menu.component';
 import { FooterComponent } from '../components/footer/footer.component';
 import { catchError, finalize, throwError } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
+import { ChangeDetectorRef } from '@angular/core';
 
 
 interface RedeSocial {
@@ -29,9 +30,12 @@ interface PasswordVisibility {
   styleUrl: './perfil.component.css'
 })
 
-export class PerfilComponent implements OnInit {
+export class PerfilComponent implements OnInit, OnDestroy {
   private perfilService = inject(PerfilService);
   private fb = inject(FormBuilder);
+  private objectURLS: string[] = [];
+  previewURLPerfil: string | null = null;
+  previewURLCapa: string | null = null;
 
   //isso aqui só existe para simular o backend
   usuarioLogado: Usuario = {
@@ -80,7 +84,7 @@ export class PerfilComponent implements OnInit {
     confirm: false
   };
 
-  constructor(private toastr: ToastrService) {
+  constructor(private toastr: ToastrService, private cdr: ChangeDetectorRef) {
 
   }
 
@@ -88,6 +92,10 @@ export class PerfilComponent implements OnInit {
   ngOnInit(): void {
     this.obterUsuario();
     this.initForm();
+  }
+
+  ngOnDestroy() {
+    this.objectURLS.forEach(url => window.URL.revokeObjectURL(url));
   }
 
   obterUsuario() {
@@ -308,71 +316,89 @@ export class PerfilComponent implements OnInit {
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
 
-      // Verify file type
+      // Validações básicas
       if (!file.type.startsWith('image/')) {
         this.toastr.error('Por favor, selecione apenas arquivos de imagem.');
         input.value = '';
         return;
       }
 
-      // Verify file size (5MB max)
-      const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+      const maxSize = 5 * 1024 * 1024;
       if (file.size > maxSize) {
         this.toastr.error('A imagem deve ter no máximo 5MB.');
         input.value = '';
         return;
       }
 
-      // Verify image dimensions
-      const img = new Image();
-      img.src = URL.createObjectURL(file);
-      img.onload = () => {
-        const maxWidth = 2048;
-        const maxHeight = 2048;
+      // Limpar URL anterior baseado no tipo
+      if (tipo === 'perfil' && this.previewURLPerfil) {
+        URL.revokeObjectURL(this.previewURLPerfil);
+        this.objectURLS = this.objectURLS.filter(url => url !== this.previewURLPerfil);
+      } else if (tipo === 'capa' && this.previewURLCapa) {
+        URL.revokeObjectURL(this.previewURLCapa);
+        this.objectURLS = this.objectURLS.filter(url => url !== this.previewURLCapa);
+      }
 
-        if (tipo === 'perfil' && img.width > maxWidth || img.height > maxHeight) {
-          this.toastr.error(`A imagem deve ter no máximo ${maxWidth}x${maxHeight} pixels.`);
+      // Criar nova preview
+      const img = new Image();
+      const objectUrl = URL.createObjectURL(file);
+      img.src = objectUrl;
+
+      img.onload = () => {
+        // Validações específicas por tipo
+        const dimensoes = tipo === 'perfil' 
+          ? { maxWidth: 2048, maxHeight: 2048, nome: 'foto de perfil' }
+          : { maxWidth: 2560, maxHeight: 1440, nome: 'foto de capa' };
+
+        if (img.width > dimensoes.maxWidth || img.height > dimensoes.maxHeight) {
+          this.toastr.error(
+            `A ${dimensoes.nome} deve ter no máximo ${dimensoes.maxWidth}x${dimensoes.maxHeight} pixels.`
+          );
           input.value = '';
-          URL.revokeObjectURL(img.src);
+          URL.revokeObjectURL(objectUrl);
           return;
         }
 
-        // If all validations pass, update the form
+        // Atualizar form e preview baseado no tipo
         if (tipo === 'perfil') {
           this.fotoPerfilFile = file;
+          this.previewURLPerfil = objectUrl;
           this.perfilForm.patchValue({ fotoPerfil: file });
+          //console.log(this.perfilForm.value);
         } else {
           this.fotoCapaFile = file;
+          this.previewURLCapa = objectUrl;
           this.perfilForm.patchValue({ fotoCapa: file });
+          //console.log(this.perfilForm.value);
         }
-        URL.revokeObjectURL(img.src);
+
+        this.objectURLS.push(objectUrl);
+        this.cdr.detectChanges();
+        //console.log(this.perfilForm.value);
+      };
+      img.onerror = () => {
+        this.toastr.error('Erro ao carregar a imagem. Tente novamente.');
+        input.value = '';
+        URL.revokeObjectURL(objectUrl);
       };
     }
   }
 
-  getFotoPreviewUrl(file: File | undefined): string {
-    if (file) {
-      return URL.createObjectURL(file);
-    }
-    return '';
-  }
-
-  // Modifique o método removerFoto existente para:
   removerFoto(tipo: 'perfil' | 'capa') {
-    if (tipo === 'perfil') {
-      if (this.fotoPerfilFile) {
-        URL.revokeObjectURL(this.getFotoPreviewUrl(this.fotoPerfilFile));
-        this.fotoPerfilFile = undefined;
-        this.perfilForm.patchValue({ fotoPerfil: '' });
-      }
-    } else {
-      if (this.fotoCapaFile) {
-        URL.revokeObjectURL(this.getFotoPreviewUrl(this.fotoCapaFile));
-        this.fotoCapaFile = undefined;
-        this.perfilForm.patchValue({ fotoCapa: '' });
-      }
+    if (tipo === 'perfil' && this.previewURLPerfil) {
+      URL.revokeObjectURL(this.previewURLPerfil);
+      this.previewURLPerfil = null;
+      this.fotoPerfilFile = undefined;
+      this.perfilForm.patchValue({ fotoPerfil: null });
+      //console.log(this.perfilForm.value);
+    } else if (tipo === 'capa' && this.previewURLCapa) {
+      URL.revokeObjectURL(this.previewURLCapa);
+      this.previewURLCapa = null;
+      this.fotoCapaFile = undefined;
+      this.perfilForm.patchValue({ fotoCapa: null });
+      //console.log(this.perfilForm.value);
     }
-    this.toastr.success(`Foto de ${tipo} removida com sucesso.`);
+    this.cdr.detectChanges();
   }
 
   salvarAlteracoes() {
@@ -382,6 +408,7 @@ export class PerfilComponent implements OnInit {
       // Remover subformulário de nova rede social dos dados
       const { novaRedeSocial, ...dadosAtualizados } = formValue;
 
+      //console.log(formValue.value);
       // Verificar alteração de senha
       if (formValue.senhaAtual || formValue.novaSenha || formValue.confirmarNovaSenha) {
         if (this.perfilForm.hasError('passwordFieldsRequired')) {

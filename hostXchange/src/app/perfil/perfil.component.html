@@ -135,8 +135,11 @@
                 <div class="preview-container position-relative">
                   @if (fotoPerfilFile) {
                   <div class="preview-image-wrapper">
-                    <div class="preview-image"
-                      [style.backgroundImage]="'url(' + getFotoPreviewUrl(fotoPerfilFile) + ')'"></div>
+                    <div class="preview-image">
+                      <img class="preview-img"
+                      [src]="previewURLPerfil"
+                      alt="Preview da foto de perfil">
+                    </div>
                     <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1"
                       (click)="removerFoto('perfil')">×</button>
                   </div>
@@ -157,7 +160,10 @@
                 <div class="preview-container position-relative">
                   @if (fotoCapaFile) {
                   <div class="preview-image-wrapper">
-                    <div class="preview-image" [style.backgroundImage]="'url(' + getFotoPreviewUrl(fotoCapaFile) + ')'">
+                    <div class="preview-image">
+                      <img class="preview-img"
+                      [src]="previewURLCapa"
+                      alt="Preview da foto de capa">
                     </div>
                     <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1"
                       (click)="removerFoto('capa')">×</button>
@@ -429,23 +435,26 @@
     <div class="card bg-dark text-white">
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-4">
-          <h2>Avaliar Usuário</h2>
+          <h2>Avaliar Usuário.</h2>
           <button class="btn btn-outline-light" (click)="avaliarUsuario = false">
             <i class="fas fa-times"></i> Fechar
           </button>
+        </div>
+        <div class="mb-3">
+          <h4>Olá, {{ usuarioLogado.nome }}! Você está avaliando: {{ avaliacaoPendenteEspecifica.nomeUsuario }}</h4>
         </div>
         <form [formGroup]="avaliacaoForm" (ngSubmit)="salvarAvaliacao()">
           <div class="mb-3">
             <label for="avaliacao" class="form-label">Avaliação:</label>
             <div class="d-flex align-items-center">
               <div class="stars text-secondary me-2">
-              <i *ngFor="let star of [1, 2, 3, 4, 5]" class="fas fa-star" 
-                 [class.text-warning]="star <= avaliacaoForm.get('avaliacao')?.value"
+                <i *ngFor="let star of [1, 2, 3, 4, 5]" class="fas fa-star" 
+                 [class.text-warning]="star <= (avaliacaoForm.get('avaliacao')?.value || 1)"
                  (click)="avaliacaoForm.get('avaliacao')?.setValue(star)" 
                  style="cursor: pointer">
-              </i>
-              </div>
-              <span>{{avaliacaoForm.get('avaliacao')?.value || 1}}/5</span>
+                </i>
+                </div>
+                <span>{{avaliacaoForm.get('avaliacao')?.value || 1}} estrela(s).</span>
             </div>
           </div>
           <div class="mb-3">

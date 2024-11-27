@@ -160,6 +160,13 @@ body {
     opacity: 1;
 }
 
+.preview-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
 /* Estilos para telas menores */
 @media (max-width: 767px) {
     .cover-photo {
