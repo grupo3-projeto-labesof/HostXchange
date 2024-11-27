@@ -6,6 +6,7 @@ import { FormExchangeComponent } from './form-exchange/form-exchange.component';
 import { ExchangeComponent } from './exchange/exchange.component';
 import { MapComponent } from './map/map.component';
 import { PerfilComponent } from './perfil/perfil.component';
+import { PesquisarUsuarioComponent } from './pesquisar-usuario/pesquisar-usuario.component';
 
 export const routes: Routes = [
   { path: 'home', component: HomeComponent }
@@ -15,6 +16,7 @@ export const routes: Routes = [
   , { path: 'perfil', component: PerfilComponent }
   , { path: 'exchange', component: ExchangeComponent }
   , { path: 'map', component: MapComponent }
+  , { path: 'pesquisar-usuario', component: PesquisarUsuarioComponent}
   , { path: '', redirectTo: 'home', pathMatch: 'full' }
   , { path: '**', redirectTo: 'home' }
 ];
