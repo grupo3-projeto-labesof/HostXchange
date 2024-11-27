@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const fs = require('fs');
 
 const buscar = async () => {
     try {
@@ -14,9 +15,24 @@ const buscar = async () => {
     }
 };
 
+const buscarPorId = async (id) => {
+    try {
+        const intercambio = await prisma.intercambio.findUnique({
+            where: { id: Number(id) },
+            include: {
+                contatoHost: true
+            }
+        });
+
+        return intercambio;
+    } catch (error) {
+        console.error('Erro ao buscar intercâmbio por ID:', error);
+        throw error;
+    }
+};
+
 const cadastrar = async (dados) => {
     try {
-        // Apenas mantendo os primeiros 10 paths
         const imagens = dados.imagens.slice(0, 10).map((img, index) => ({
             [`img${index + 1}`]: fs.readFileSync(img.path) // Converte a imagem para Buffer
         }));
@@ -30,7 +46,7 @@ const cadastrar = async (dados) => {
                 beneficios: dados.beneficios,
                 duracao: dados.duracao,
                 idhost: Number(dados.idhost),
-                ...Object.assign({}, ...imagens) // Popula os campos img1...img10
+                ...Object.assign({}, ...imagens)
             }
         });
 
@@ -41,4 +57,4 @@ const cadastrar = async (dados) => {
     }
 };
 
-module.exports = { buscar, cadastrar };
+module.exports = { buscar, buscarPorId, cadastrar };
