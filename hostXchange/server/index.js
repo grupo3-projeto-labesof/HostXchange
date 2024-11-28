@@ -2,11 +2,12 @@ const express = require('express');
 const session = require('express-session');
 const cors    = require('cors');
 
-const routeCadastro     = require('./routes/CadastroRoute.js');
-const routeLogin        = require('./routes/LoginRoute.js');
-const routePerfil       = require('./routes/PerfilRoute');
+const routeCadastro     = require('./routes/CadastroRoute.js' );
+const routeLogin        = require('./routes/LoginRoute.js'    );
+const routePerfil       = require('./routes/PerfilRoute'      );
 const routeIntercambios = require('./routes/IntercambiosRoute');
-const routeAvaliacao    = require('./routes/AvaliacaoRoute');
+const routeAvaliacao    = require('./routes/AvaliacaoRoute'   );
+const routeMapa         = require('./routes/MapaRoute'        );
 
 const app  = express();
 const PORT = 3000;
@@ -26,11 +27,12 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-app.use('/cadastro'    , routeCadastro);
-app.use('/login'       , routeLogin);
+app.use('/cadastro'    , routeCadastro    ); 
+app.use('/login'       , routeLogin       );
 app.use('/intercambios', routeIntercambios);
-app.use('/perfil'      , routePerfil);
-app.use('/avaliacao'   , routeAvaliacao);
+app.use('/perfil'      , routePerfil      );
+app.use('/avaliacao'   , routeAvaliacao   );
+app.use('/mapa'        , routeMapa        );
 
 app.listen(PORT, () => {
   console.log('Servidor rodando na porta ' + PORT + '!');
