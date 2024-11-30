@@ -4,9 +4,9 @@
   <section *ngIf="view === 1" id="profile-view" class="mb-5">
     <article class="card bg-dark text-white">
       <div class="card cover-card mt-4 mb-4 mx-3">
-        <div class="cover-photo" [style.backgroundImage]="'url(' + 'assets/images/perfil/capa.jpg' + ')'">
+        <div class="cover-photo" [style.backgroundImage]="'url(' + usuario.fotoCapa + ')'">
           <div class="profile-picture-container">
-            <img [src]="'assets/images/perfil/perfil.jpg'" alt="Foto de Perfil" class="rounded-circle profile-picture">
+            <img [src]="usuario.fotoPerfil" alt="Foto de Perfil" class="rounded-circle profile-picture">
           </div>
         </div>
       </div>

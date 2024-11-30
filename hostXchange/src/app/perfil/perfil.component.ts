@@ -112,12 +112,15 @@ export class PerfilComponent implements OnInit {
       next: async (res: any) => {
         if (res.blOk === true) {
           this.usuario = res.dados;
-          const { facebook, instagram, twitter, linkedin } = res.dados;
+          const { facebook, instagram, twitter, linkedin, fotoCapa, fotoPerfil } = res.dados;
           if(facebook)  this.redesSociais.push({ nome: "Facebook" , url: facebook  });
           if(instagram) this.redesSociais.push({ nome: "Instagram", url: instagram });
           if(twitter)   this.redesSociais.push({ nome: "Twitter"  , url: twitter   });
           if(linkedin)  this.redesSociais.push({ nome: "LinkedIn" , url: linkedin  });
           this.atualizarRedesSociaisDisponiveis()
+
+          if(fotoCapa === null || "") this.usuario.fotoCapa = 'assets/images/perfil/capa.jpg';
+          if(fotoPerfil === null || "") this.usuario.fotoPerfil = 'assets/images/perfil/perfil.jpg';
 
           await this.service.getAvaliacoes({idUser: perfil}).subscribe({
             next: (res: any) => {
@@ -420,12 +423,14 @@ export class PerfilComponent implements OnInit {
     //if (this.perfilForm.valid) {
       const formValue = this.perfilForm.value;
       let data:any = {
-          userId   : this.usuario.idusuario
-        , nome     : this.perfilForm.value.nome
-        , email    : this.perfilForm.value.username
-        , cpf      : this.perfilForm.value.cpf
-        , rg       : this.perfilForm.value.rg
-        , nrpassa  : this.perfilForm.value.passaporte
+          userId    : this.usuario.idusuario
+        , nome      : this.perfilForm.value.nome
+        , email     : this.perfilForm.value.username
+        , cpf       : this.perfilForm.value.cpf
+        , rg        : this.perfilForm.value.rg
+        , nrpassa   : this.perfilForm.value.passaporte
+        , fotoCapa  : this.perfilForm.value.fotoCapa
+        , fotoPerfil: this.perfilForm.value.fotoPerfil
       }
 
       this.redesSociais.map(m => {
