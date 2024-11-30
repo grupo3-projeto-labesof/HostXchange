@@ -26,7 +26,7 @@ const cadastroUsuario = async (nome, email, password, cpf, rg, sexo, nacionalida
 
 const cadastroHost = async (nomePropriedade, rua, numero, complemento, cidade, estado, cep, telefone, tipoPropriedade, email) => {
   try {
-    const host = await prisma.contatoHost.create({
+    const host = await prisma.contatohost.create({
       data: {
         nmprop: nomePropriedade,
         endereco: rua,
@@ -57,10 +57,10 @@ const updateTipoUsuario = async (idUsuario, idHost) => {
         contatoHostId: idHost
       }
     });
-    return { success: true, message: 'Tipo de usuário atualizado para Host!' };
+    return { success: true, message: 'Seu perfil foi atualizado para Host!' };
   } catch (error) {
     console.error('Erro ao atualizar tipo de usuário:', error);
-    return { success: false, message: 'Erro ao atualizar tipo de usuário!' };
+    return { success: false, message: 'Erro ao atualizar tipo do usuário para Host!' };
   }
 };
 

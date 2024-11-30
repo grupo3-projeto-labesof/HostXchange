@@ -6,6 +6,8 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 import { HostService } from '../services/host.service';
 import { MenuComponent } from '../components/menu/menu.component';
 import { FooterComponent } from '../components/footer/footer.component';
+import { ToastrService } from 'ngx-toastr';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -24,8 +26,13 @@ export class FormHostComponent implements OnInit {
   cidadeNome: string = '';
   estadoNome: string = '';
 
-  constructor(private fb: FormBuilder, private http: HttpClient, private hostService: HostService) { }
-
+  constructor(
+      private fb: FormBuilder
+    , private http: HttpClient
+    , private hostService: HostService
+    , private toastr : ToastrService
+    , private router: Router
+  ) { }
 
   ngOnInit(): void {
     this.inicializarFormulario();
@@ -239,17 +246,23 @@ export class FormHostComponent implements OnInit {
       data.idUsuario = localStorage.getItem("id");
       
       this.hostService.enviarFormulario(data).subscribe({
-        next: (response) => {
-          console.log('Dados enviados com sucesso: ', response);
-          alert('Dados enviados com sucesso!');
+        next: (res: any) => {
+          if(res.success) {
+            console.log('Dados enviados com sucesso!');
+            this.router.navigate(['/cadastrar-intercambio']);
+            this.toastr.success(res.message);
+          } else {
+            this.toastr.error(res.message);
+          }
         },
         error: (err) => {
-          alert('Erro ao enviar dados, tente novamente mais tarde! ' + err);
+          console.log("Erro: ", err);
+          this.toastr.error('Erro ao enviar dados, tente novamente mais tarde! ' + err);
         }
       });
       
     } else {
-      alert('Formulário inválido!');
+      this.toastr.warning('Formulário inválido!');
     }
   }
 

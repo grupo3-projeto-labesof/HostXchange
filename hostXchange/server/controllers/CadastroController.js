@@ -19,33 +19,28 @@ const cadastroUsuario = async (req, res) => {
 }
 
 const cadastroHost = async (req, res) => {
-  const { idUsuario, nomePropriedade, rua, numero, complemento, cidade, estado, cep, telefone, tipoPropriedade, email } = req.body;
-  cadastroDAO.cadastroHost(nome, endereco, cddestado, cep, tel, email, (err, idHost) => {
-    if (err) {
-      console.error('Erro ao criar notícia:', err);
-      return res.status(500).json({ message: 'Erro ao criar Contato', blOk: false });
-    }
-    cadastroDAO.updateTipoUsuario(idUsuario, idHost, (err) => {
-      if (err) {
-        console.error('Erro ao alterar usuário:', err);
-        return res.status(500).json({ message: 'Erro ao alterar usuário', blOk: false });
-      }
-      res.status(201).json({ message: 'Usuário alterado para Host com sucesso!', blOk });
-    });
-  });
+  // const { idUsuario, nomePropriedade, rua, numero, complemento, cidade, estado, cep, telefone, tipoPropriedade, email } = req.body;
+  // cadastroDAO.cadastroHost(nome, endereco, cddestado, cep, tel, email, (err, idHost) => {
+  //   if (err) {
+  //     console.error('Erro ao criar notícia:', err);
+  //     return res.status(500).json({ message: 'Erro ao criar Contato', blOk: false });
+  //   }
+  //   cadastroDAO.updateTipoUsuario(idUsuario, idHost, (err) => {
+  //     if (err) {
+  //       console.error('Erro ao alterar usuário:', err);
+  //       return res.status(500).json({ message: 'Erro ao alterar usuário', blOk: false });
+  //     }
+  //     res.status(201).json({ message: 'Usuário alterado para Host com sucesso!', blOk });
+  //   });
+  // });
   
   try {
     const resultHost = await cadastroDAO.cadastroHost(nomePropriedade, rua, numero, complemento, cidade, estado, cep, telefone, tipoPropriedade, email);
     if (resultHost.success) {
       const resultUpdate = await cadastroDAO.updateTipoUsuario(idUsuario, resultHost.idHost.toString());
-      if (resultUpdate.success) {
-        res.status(201).json(resultUpdate);
-      } else {
-        res.status(500).json(resultUpdate);
-      }
-    } else {
-      res.status(500).json(resultHost);
+      res.status(201).json(resultUpdate);
     }
+    res.status(201).json(resultHost);
   } catch (error) {
     res.status(500).json({ success: false, message: 'Erro ao criar Host!' });
   }
