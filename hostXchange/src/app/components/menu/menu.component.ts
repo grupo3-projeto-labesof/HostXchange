@@ -11,13 +11,11 @@ import { Router } from '@angular/router';
 })
 export class MenuComponent {
 
-  public logado: any = false;
+  public logado:boolean = localStorage.getItem("logado") === "true" ? true : false;
 
   constructor(private router: Router) { }
 
-  ngOnInit() {
-    localStorage.getItem("logado") ? this.logado = localStorage.getItem("logado") : this.logado = false;
-  }
+  ngOnInit() { }
 
   login() {
     this.router.navigate(['/login']);

@@ -54,3 +54,11 @@ button {
 button:hover {
   background-color: #f1f1f1;
 }
+
+.profile-icon {
+  border-radius: 25px;
+}
+
+.profile-icon:hover i {
+  color: black;
+}

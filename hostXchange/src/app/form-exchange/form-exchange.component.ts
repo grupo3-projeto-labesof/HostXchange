@@ -17,7 +17,7 @@ export class FormExchangeComponent implements OnInit {
 
     formExchange!: FormGroup;
     selectedImage: File | null = null; // Para armazenar a imagem selecionada
-
+    cardTitle:String = "";
     constructor(private fb: FormBuilder, private http: HttpClient, private exchangeService: ExchangeService) { }
 
     ngOnInit(): void {

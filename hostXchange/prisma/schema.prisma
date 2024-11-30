@@ -97,6 +97,8 @@ model Avaliacao {
   avaliacao   Int      @default(0) // Nota da avaliação (ex: 1 a 5)
   snaval      Boolean? // Sim ou não para algo
   descricao   String?  @db.Text
+  dtaval      DateTime? @db.Timestamp(6)
+  dtcadast    DateTime @default(now())
 
   avaliado  Usuario @relation("avaliado_relation", fields: [avaliadoId], references: [idusuario], onDelete: Cascade)
   avaliador Usuario @relation("avaliador_relation", fields: [avaliadorId], references: [idusuario], onDelete: Cascade)
