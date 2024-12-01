@@ -6,7 +6,16 @@ const buscar = async () => {
     try {
         return await prisma.intercambio.findMany({
             include: {
-                contatoHost: true
+                contatoHost: true,
+                contatoHost: {
+                    include: {
+                        usuario: {
+                            include: {
+                                avaliacoesComoAvaliado: true // Inclui as avaliações do host
+                            }
+                        }
+                    }
+                }
             }
         });
     } catch (error) {
@@ -18,9 +27,18 @@ const buscar = async () => {
 const buscarPorId = async (id) => {
     try {
         const intercambio = await prisma.intercambio.findUnique({
-            where: { id: Number(id) },
+            where: { idinterc: Number(id) },
             include: {
-                contatoHost: true
+                contatoHost: true,
+                contatoHost: {
+                    include: {
+                        usuario: {
+                            include: {
+                                avaliacoesComoAvaliado: true // Inclui as avaliações do host
+                            }
+                        }
+                    }
+                }
             }
         });
 
@@ -33,20 +51,21 @@ const buscarPorId = async (id) => {
 
 const cadastrar = async (dados) => {
     try {
-        const imagens = dados.imagens.slice(0, 10).map((img, index) => ({
-            [`img${index + 1}`]: fs.readFileSync(img.path) // Converte a imagem para Buffer
-        }));
+        const imagens = (dados.imagens || []).slice(0, 10).reduce((acc, img, index) => {
+            acc[`img${index + 1}`] = img.path; // Salva a rota da imagem como string
+            return acc;
+        }, {});
 
         const novoIntercambio = await prisma.intercambio.create({
             data: {
-                nmlocal: dados.nmlocal,
+                nmlocal: "",
                 titulo: dados.titulo,
                 descricao: dados.descricao,
                 servicos: dados.servicos,
                 beneficios: dados.beneficios,
                 duracao: dados.duracao,
                 idhost: Number(dados.idhost),
-                ...Object.assign({}, ...imagens)
+                ...imagens
             }
         });
 

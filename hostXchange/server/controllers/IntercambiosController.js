@@ -28,6 +28,7 @@ const upload = multer({
 const buscar = async (req, res) => {
     try {
         const intercambios = await intercambiosDAO.buscar();
+        console.log(intercambios)
         res.status(200).json(intercambios);
     } catch (error) {
         console.error('Erro ao buscar intercâmbios:', error);
@@ -63,7 +64,7 @@ const cadastrar = async (req, res) => {
 
             // Montando as referências das imagens
             const imagens = req.files.map((file) => ({
-                path: file.path
+                path: `/assets/intercambios/host_${idhost}/${file.filename}` // Construir a rota correta
             }));
 
             // Salvar o intercâmbio no banco de dados
@@ -75,7 +76,7 @@ const cadastrar = async (req, res) => {
                 beneficios,
                 duracao,
                 idhost,
-                imagens
+                imagens // Passa as imagens como referências de caminho
             });
 
             res.status(201).json({ blOk: true, message: 'Intercâmbio cadastrado com sucesso!', intercambio });

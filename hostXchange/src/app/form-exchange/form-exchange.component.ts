@@ -80,7 +80,6 @@ export class FormExchangeComponent implements OnInit {
             formData.append('servicos', this.formExchange.value.servicos);
             formData.append('beneficios', this.formExchange.value.beneficios);
             formData.append('duracao', this.formExchange.value.duracao);
-            formData.append('nmlocal', this.formExchange.value.cidade);
     
             const idHost = localStorage.getItem('idHost');
             if (!idHost || idHost === "0") {

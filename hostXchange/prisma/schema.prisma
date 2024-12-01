@@ -77,23 +77,22 @@ model Intercambio {
   servicos   String @db.VarChar(250)
   beneficios String @db.VarChar(250)
   duracao    String @db.VarChar(100)
-  img1       Bytes
-  img2       Bytes?
-  img3       Bytes?
-  img4       Bytes?
-  img5       Bytes?
-  img6       Bytes?
-  img7       Bytes?
-  img8       Bytes?
-  img9       Bytes?
-  img10      Bytes?
+  img1       String  // Alterado para String
+  img2       String? // Alterado para String
+  img3       String? // Alterado para String
+  img4       String? // Alterado para String
+  img5       String? // Alterado para String
+  img6       String? // Alterado para String
+  img7       String? // Alterado para String
+  img8       String? // Alterado para String
+  img9       String? // Alterado para String
+  img10      String? // Alterado para String
   idhost     Int
 
   contatoHost ContatoHost @relation(fields: [idhost], references: [idctt], onDelete: Cascade, onUpdate: Cascade)
   
-  // Relação biderecional com Match
   matches Match[] @relation("iterc_relation")
-  
+
   @@index([idhost], name: "IDHOST_idx")
   @@map("INTERCAMBIOS")
 }
