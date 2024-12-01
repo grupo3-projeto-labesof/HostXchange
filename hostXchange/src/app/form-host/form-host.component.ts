@@ -27,11 +27,11 @@ export class FormHostComponent implements OnInit {
   estadoNome: string = '';
 
   constructor(
-      private fb: FormBuilder
-    , private http: HttpClient
+      private fb         : FormBuilder
+    , private http       : HttpClient
     , private hostService: HostService
-    , private toastr : ToastrService
-    , private router: Router
+    , private toastr     : ToastrService
+    , private router     : Router
   ) { }
 
   ngOnInit(): void {
@@ -42,17 +42,17 @@ export class FormHostComponent implements OnInit {
   inicializarFormulario() {
     this.formHost = this.fb.group({
       nomePropriedade: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(60)]],
-      rua: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(60)]],
-      numero: ['', Validators.required],
-      complemento: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(20)]],
-      cidade: ['', Validators.required],
-      estado: ['', Validators.required],
-      cep: ['', Validators.required],
+      rua            : ['', [Validators.required, Validators.minLength(5), Validators.maxLength(60)]],
+      numero         : ['', Validators.required],
+      complemento    : ['', [Validators.required, Validators.minLength(4), Validators.maxLength(20)]],
+      cidade         : ['', Validators.required],
+      estado         : ['', Validators.required],
+      cep            : ['', Validators.required],
       tipoPropriedade: ['', Validators.required],
-      telefone: ['', Validators.required],
-      email: ['', [Validators.email]],
-      latitude: '',
-      longitude: ''
+      telefone       : ['', Validators.required],
+      email          : ['', [Validators.email]],
+      latitude       : '',
+      longitude      : ''
     });
   }
 
@@ -244,11 +244,14 @@ export class FormHostComponent implements OnInit {
       let data = this.formHost.value;
       
       data.idUsuario = localStorage.getItem("id");
-      
-      this.hostService.enviarFormulario(data).subscribe({
+      debugger
+      await this.hostService.enviarFormulario(data).subscribe({
         next: (res: any) => {
+          debugger
           if(res.success) {
             console.log('Dados enviados com sucesso!');
+            localStorage.setItem("idHost", res.idHost);
+            localStorage.setItem("tipo_user", "H");
             this.router.navigate(['/cadastrar-intercambio']);
             this.toastr.success(res.message);
           } else {

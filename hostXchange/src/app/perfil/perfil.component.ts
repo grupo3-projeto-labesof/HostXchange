@@ -98,8 +98,8 @@ export class PerfilComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.informacoes();
     this.initForm();
+    this.informacoes();
   }
 
   async informacoes() {

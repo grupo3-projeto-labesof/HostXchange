@@ -57,8 +57,8 @@ model ContatoHost {
   nrtel     String?  @db.VarChar(100)
   tipoProp  String?  @db.VarChar(40)
   email     String?  @db.VarChar(100)
-  latitude  String?  @db.VarChar(100)
-  longitude String?  @db.VarChar(100)
+  latitude  Float?
+  longitude Float?
   stcadast  String?  @db.VarChar(10)
   dtcadast  DateTime @default(now())
 

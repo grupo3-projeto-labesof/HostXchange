@@ -24,21 +24,23 @@ const cadastroUsuario = async (nome, email, password, cpf, rg, sexo, nacionalida
   }
 };
 
-const cadastroHost = async (nomePropriedade, rua, numero, complemento, cidade, estado, cep, telefone, tipoPropriedade, email) => {
+const cadastroHost = async (nomePropriedade, rua, numero, complemento, cidade, estado, cep, telefone, tipoPropriedade, email, latitude, longitude) => {
   try {
-    const host = await prisma.contatohost.create({
+    const host = await prisma.contatoHost.create({
       data: {
-        nmprop: nomePropriedade,
-        endereco: rua,
-        numero,
-        complem: complemento,
-        cidade,
-        cdestado: estado,
-        nrcep: cep,
-        nrtel: telefone,
-        tipoProp: tipoPropriedade,
-        email,
-        stcadast: 'A'
+        nmprop   : nomePropriedade,
+        endereco : rua,
+        numero   : numero,
+        complem  : complemento,
+        cidade   : cidade,
+        cdestado : estado,
+        nrcep    : cep,
+        nrtel    : telefone,
+        tipoProp : tipoPropriedade,
+        email    : email,
+        stcadast : 'A',
+        latitude : latitude,
+        longitude: longitude
       }
     });
     return { success: true, idHost: host.idctt };
@@ -50,13 +52,22 @@ const cadastroHost = async (nomePropriedade, rua, numero, complemento, cidade, e
 
 const updateTipoUsuario = async (idUsuario, idHost) => {
   try {
+    const usuario = await prisma.usuario.findUnique({
+      where: { idusuario: Number(idUsuario) },
+    });
+
+    if (!usuario) {
+      return { success: false, message: 'Usuário não encontrado!' };
+    }
+
     await prisma.usuario.update({
-      where: { idusuario: idUsuario },
+      where: { idusuario: Number(idUsuario) },
       data: {
         tpusuario: 'H',
-        contatoHostId: idHost
-      }
+        idhost: Number(idHost),
+      },
     });
+
     return { success: true, message: 'Seu perfil foi atualizado para Host!' };
   } catch (error) {
     console.error('Erro ao atualizar tipo de usuário:', error);

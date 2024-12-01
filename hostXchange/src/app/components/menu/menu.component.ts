@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 export class MenuComponent {
 
   public logado:boolean = localStorage.getItem("logado") === "true" ? true : false;
+  public tipo_user      = localStorage.getItem("tipo_user");
 
   constructor(private router: Router) { }
 
@@ -26,6 +27,9 @@ export class MenuComponent {
     localStorage.removeItem('nome');
     localStorage.removeItem('logado');
     localStorage.removeItem('tipo_user');
+    localStorage.removeItem('idHost');
+    localStorage.removeItem('verPerfil');
+    localStorage.removeItem('verIntercambio');
     this.router.navigate(['/login']);
   }
 

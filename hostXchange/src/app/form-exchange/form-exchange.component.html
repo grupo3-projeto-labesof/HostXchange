@@ -7,60 +7,54 @@
     </header>
 
     <form [formGroup]="formExchange" (ngSubmit)="onSubmit()" enctype="multipart/form-data" class="form">
-
-        <!-- Campo para inserir imagens do local -->
+        <!-- Imagem -->
         <div class="form-group mb-4">
-            <label for="localImage" class="form-label">Imagem do Local:<span class="text-danger"> *</span></label>
-            <input type="file" id="localImage" (change)="onFileChange($event)" accept="image/*" class="form-control">
+            <label for="localImage" class="form-label">Imagens do Local:<span class="text-danger"> *</span></label>
+            <input type="file" id="localImage" (change)="onFileChange($event)" accept="image/*" multiple class="form-control">
+            <small class="text-muted">Você pode selecionar até 10 imagens.</small>
         </div>
 
-        <!-- Campo de Título do card -->
+        <!-- Pré Visualização das Imagens -->
+        <!-- <div class="form-group mb-4">
+            <label for="localImage" class="form-label">Pré-visualização:</label>
+            <div class="preview-container">
+                <img *ngFor="let image of selectedImages" //[src]="image | filePreview" class="preview-image">
+            </div>
+        </div> -->
+    
+        <!-- Título -->
         <div class="form-group mb-4">
-            <label for="" class="form-label">Título do Card:<span class="text-danger"> *</span></label>
-            <input type="text"  placeholder="Título do Card"
-                class="form-control">
+            <label for="titulo" class="form-label">Título do Card:<span class="text-danger"> *</span></label>
+            <input type="text" id="titulo" formControlName="titulo" placeholder="Título do Card" class="form-control">
         </div>
-
-        <!-- Campo para descrição -->
+    
+        <!-- Descrição -->
         <div class="form-group mb-4">
-            <label for="" class="form-label">Descrição:<span class="text-danger"> *</span></label>
-            <textarea  placeholder="Descrição da Viagem"
-                class="form-control" rows="4"></textarea>
+            <label for="descricao" class="form-label">Descrição:<span class="text-danger"> *</span></label>
+            <textarea id="descricao" formControlName="descricao" placeholder="Descrição da Viagem" class="form-control" rows="4"></textarea>
         </div>
-
-        <!-- Campo para descrever como será o serviço -->
+    
+        <!-- Serviços -->
         <div class="form-group mb-4">
-            <label for="serviceDescription" class="form-label">Descrição do Serviço:<span class="text-danger">
-                    *</span></label>
-            <textarea 
-                placeholder="Detalhes sobre o serviço" class="form-control" rows="4"></textarea>
+            <label for="servicos" class="form-label">Serviços:<span class="text-danger"> *</span></label>
+            <input type="text" id="servicos" formControlName="servicos" placeholder="Serviços (Ex.: Agricultura, Cozinha)" class="form-control">
         </div>
-
-        <!-- Campo para informar tags sobre o serviço -->
+    
+        <!-- Benefícios -->
         <div class="form-group mb-4">
-            <label for="serviceTags" class="form-label">Tags do Serviço:<span class="text-danger"> *</span></label>
-            <input type="text" 
-                placeholder="Tags (Ex.: Agricultura, Cozinha)" class="form-control">
+            <label for="beneficios" class="form-label">Benefícios:<span class="text-danger"> *</span></label>
+            <input type="text" id="beneficios" formControlName="beneficios" placeholder="O que o Host oferece (Ex.: Alojamento, Alimentação)" class="form-control">
         </div>
-
-        <!-- Campo para informar o que o Host oferece -->
+    
+        <!-- Duração -->
         <div class="form-group mb-4">
-            <label for="hostOffers" class="form-label">O que o Host oferece:<span class="text-danger"> *</span></label>
-            <input type="text" 
-                placeholder="O que o Host oferece (Ex.: Alojamento, Alimentação)" class="form-control">
+            <label for="duracao" class="form-label">Duração:<span class="text-danger"> *</span></label>
+            <input type="text" id="duracao" formControlName="duracao" placeholder="Duração do trabalho (Ex.: 2 semanas)" class="form-control">
         </div>
-
-        <!-- Campo para informar a duração do trabalho -->
-        <div class="form-group mb-4">
-            <label for="workDuration" class="form-label">Duração do Trabalho:<span class="text-danger"> *</span></label>
-            <input type="text" 
-                placeholder="Duração do trabalho (Ex.: 2 semanas)" class="form-control">
-        </div>
-
-        <!-- Botão para submeter o formulário -->
+    
+        <!-- Botão de Submissão -->
         <div class="text-center">
-            <button type="submit" class="btn btn-primary" [disabled]="formExchange.invalid">Cadastrar
-                Intercâmbio</button>
+            <button type="submit" class="btn btn-primary" [disabled]="formExchange.invalid">Cadastrar Intercâmbio</button>
         </div>
     </form>
 </main>

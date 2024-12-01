@@ -89,8 +89,6 @@ CREATE TABLE `AVALIACAO` (
     PRIMARY KEY (`idavaliacao`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-<<<<<<<< HEAD:hostXchange/prisma/migrations/20241130003736_/migration.sql
-========
 -- CreateTable
 CREATE TABLE `MATCH` (
     `idmatch` INTEGER NOT NULL AUTO_INCREMENT,
@@ -101,7 +99,6 @@ CREATE TABLE `MATCH` (
     PRIMARY KEY (`idmatch`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
->>>>>>>> joao:hostXchange/prisma/migrations/20241201001513_/migration.sql
 -- AddForeignKey
 ALTER TABLE `USUARIO` ADD CONSTRAINT `USUARIO_idhost_fkey` FOREIGN KEY (`idhost`) REFERENCES `CONTATO_HOST`(`idctt`) ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -113,12 +110,9 @@ ALTER TABLE `AVALIACAO` ADD CONSTRAINT `AVALIACAO_avaliadoId_fkey` FOREIGN KEY (
 
 -- AddForeignKey
 ALTER TABLE `AVALIACAO` ADD CONSTRAINT `AVALIACAO_avaliadorId_fkey` FOREIGN KEY (`avaliadorId`) REFERENCES `USUARIO`(`idusuario`) ON DELETE CASCADE ON UPDATE CASCADE;
-<<<<<<<< HEAD:hostXchange/prisma/migrations/20241130003736_/migration.sql
-========
 
 -- AddForeignKey
 ALTER TABLE `MATCH` ADD CONSTRAINT `MATCH_idviajante_fkey` FOREIGN KEY (`idviajante`) REFERENCES `USUARIO`(`idusuario`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `MATCH` ADD CONSTRAINT `MATCH_idinterc_fkey` FOREIGN KEY (`idinterc`) REFERENCES `INTERCAMBIOS`(`idinterc`) ON DELETE CASCADE ON UPDATE CASCADE;
->>>>>>>> joao:hostXchange/prisma/migrations/20241201001513_/migration.sql

@@ -7,23 +7,25 @@ import { catchError } from 'rxjs/operators';
     providedIn: 'root'
 })
 export class ExchangeService {
-    private apiUrl = 'https://sua-api.com/intercambios'; // Coloque a URL da sua API aqui
+    private apiUrl = 'http://localhost:3000/'; // Coloque a URL da sua API aqui
 
     constructor(private http: HttpClient) { }
 
-    cadastrarIntercambio(dados: any): Observable<any> {
-        return this.http.post<any>(this.apiUrl, dados).pipe(
-            catchError(this.handleError)
-        );
-    }
+    // cadastrarIntercambio(dados: any): Observable<any> {
+    //     return this.http.post<any>(`${this.apiUrl}intercambios/cadastrar`, dados);
+    // }
 
-    private handleError(error: HttpErrorResponse): Observable<never> {
-        let errorMessage = 'Erro desconhecido!';
-        if (error.error instanceof ErrorEvent) {
-            errorMessage = `Erro: ${error.error.message}`;
-        } else {
-            errorMessage = `Erro ${error.status}: ${error.message}`;
-        }
-        return throwError(errorMessage);
-    }
+    cadastrarIntercambio (dados: Object){
+        return this.http.post(`${this.apiUrl}intercambios/cadastrar`, dados);
+      }
+
+    // private handleError(error: HttpErrorResponse): Observable<never> {
+    //     let errorMessage = 'Erro desconhecido!';
+    //     if (error.error instanceof ErrorEvent) {
+    //         errorMessage = `Erro: ${error.error.message}`;
+    //     } else {
+    //         errorMessage = `Erro ${error.status}: ${error.message}`;
+    //     }
+    //     return throwError(errorMessage);
+    // }
 }
