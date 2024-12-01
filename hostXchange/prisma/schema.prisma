@@ -25,12 +25,21 @@ model Usuario {
   twitter   String?  @db.VarChar(255)
   instagram String?  @db.VarChar(255)
   linkedin  String?  @db.VarChar(255)
+  fotoPerfil Bytes?
+  fotoCapa   Bytes?
   CDRESET   String?  @db.VarChar(6)
   idhost    Int?     @unique // Campo único para relação 1-1
 
   contatoHost ContatoHost? @relation(fields: [idhost], references: [idctt], onDelete: Cascade, onUpdate: Cascade)
 
   idavaliacao Int? // Referência ao ID da Avaliacao (opcional)
+
+  // Relações bidirecionais com Avaliacao
+  avaliacoesComoAvaliado  Avaliacao[] @relation("avaliado_relation")
+  avaliacoesComoAvaliador Avaliacao[] @relation("avaliador_relation")
+
+  // Relação biderecional com Match
+  matches Match[] @relation("viajante_relation")
 
   @@index([idhost], name: "IDHOST_idx")
   @@map("USUARIO")
@@ -54,7 +63,7 @@ model ContatoHost {
   dtcadast  DateTime @default(now())
 
   usuario Usuario? @relation
-
+  
   intercambio Intercambio[]
 
   @@map("CONTATO_HOST")
@@ -81,7 +90,10 @@ model Intercambio {
   idhost     Int
 
   contatoHost ContatoHost @relation(fields: [idhost], references: [idctt], onDelete: Cascade, onUpdate: Cascade)
-
+  
+  // Relação biderecional com Match
+  matches Match[] @relation("iterc_relation")
+  
   @@index([idhost], name: "IDHOST_idx")
   @@map("INTERCAMBIOS")
 }
@@ -92,10 +104,24 @@ model Avaliacao {
   avaliadorId Int
   avaliacao   Int      @default(0) // Nota da avaliação (ex: 1 a 5)
   snaval      Boolean? // Sim ou não para algo
-  descricao   String?  @db.Text
+  descricao   String?   @db.Text
+  dtaval      DateTime? @db.Timestamp(6)
+  dtcadast    DateTime @default(now())
 
-  //avaliado  Usuario @relation(fields: [avaliadoId], references: [idusuario], onDelete: Cascade)
-  //avaliador Usuario @relation(fields: [avaliadorId], references: [idusuario], onDelete: Cascade)
+  avaliado  Usuario @relation("avaliado_relation" , fields: [avaliadoId] , references: [idusuario], onDelete: Cascade)
+  avaliador Usuario @relation("avaliador_relation", fields: [avaliadorId], references: [idusuario], onDelete: Cascade)
 
   @@map("AVALIACAO")
+}
+
+model Match {
+  idmatch    Int      @id @default(autoincrement())
+  idviajante Int 
+  idinterc   Int 
+  dtcria     DateTime @default(now())
+  
+  viajante Usuario     @relation("viajante_relation", fields: [idviajante], references: [idusuario], onDelete: Cascade)
+  iterc    Intercambio @relation("iterc_relation"   , fields: [idinterc]  , references: [idinterc] , onDelete: Cascade)
+  
+  @@map("MATCH")
 }

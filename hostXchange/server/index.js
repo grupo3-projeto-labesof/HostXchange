@@ -8,6 +8,7 @@ const routePerfil       = require('./routes/PerfilRoute'      );
 const routeIntercambios = require('./routes/IntercambiosRoute');
 const routeAvaliacao    = require('./routes/AvaliacaoRoute'   );
 const routeMapa         = require('./routes/MapaRoute'        );
+const routeMatch        = require('./routes/MatchRoute'       );
 
 const app  = express();
 const PORT = 3000;
@@ -33,6 +34,7 @@ app.use('/intercambios', routeIntercambios);
 app.use('/perfil'      , routePerfil      );
 app.use('/avaliacao'   , routeAvaliacao   );
 app.use('/mapa'        , routeMapa        );
+app.use('/match'       , routeMatch       );
 
 app.listen(PORT, () => {
   console.log('Servidor rodando na porta ' + PORT + '!');
