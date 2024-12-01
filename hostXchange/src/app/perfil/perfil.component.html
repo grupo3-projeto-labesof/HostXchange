@@ -176,7 +176,7 @@
         <!-- Campos de Edição do Usuário -->
         <div class="mb-3">
           <label for="nome" class="form-label">Nome:<span class="text-danger">*</span></label>
-          <input type="text" id="nome" [(ngModel)]="usuario.nome" formControlName="nome" class="form-control bg-secondary text-white" required>
+          <input type="text" id="nome" formControlName="nome" class="form-control bg-secondary text-white" required>
           <div *ngIf="perfilForm.get('nome')?.errors?.['required'] && perfilForm.get('nome')?.touched"
             class="text-danger mt-1">
             <small>Nome é obrigatório.</small>
@@ -189,23 +189,20 @@
           </div>
         </div>
         <div class="mb-3">
-          <label for="username" class="form-label">Email:<span class="text-danger">*</span></label>
-          <input type="text" id="username" [(ngModel)]="usuario.email" formControlName="username" class="form-control bg-secondary text-white"
+          <label for="email" class="form-label">Email:<span class="text-danger">*</span></label>
+          <input type="text" id="email" formControlName="email" class="form-control bg-secondary text-white"
             required>
-          <div *ngIf="perfilForm.get('username')?.errors?.['required'] && perfilForm.get('username')?.touched"
+          <div *ngIf="perfilForm.get('email')?.errors?.['required'] && perfilForm.get('email')?.touched"
             class="text-danger mt-1">
-            <small>O nome de usuário é obrigatório.</small>
+            <small>O email é obrigatório.</small>
           </div>
-          <div *ngIf="perfilForm.get('username')?.errors?.['minlength']" class="text-danger mt-1">
-            <small>O nome de usuário deve ter no mínimo 5 caracteres.</small>
-          </div>
-          <div *ngIf="perfilForm.get('username')?.errors?.['maxlength']" class="text-danger mt-1">
-            <small>O nome de usuário deve ter no máximo 20 caracteres.</small>
+          <div *ngIf="perfilForm.get('email')?.errors?.['email']" class="text-danger mt-1">
+            <small>O email fornecido deve ser válido.</small>
           </div>
         </div>
         <div class="mb-3">
           <label for="rg" class="form-label">RG:<span class="text-danger">*</span></label>
-          <input type="text" id="rg" [(ngModel)]="usuario.rg" formControlName="rg" mask="00.000.000-0"
+          <input type="text" id="rg" formControlName="rg" mask="00.000.000"
             class="form-control bg-secondary text-white" required>
           <div *ngIf="perfilForm.get('rg')?.errors?.['required'] && perfilForm.get('rg')?.touched"
             class="text-danger mt-1">
@@ -217,7 +214,7 @@
         </div>
         <div class="mb-3">
           <label for="cpf" class="form-label">CPF:<span class="text-danger">*</span></label>
-          <input type="text" id="cpf" [(ngModel)]="usuario.cpf" formControlName="cpf" mask="000.000.000-00"
+          <input type="text" id="cpf" formControlName="cpf" mask="000.000.000-00"
             class="form-control bg-secondary text-white" required>
           <div *ngIf="perfilForm.get('cpf')?.errors?.['required'] && perfilForm.get('cpf')?.touched"
             class="text-danger mt-1">
@@ -229,7 +226,7 @@
         </div>
         <div class="mb-3">
           <label for="passaporte" class="form-label">Passaporte:<span class="text-danger">*</span></label>
-          <input type="text" id="passaporte" [(ngModel)]="usuario.nrpassa" formControlName="passaporte" mask="AA000000"
+          <input type="text" id="passaporte" formControlName="passaporte" mask="AA000000"
             class="form-control bg-secondary text-white" required>
           <div *ngIf="perfilForm.get('passaporte')?.errors?.['required'] && perfilForm.get('passaporte')?.touched"
             class="text-danger mt-1">
@@ -253,7 +250,7 @@
                 <!-- Listagem das redes sociais com nome, URL e botão de remover -->
                 <div formArrayName="redesSociais">
                   @for (rede of redesSociais; track $index; let i = $index) {
-                  <div [formGroupName]="i" class="social-media-item mb-2 pb-2 border-bottom border-light">
+                  <div class="social-media-item mb-2 pb-2 border-bottom border-light">
                     <div class="row g-2 align-items-center">
                       <div class="col-3 border-end">
                         <span class="badge bg-primary d-inline-block">
@@ -372,7 +369,7 @@
         </div>
 
         <!-- Botões de Ação -->
-        <button type="button" class="btn btn-primary" (click)="salvarAlteracoes()">Salvar Alterações</button>
+        <button type="button" class="btn btn-primary" (click)="salvarAlteracoes()" [disabled]="!perfilForm.valid || (!perfilForm.dirty && !redesSociaisForamAlteradas())" >Salvar Alterações</button>
         <button type="button" class="btn btn-secondary ms-2" (click)="cancelarAlteracoes()">Cancelar</button>
       </div> <!-- Fim de card-body -->
     </form>
@@ -458,6 +455,3 @@
       </div>
     </div>
   </section>
-
-</main>
-<app-footer></app-footer>

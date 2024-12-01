@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { PerfilService } from '../services/perfil.service';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 import { CommonModule } from '@angular/common';
@@ -30,18 +30,19 @@ interface PasswordVisibility {
 
 export class PerfilComponent implements OnInit {
   public userLogado: any = localStorage.getItem("id");
-  public verPerfil : any = 0;//Number(localStorage.getItem("verPerfil"));
+  public verPerfil: any = 0;//Number(localStorage.getItem("verPerfil"));
 
-  public avaliacoesPendentes:any = [];
-  public avaliacoesRecebidas:any = [];
-  public avaliacoesFeitas   :any = [];
+  public avaliacoesPendentes: any = [];
+  public avaliacoesRecebidas: any = [];
+  public avaliacoesFeitas: any = [];
 
-  public usuario:any = {};
+  public usuario: any = {};
 
   public view = 1;
 
   public notaAvaliacaoUsuario: number = 0;
-  public redesSociais:Array<any> = [];
+  public redesSociais: Array<any> = [];
+  public redesSociaisOriginais: Array<any> = [];
 
   //isso aqui só existe para simular o backend
   // usuarioLogado: Usuario = {
@@ -65,7 +66,7 @@ export class PerfilComponent implements OnInit {
   // editMode = false;
   perfilForm!: FormGroup;
   avaliacaoForm!: FormGroup;
-  // novaRedeForm!: FormGroup;
+  novaRedeForm!: FormGroup;
   fotoPerfilFile?: File;
   fotoCapaFile?: File;
   senhaAtualCorreta: string = '';
@@ -74,7 +75,7 @@ export class PerfilComponent implements OnInit {
   comentarioAvaliacao: string = '';
   // mostrarAvaliacoes = false;
   avaliacao: any;
-  
+
 
   todasRedesSociais: string[] = ['LinkedIn', 'Twitter', 'Facebook', 'Instagram'];
   redesSociaisDisponiveis: string[] = ['LinkedIn', 'Twitter', 'Facebook', 'Instagram'];
@@ -90,9 +91,9 @@ export class PerfilComponent implements OnInit {
   };
 
   constructor(
-      private toastr : ToastrService
-    , private service: PerfilService 
-    , private fb     : FormBuilder
+    private toastr: ToastrService
+    , private service: PerfilService
+    , private fb: FormBuilder
   ) { }
 
 
@@ -100,38 +101,45 @@ export class PerfilComponent implements OnInit {
     this.informacoes();
     this.initForm();
   }
-  
+
   async informacoes() {
     const perfil = this.verPerfil != 0 ? this.verPerfil : this.userLogado;
-    this.usuario             = [];
-    this.avaliacoesFeitas    = [];
+    this.usuario = [];
+    this.avaliacoesFeitas = [];
     this.avaliacoesPendentes = [];
     this.avaliacoesRecebidas = [];
-    this.redesSociais        = [];
-    await this.service.getInformacoes({idUser: perfil}).subscribe({
+    this.redesSociais = [];
+    await this.service.getInformacoes({ idUser: perfil }).subscribe({
       next: async (res: any) => {
         if (res.blOk === true) {
           this.usuario = res.dados;
-          const { facebook, instagram, twitter, linkedin, fotoCapa, fotoPerfil } = res.dados;
-          if(facebook)  this.redesSociais.push({ nome: "Facebook" , url: facebook  });
-          if(instagram) this.redesSociais.push({ nome: "Instagram", url: instagram });
-          if(twitter)   this.redesSociais.push({ nome: "Twitter"  , url: twitter   });
-          if(linkedin)  this.redesSociais.push({ nome: "LinkedIn" , url: linkedin  });
+          const { fotoCapa, fotoPerfil } = res.dados;
+
+          this.perfilForm.patchValue({
+            nome: res.dados.nome,
+            email: res.dados.email,
+            rg: res.dados.rg,
+            cpf: res.dados.cpf,
+            passaporte: res.dados.nrpassa
+          });
+
+          this.carregarRedesSociais(res.dados);
+          this.redesSociaisOriginais = [...this.redesSociais];
           this.atualizarRedesSociaisDisponiveis()
 
-          if(fotoCapa === null || "") this.usuario.fotoCapa = 'assets/images/perfil/capa.jpg';
-          if(fotoPerfil === null || "") this.usuario.fotoPerfil = 'assets/images/perfil/perfil.jpg';
+          if (!fotoCapa) this.usuario.fotoCapa = 'assets/images/perfil/capa.jpg';
+          if (!fotoPerfil) this.usuario.fotoPerfil = 'assets/images/perfil/perfil.jpg';
 
-          await this.service.getAvaliacoes({idUser: perfil}).subscribe({
+          await this.service.getAvaliacoes({ idUser: perfil }).subscribe({
             next: (res: any) => {
               if (res.blOk === true) {
                 const avaliacoes = res.avaliacoes;
-                if(this.verPerfil) {
-                  avaliacoes.avaliado.map((b:any) => b.snaval === true ? this.avaliacoesRecebidas.push(b) : null );
+                if (this.verPerfil) {
+                  avaliacoes.avaliado.map((b: any) => b.snaval === true ? this.avaliacoesRecebidas.push(b) : null);
                   this.notaAvaliacaoUsuario = avaliacoes.media;
                 } else {
-                  avaliacoes.avaliado.map((b:any) => b.snaval === true ? this.avaliacoesRecebidas.push(b) : null );
-                  avaliacoes.avaliador.map((b:any) =>  b.snaval === true ? this.avaliacoesFeitas.push(b) : b.snaval === false ? this.avaliacoesPendentes.push(b) : null );
+                  avaliacoes.avaliado.map((b: any) => b.snaval === true ? this.avaliacoesRecebidas.push(b) : null);
+                  avaliacoes.avaliador.map((b: any) => b.snaval === true ? this.avaliacoesFeitas.push(b) : b.snaval === false ? this.avaliacoesPendentes.push(b) : null);
                   this.notaAvaliacaoUsuario = avaliacoes.media;
                 }
               }
@@ -150,6 +158,31 @@ export class PerfilComponent implements OnInit {
     });
   }
 
+  get redesSociaisFormArray() {
+    return this.perfilForm.get('redesSociais') as FormArray;
+  }
+
+  carregarRedesSociais(dados: any) {
+    this.redesSociais = []; // Limpa o array existente
+
+    const { facebook, instagram, twitter, linkedin } = dados;
+
+    if (facebook) {
+      this.redesSociais.push({ nome: 'Facebook', url: facebook });
+    }
+    if (instagram) {
+      this.redesSociais.push({ nome: 'Instagram', url: instagram });
+    }
+    if (twitter) {
+      this.redesSociais.push({ nome: 'Twitter', url: twitter });
+    }
+    if (linkedin) {
+      this.redesSociais.push({ nome: 'LinkedIn', url: linkedin });
+    }
+
+    this.atualizarRedesSociaisDisponiveis();
+  }
+
   hasFotoPerfil(): boolean {
     return !!this.usuario?.fotoPerfil;
   }
@@ -163,15 +196,11 @@ export class PerfilComponent implements OnInit {
       fotoPerfil: [this.usuario?.fotoPerfil || 'assets/images/perfil/perfil.jpg'],
       fotoCapa: [this.usuario?.fotoCapa || 'assets/images/perfil/capa.jpg'],
       nome: [this.usuario?.nome, [Validators.required, Validators.minLength(5), Validators.maxLength(60)]],
-      username: [this.usuario?.username, [Validators.required, Validators.minLength(5), Validators.maxLength(20)]],
+      email: [this.usuario?.email, [Validators.required, Validators.email]],
       rg: [this.usuario?.rg, [Validators.required, Validators.minLength(7)]],
       cpf: [this.usuario?.cpf, [Validators.required, Validators.minLength(11)]],
       passaporte: [this.usuario?.nrpassa, [Validators.required, Validators.minLength(8)]],
       redesSociais: this.fb.array([]),
-      novaRedeSocial: this.fb.group({
-        nome: [null],
-        url: ['https://']
-      }),
       senhaAtual: ['', Validators.minLength(6)],
       novaSenha: ['', [
         Validators.minLength(6),
@@ -181,6 +210,11 @@ export class PerfilComponent implements OnInit {
     }, {
       validators: [this.passwordRequiredValidator.bind(this), this.passwordMatchValidator]
     });
+
+    this.perfilForm.addControl('novaRedeSocial', this.fb.group({
+      nome: [''],
+      url: ['https://']
+    }));
 
     //this.setRedesSociais();
 
@@ -192,12 +226,12 @@ export class PerfilComponent implements OnInit {
 
   async salvarAvaliacao() {
     if (this.avaliacaoForm.valid) {
-      const avaliacao = { 
-          idavaliacao: this.avaliacao
-        , avaliacao  : this.avaliacaoForm.value.avaliacao
-        , descricao  : this.avaliacaoForm.value.descricao 
+      const avaliacao = {
+        idavaliacao: this.avaliacao
+        , avaliacao: this.avaliacaoForm.value.avaliacao
+        , descricao: this.avaliacaoForm.value.descricao
       };
-      
+
       await this.service.salvarAvaliacao(avaliacao).subscribe({
         next: (res: any) => {
           debugger
@@ -228,7 +262,7 @@ export class PerfilComponent implements OnInit {
   getNotaFormatada(): string {
     return this.notaAvaliacaoUsuario.toFixed(1);
   }
-  
+
   cancelarAvaliacao() {
     if (this.avaliacaoForm.dirty || this.avaliacaoForm.value.avaliacao || this.avaliacaoForm.value.descricao) {
       if (!confirm('Existem alterações não salvas. Deseja realmente cancelar?')) {
@@ -239,6 +273,15 @@ export class PerfilComponent implements OnInit {
     //this.avaliarUsuario = false;
     //this.avaliacaoPendenteEspecifica = null;
     this.voltar();
+  }
+
+  redesSociaisForamAlteradas(): boolean {
+    if (this.redesSociais.length !== this.redesSociaisOriginais.length) return true;
+    
+    return this.redesSociais.some((rede, index) => 
+      rede.nome !== this.redesSociaisOriginais[index]?.nome || 
+      rede.url !== this.redesSociaisOriginais[index]?.url
+    );
   }
 
   hasRedesSociais(): boolean {
@@ -278,43 +321,29 @@ export class PerfilComponent implements OnInit {
   }
 
   addRedeSocial() {
-    debugger
     if (this.novaRedeSocial.valid) {
       const novaRede = {
-        nome: this.novaRedeSocial.get('nome')?.value,
-        url: this.novaRedeSocial.get('url')?.value
+        nome: this.novaRedeSocial.value.nome,
+        url: this.novaRedeSocial.value.url
       };
 
-      // Add to form array
-      const novaRedeGroup = this.fb.group({
-        nome: [novaRede.nome],
-        url: [novaRede.url]
-      });
-      this.redesSociais.push(novaRedeGroup.value);
-
-      // Add to usuarioEditando
-      // if (this.usuarioEditando) {
-      //   if (!this.usuarioEditando.redesSociais) {
-      //     this.usuarioEditando.redesSociais = [];
-      //   }
-      //   this.usuarioEditando.redesSociais.push(novaRede);
-      // }
-
-
-      this.novaRedeSocial.reset({ url: 'https://' });
+      this.redesSociais.push(novaRede);
+      this.novaRedeSocial.reset({ nome: '', url: 'https://' });
       this.atualizarRedesSociaisDisponiveis();
     }
   }
 
   removeSocialMedia(index: number) {
-    this.redesSociais.splice(index, 1);
-    // this.redesSociais.removeAt(index);
-    this.atualizarRedesSociaisDisponiveis();
+    const redeRemovida = this.redesSociais[index];
 
-    /*
-    console.log(this.usuario?.redesSociais);
-    console.log(this.redesSociaisDisponiveis);
-    */
+    // Remove do array local
+    this.redesSociais.splice(index, 1);
+
+    // Não precisamos modificar this.usuario pois o salvarAlteracoes
+    // usa apenas o array redesSociais para construir o objeto data
+
+    // Atualiza a lista de redes disponíveis
+    this.atualizarRedesSociaisDisponiveis();
   }
 
   atualizarRedesSociaisDisponiveis() {
@@ -421,84 +450,90 @@ export class PerfilComponent implements OnInit {
   async salvarAlteracoes() {
     debugger
     //if (this.perfilForm.valid) {
-      const formValue = this.perfilForm.value;
-      let data:any = {
-          userId    : this.usuario.idusuario
-        , nome      : this.perfilForm.value.nome
-        , email     : this.perfilForm.value.username
-        , cpf       : this.perfilForm.value.cpf
-        , rg        : this.perfilForm.value.rg
-        , nrpassa   : this.perfilForm.value.passaporte
-        , fotoCapa  : this.perfilForm.value.fotoCapa
-        , fotoPerfil: this.perfilForm.value.fotoPerfil
+    const formValue = this.perfilForm.value;
+    let data: any = {
+      userId: this.usuario.idusuario
+      , nome: this.perfilForm.value.nome
+      , email: this.perfilForm.value.email
+      , cpf: this.perfilForm.value.cpf
+      , rg: this.perfilForm.value.rg
+      , nrpassa: this.perfilForm.value.passaporte
+      , fotoCapa: this.perfilForm.value.fotoCapa
+      , fotoPerfil: this.perfilForm.value.fotoPerfil
+    }
+
+    data.facebook = null;
+    data.twitter = null;
+    data.instagram = null;
+    data.linkedin = null;
+
+    // Atualiza apenas os existentes
+    this.redesSociais.map(m => {
+      if (m.nome === "Facebook") data.facebook = m.url;
+      if (m.nome === "Twitter") data.twitter = m.url;
+      if (m.nome === "Instagram") data.instagram = m.url;
+      if (m.nome === "LinkedIn") data.linkedin = m.url;
+    });
+
+    // Remover subformulário de nova rede social dos dados
+    const { novaRedeSocial, ...dadosAtualizados } = formValue;
+
+    // Verificar alteração de senha
+    if (formValue.senhaAtual || formValue.novaSenha || formValue.confirmarNovaSenha) {
+      if (this.perfilForm.hasError('passwordFieldsRequired')) {
+        this.toastr.warning('Todos os campos de senha são necessários');
+        return;
       }
 
-      this.redesSociais.map(m => {
-        m.nome === "Facebook"  ? data.facebook  = m.url : null;
-        m.nome === "Twitter"   ? data.twitter   = m.url : null;
-        m.nome === "Instagram" ? data.instagram = m.url : null;
-        m.nome === "LinkedIn"  ? data.linkedin  = m.url : null;
-      })
-
-      // Remover subformulário de nova rede social dos dados
-      const { novaRedeSocial, ...dadosAtualizados } = formValue;
-
-      // Verificar alteração de senha
-      if (formValue.senhaAtual || formValue.novaSenha || formValue.confirmarNovaSenha) {
-        if (this.perfilForm.hasError('passwordFieldsRequired')) {
-          this.toastr.warning('Todos os campos de senha são necessários');
-          return;
-        }
-
-        if (this.perfilForm.hasError('passwordMismatch')) {
-          this.toastr.warning('As senhas não coincidem');
-          return;
-        }
-        data.senha = this.perfilForm.value.novaSenha;
-        await this.service.atualizarPerfil(data).subscribe({
-          next: (res: any) => {
-            debugger
-            if (res.blOk === true) {
-              this.toastr.success(res.message);
-              this.avaliacaoForm.reset();
-              this.informacoes();
-              this.voltar();
-            } else {
-              this.toastr.error(res.message);
-            }
-          },
-          error: (error) => {
-            console.error('Error during getAval:', error);
-            this.toastr.warning('Ocorreu um erro durante o carregamento da tela. Por favor, recarregue a página!', 'ATENÇÃO:');
-          }
-        });
-      } else {
-        await this.service.atualizarPerfil(data).subscribe({
-          next: (res: any) => {
-            debugger
-            if (res.blOk === true) {
-              this.toastr.success(res.message);
-              this.avaliacaoForm.reset();
-              this.informacoes();
-              this.voltar();
-            } else {
-              this.toastr.error(res.message);
-            }
-          },
-          error: (error) => {
-            console.error('Error during getAval:', error);
-            this.toastr.warning('Ocorreu um erro durante o carregamento da tela. Por favor, recarregue a página!', 'ATENÇÃO:');
-          }
-        });
+      if (this.perfilForm.hasError('passwordMismatch')) {
+        this.toastr.warning('As senhas não coincidem');
+        return;
       }
+      data.senha = this.perfilForm.value.novaSenha;
+      await this.service.atualizarPerfil(data).subscribe({
+        next: (res: any) => {
+          debugger
+          if (res.blOk === true) {
+            this.toastr.success(res.message);
+            this.avaliacaoForm.reset();
+            this.informacoes();
+            this.voltar();
+          } else {
+            this.toastr.error(res.message);
+          }
+        },
+        error: (error) => {
+          console.error('Error during getAval:', error);
+          this.toastr.warning('Ocorreu um erro durante o carregamento da tela. Por favor, recarregue a página!', 'ATENÇÃO:');
+        }
+      });
+    } else {
+      await this.service.atualizarPerfil(data).subscribe({
+        next: (res: any) => {
+          debugger
+          if (res.blOk === true) {
+            this.toastr.success(res.message);
+            this.avaliacaoForm.reset();
+            this.informacoes();
+            this.voltar();
+          } else {
+            this.toastr.error(res.message);
+          }
+        },
+        error: (error) => {
+          console.error('Error during getAval:', error);
+          this.toastr.warning('Ocorreu um erro durante o carregamento da tela. Por favor, recarregue a página!', 'ATENÇÃO:');
+        }
+      });
+    }
     //}
   }
 
   cancelarAlteracoes() {
-    // if (this.perfilForm.dirty) {
-    //   if (!confirm('Existem alterações não salvas. Deseja realmente cancelar?')) {
-    //     return;
-    //   }
+    // if (this.perfilForm.dirty || this.redesSociaisForamAlteradas()) {
+    // if (!confirm('Existem alterações não salvas. Deseja realmente cancelar?')) {
+    //    return;
+    //  }
     // }
     // this.editMode = false;
     this.perfilForm.reset();
