@@ -11,7 +11,6 @@ const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         const hostFolder = path.join(uploadsDir, `host_${req.body.idhost}`);
         if (!fs.existsSync(hostFolder)) {
-            
             fs.mkdirSync(hostFolder, { recursive: true });
         }
         cb(null, hostFolder);
@@ -33,6 +32,22 @@ const buscar = async (req, res) => {
     } catch (error) {
         console.error('Erro ao buscar intercâmbios:', error);
         res.status(500).json({ blOk: false, message: 'Erro ao buscar intercâmbios!' });
+    }
+};
+
+const buscarPorId = async (req, res) => {
+    try {
+        const { id } = req.params; // Pega o ID da URL
+        const intercambio = await intercambiosDAO.buscarPorId(id);
+
+        if (!intercambio) {
+            return res.status(404).json({ blOk: false, message: 'Intercâmbio não encontrado!' });
+        }
+
+        res.status(200).json(intercambio);
+    } catch (error) {
+        console.error('Erro ao buscar intercâmbio por ID:', error);
+        res.status(500).json({ blOk: false, message: 'Erro ao buscar intercâmbio por ID!' });
     }
 };
 
@@ -71,4 +86,4 @@ const cadastrar = async (req, res) => {
     });
 };
 
-module.exports = { buscar, cadastrar };
+module.exports = { buscar, buscarPorId, cadastrar };

@@ -1,0 +1,34 @@
+<app-menu></app-menu> <!-- Componente de Menu -->
+
+<div class="details-container">
+    <header>
+        <h1 class="text-center">Detalhes do Intercâmbio</h1>
+    </header>
+
+    <section *ngIf="selectedExchange">
+        <h2>{{ selectedExchange.titulo }}</h2>
+        <img *ngIf="selectedExchange.img" [src]="selectedExchange.img" alt="Imagem do Intercâmbio"
+            class="exchange-image" />
+        <p><strong>Descrição:</strong> {{ selectedExchange.descricao }}</p>
+        <p><strong>Serviços:</strong> {{ selectedExchange.servicos }}</p>
+        <p><strong>Benefícios:</strong> {{ selectedExchange.beneficios }}</p>
+        <p><strong>Duração:</strong> {{ selectedExchange.duracao }}</p>
+    </section>
+
+    <section *ngIf="selectedExchange?.contatoHost">
+        <h3>Informações do Host</h3>
+        <p><strong>Proprietário:</strong> {{ selectedExchange.contatoHost.nmprop }}</p>
+        <p>
+            <strong>Endereço:</strong> {{ selectedExchange.contatoHost.endereco }},
+            {{ selectedExchange.contatoHost.cidade }},
+            {{ selectedExchange.contatoHost.estado }}
+        </p>
+        <p><strong>Contato:</strong> {{ selectedExchange.contatoHost.telefone }}</p>
+        <p><strong>Email:</strong> {{ selectedExchange.contatoHost.email }}</p>
+    </section>
+
+    <button class="back-button" (click)="goBack()">Voltar</button>
+    <button class="apply-button" (click)="applyForExchange()">Se Candidatar</button>
+</div>
+
+<app-footer></app-footer> <!-- Componente de Footer -->
