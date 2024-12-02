@@ -76,4 +76,39 @@ const cadastrar = async (dados) => {
     }
 };
 
-module.exports = { buscar, buscarPorId, cadastrar };
+const getIntercambioById = async (req, res) => {
+    try {
+        const { id } = req.body;
+
+        const intercambio = await prisma.intercambio.findUnique({
+            where: { idinterc: Number(id) },
+            include: {
+                contatoHost: {
+                    include: {
+                        usuario: {
+                            include: {
+                                avaliacoesComoAvaliado: {
+                                    select: {
+                                        avaliacao: true,
+                                        descricao: true,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        });
+
+        if (!intercambio) {
+            return res.status(404).json({ blOk: false, message: 'Intercâmbio não encontrado!' });
+        }
+
+        res.status(200).json(intercambio);
+    } catch (error) {
+        console.error('Erro ao buscar detalhes do intercâmbio:', error);
+        res.status(500).json({ blOk: false, message: 'Erro ao buscar detalhes do intercâmbio!' });
+    }
+};
+
+module.exports = { buscar, buscarPorId, cadastrar, getIntercambioById };

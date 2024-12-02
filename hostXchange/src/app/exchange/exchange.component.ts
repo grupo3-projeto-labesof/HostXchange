@@ -47,6 +47,9 @@ export class ExchangeComponent implements OnInit {
     constructor(private router: Router, private exchangeService: ExchangeService) { }
 
     ngOnInit(): void {
+        localStorage.setItem('verIntercambio', "0");
+        localStorage.setItem('verPerfil'     , "0");
+        localStorage.setItem('idHost'        , "0");
         this.loadExchanges();
     }
 
@@ -97,6 +100,7 @@ export class ExchangeComponent implements OnInit {
     }
 
     verDetalhes(id: number): void {
-        this.router.navigate([`/exchange/${id}`]);
+        localStorage.setItem('verIntercambio', id.toString());
+        this.router.navigate(['/intercambio']);
     }
 }
