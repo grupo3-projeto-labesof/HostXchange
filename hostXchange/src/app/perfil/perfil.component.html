@@ -116,13 +116,11 @@
           <h3>Fotos</h3>
           <div class="mb-3">
             <label for="fotoPerfil" class="form-label">Foto de Perfil</label>
-            <input type="file" id="fotoPerfil" (change)="onFileSelected($event, 'perfil')"
-              class="form-control bg-secondary text-white" accept="image/*">
+            <input type="file" id="fotoPerfil" (change)="onFileSelected($event, 'perfil')" class="form-control bg-secondary text-white" accept="image/*">
           </div>
           <div class="mb-3">
             <label for="fotoCapa" class="form-label">Foto de Capa</label>
-            <input type="file" id="fotoCapa" (change)="onFileSelected($event, 'capa')"
-              class="form-control bg-secondary text-white" accept="image/*">
+            <input type="file" id="fotoCapa" (change)="onFileSelected($event, 'capa')" class="form-control bg-secondary text-white" accept="image/*">
           </div>
         </div>
 
@@ -133,40 +131,33 @@
               <div class="card-body">
                 <h4>Preview Foto de Perfil</h4>
                 <div class="preview-container position-relative">
-                  @if (fotoPerfilFile) {
-                  <div class="preview-image-wrapper">
-                    <div class="preview-image"
-                      [style.backgroundImage]="'url(' + getFotoPreviewUrl(fotoPerfilFile) + ')'"></div>
-                    <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1"
-                      (click)="removerFoto('perfil')">×</button>
+                  <div *ngIf="fotoPerfilFile; else noImagePerfil">
+                    <div class="preview-image" [style.backgroundImage]="'url(' + getFotoPreviewUrl(fotoPerfilFile) + ')'"></div>
+                    <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1" (click)="removerFoto('perfil')">×</button>
                   </div>
-                  } @else {
-                  <div class="preview-placeholder d-flex align-items-center justify-content-center">
-                    Nenhuma imagem selecionada
-                  </div>
-                  }
+                  <ng-template #noImagePerfil>
+                    <div class="preview-placeholder d-flex align-items-center justify-content-center">
+                      Nenhuma imagem selecionada
+                    </div>
+                  </ng-template>
                 </div>
               </div>
             </div>
           </div>
-
           <div class="col-md-6">
             <div class="card bg-secondary">
               <div class="card-body">
                 <h4>Preview Foto de Capa</h4>
                 <div class="preview-container position-relative">
-                  @if (fotoCapaFile) {
-                  <div class="preview-image-wrapper">
-                    <div class="preview-image" [style.backgroundImage]="'url(' + getFotoPreviewUrl(fotoCapaFile) + ')'">
+                  <div *ngIf="fotoCapaFile; else noImageCapa">
+                    <div class="preview-image" [style.backgroundImage]="'url(' + getFotoPreviewUrl(fotoCapaFile) + ')'"></div>
+                    <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1" (click)="removerFoto('capa')">×</button>
+                  </div>
+                  <ng-template #noImageCapa>
+                    <div class="preview-placeholder d-flex align-items-center justify-content-center">
+                      Nenhuma imagem selecionada
                     </div>
-                    <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1"
-                      (click)="removerFoto('capa')">×</button>
-                  </div>
-                  } @else {
-                  <div class="preview-placeholder d-flex align-items-center justify-content-center">
-                    Nenhuma imagem selecionada
-                  </div>
-                  }
+                  </ng-template>
                 </div>
               </div>
             </div>

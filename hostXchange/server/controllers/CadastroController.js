@@ -3,11 +3,11 @@ const cadastroDAO = require('../dao/CadastroDAO');
 const saltRounds = 10;
 
 const cadastroUsuario = async (req, res) => {
-  const { nome, email, password, cpf, rg, nrpassa, sexo, passaporte, nacionalidade } = req.body;
+  const { nome, email, password, cpf, rg, passaporte, sexo, nacionalidade } = req.body;
   
   try {
     const hash = await bcrypt.hash(password, saltRounds);
-    const result = await cadastroDAO.cadastroUsuario(nome, email, hash, cpf, rg, nrpassa, sexo, passaporte, nacionalidade );
+    const result = await cadastroDAO.cadastroUsuario(nome, email, hash, cpf, rg, sexo, passaporte, nacionalidade );
     if (result.success) {
       res.status(201).json(result);
     } else {

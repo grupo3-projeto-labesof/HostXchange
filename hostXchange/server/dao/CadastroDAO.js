@@ -1,7 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-const cadastroUsuario = async (nome, email, password, cpf, rg, sexo, nacionalidade, passaporte) => {
+const cadastroUsuario = async (nome, email, password, cpf, rg, sexo, passaporte, nacionalidade) => {
   try {
     await prisma.usuario.create({
       data: {
@@ -10,9 +10,10 @@ const cadastroUsuario = async (nome, email, password, cpf, rg, sexo, nacionalida
         senha: password,
         cpf,
         rg,
-        sexo,
+        sexo: sexo,
         nrpassa: passaporte,
         nacional: nacionalidade,
+        nacionali: nacionalidade,
         stusuario: 'A',  // Usuário
         tpusuario: 'V'   // Tipo de usuário padrão viajante
       }

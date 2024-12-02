@@ -25,8 +25,8 @@ model Usuario {
   twitter   String?  @db.VarChar(255)
   instagram String?  @db.VarChar(255)
   linkedin  String?  @db.VarChar(255)
-  fotoPerfil Bytes?
-  fotoCapa   Bytes?
+  fotoPerfil String?
+  fotoCapa   String?
   CDRESET   String?  @db.VarChar(6)
   idhost    Int?     @unique // Campo único para relação 1-1
 
