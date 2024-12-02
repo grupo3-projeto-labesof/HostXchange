@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { PerfilService } from '../services/perfil.service';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
@@ -76,6 +76,9 @@ export class PerfilComponent implements OnInit {
   // mostrarAvaliacoes = false;
   avaliacao: any;
 
+  private fotoPerfilPreviewUrl: string = '';
+  private fotoCapaPreviewUrl: string = '';
+
 
   todasRedesSociais: string[] = ['LinkedIn', 'Twitter', 'Facebook', 'Instagram'];
   redesSociaisDisponiveis: string[] = ['LinkedIn', 'Twitter', 'Facebook', 'Instagram'];
@@ -94,6 +97,8 @@ export class PerfilComponent implements OnInit {
     private toastr: ToastrService
     , private service: PerfilService
     , private fb: FormBuilder
+    , private cdr: ChangeDetectorRef
+    , private ngZone: NgZone
   ) { }
 
 
@@ -104,7 +109,7 @@ export class PerfilComponent implements OnInit {
 
   async informacoes() {
     localStorage.setItem('verIntercambio', "0");
-    localStorage.setItem('idHost'        , "0");
+    localStorage.setItem('idHost', "0");
     const perfil = this.verPerfil != 0 ? this.verPerfil : this.userLogado;
     this.usuario = [];
     this.avaliacoesFeitas = [];
@@ -131,6 +136,8 @@ export class PerfilComponent implements OnInit {
 
           if (!fotoCapa) this.usuario.fotoCapa = 'assets/images/perfil/capa.jpg';
           if (!fotoPerfil) this.usuario.fotoPerfil = 'assets/images/perfil/perfil.jpg';
+
+          this.cdr.detectChanges();
 
           await this.service.getAvaliacoes({ idUser: perfil }).subscribe({
             next: (res: any) => {
@@ -279,9 +286,9 @@ export class PerfilComponent implements OnInit {
 
   redesSociaisForamAlteradas(): boolean {
     if (this.redesSociais.length !== this.redesSociaisOriginais.length) return true;
-    
-    return this.redesSociais.some((rede, index) => 
-      rede.nome !== this.redesSociaisOriginais[index]?.nome || 
+
+    return this.redesSociais.some((rede, index) =>
+      rede.nome !== this.redesSociaisOriginais[index]?.nome ||
       rede.url !== this.redesSociaisOriginais[index]?.url
     );
   }
@@ -382,72 +389,98 @@ export class PerfilComponent implements OnInit {
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
 
-      // Verify file type
+      // Verificar tipo de arquivo
       if (!file.type.startsWith('image/')) {
         this.toastr.error('Por favor, selecione apenas arquivos de imagem.');
         input.value = '';
         return;
       }
 
-      // Verify file size (5MB max)
-      const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+      // Verificar tamanho do arquivo (5MB max)
+      const maxSize = 5 * 1024 * 1024;
       if (file.size > maxSize) {
         this.toastr.error('A imagem deve ter no máximo 5MB.');
         input.value = '';
         return;
       }
 
-      // Verify image dimensions
+      // Criar URL para preview
+      const previewUrl = URL.createObjectURL(file);
+
+      // Verificar dimensões
       const img = new Image();
-      img.src = URL.createObjectURL(file);
       img.onload = () => {
         const maxWidth = 2048;
         const maxHeight = 2048;
 
-        if (tipo === 'perfil' && img.width > maxWidth || img.height > maxHeight) {
+        if (img.width > maxWidth || img.height > maxHeight) {
           this.toastr.error(`A imagem deve ter no máximo ${maxWidth}x${maxHeight} pixels.`);
           input.value = '';
-          URL.revokeObjectURL(img.src);
+          URL.revokeObjectURL(previewUrl);
           return;
         }
 
-        // If all validations pass, update the form
-        if (tipo === 'perfil') {
-          this.fotoPerfilFile = file;
-          this.perfilForm.patchValue({ fotoPerfil: file });
-        } else {
-          this.fotoCapaFile = file;
-          this.perfilForm.patchValue({ fotoCapa: file });
-        }
-        URL.revokeObjectURL(img.src);
+        // Se todas as validações passarem, atualizar o estado
+        this.ngZone.run(() => {
+          if (tipo === 'perfil') {
+            this.fotoPerfilFile = file;
+            this.fotoPerfilPreviewUrl = previewUrl;
+            this.usuario.fotoPerfil = previewUrl;
+          } else {
+            this.fotoCapaFile = file;
+            this.fotoCapaPreviewUrl = previewUrl;
+            this.usuario.fotoCapa = previewUrl;
+          }
+
+          // Atualizar o formulário
+          this.perfilForm.patchValue({
+            [tipo === 'perfil' ? 'fotoPerfil' : 'fotoCapa']: file
+          });
+
+          // Forçar detecção de mudanças de forma segura
+          Promise.resolve().then(() => {
+            this.cdr.detectChanges();
+          });
+        });
       };
+
+      img.src = previewUrl;
     }
   }
 
   getFotoPreviewUrl(file: File | null): string {
-    // if (file) {
-    //   return URL.createObjectURL(file);
-    // }
-    return file ? URL.createObjectURL(file) : '';
+    if (file === this.fotoPerfilFile) {
+      return this.fotoPerfilPreviewUrl;
+    } else if (file === this.fotoCapaFile) {
+      return this.fotoCapaPreviewUrl;
+    }
+    return '';
   }
 
-  // Modifique o método removerFoto existente para:
   removerFoto(tipo: 'perfil' | 'capa') {
     if (tipo === 'perfil') {
       if (this.fotoPerfilFile) {
-        URL.revokeObjectURL(this.getFotoPreviewUrl(this.fotoPerfilFile));
+        URL.revokeObjectURL(this.fotoPerfilPreviewUrl);
         this.fotoPerfilFile = undefined;
-        this.perfilForm.patchValue({ fotoPerfil: '' });
+        this.fotoPerfilPreviewUrl = '';
+        this.usuario.fotoPerfil = 'assets/images/perfil/perfil.jpg';
       }
     } else {
       if (this.fotoCapaFile) {
-        URL.revokeObjectURL(this.getFotoPreviewUrl(this.fotoCapaFile));
+        URL.revokeObjectURL(this.fotoCapaPreviewUrl);
         this.fotoCapaFile = undefined;
-        this.perfilForm.patchValue({ fotoCapa: '' });
+        this.fotoCapaPreviewUrl = '';
+        this.usuario.fotoCapa = 'assets/images/perfil/capa.jpg';
       }
     }
+
+    this.perfilForm.patchValue({
+      [tipo === 'perfil' ? 'fotoPerfil' : 'fotoCapa']: ''
+    });
+
     this.toastr.success(`Foto de ${tipo} removida com sucesso.`);
   }
+
 
   async salvarAlteracoes() {
     debugger
@@ -460,56 +493,54 @@ export class PerfilComponent implements OnInit {
     formData.append('cpf', formValue.cpf);
     formData.append('rg', formValue.rg);
     formData.append('nrpassa', formValue.passaporte);
-    
+
     if (formValue.fotoPerfil) {
-        formData.append('fotoPerfil', formValue.fotoPerfil);
+      formData.append('fotoPerfil', formValue.fotoPerfil);
     }
     if (formValue.fotoCapa) {
-        formData.append('fotoCapa', formValue.fotoCapa);
+      formData.append('fotoCapa', formValue.fotoCapa);
     }
 
-    if (formValue.facebook) {
-        formData.append('facebook', formValue.facebook);
-    }
-    if (formValue.twitter) {
-        formData.append('twitter', formValue.twitter);
-    }
-    if (formValue.instagram) {
-        formData.append('instagram', formValue.instagram);
-    }
-    if (formValue.linkedin) {
-        formData.append('linkedin', formValue.linkedin);
-    }
+    const redes = {
+      facebook: this.redesSociais.find(r => r.nome === 'Facebook')?.url ?? '',
+      twitter: this.redesSociais.find(r => r.nome === 'Twitter')?.url ?? '',
+      instagram: this.redesSociais.find(r => r.nome === 'Instagram')?.url ?? '',
+      linkedin: this.redesSociais.find(r => r.nome === 'LinkedIn')?.url ?? ''
+    };
+
+    Object.entries(redes).forEach(([nome, url]) => {
+      formData.append(nome, url);
+    });
 
     if (formValue.senhaAtual || formValue.novaSenha || formValue.confirmarNovaSenha) {
-        if (this.perfilForm.hasError('passwordFieldsRequired')) {
-            this.toastr.warning('Todos os campos de senha são necessários');
-            return;
-        }
+      if (this.perfilForm.hasError('passwordFieldsRequired')) {
+        this.toastr.warning('Todos os campos de senha são necessários');
+        return;
+      }
 
-        if (this.perfilForm.hasError('passwordMismatch')) {
-            this.toastr.warning('As senhas não coincidem');
-            return;
-        }
-        formData.append('senha', formValue.novaSenha);
+      if (this.perfilForm.hasError('passwordMismatch')) {
+        this.toastr.warning('As senhas não coincidem');
+        return;
+      }
+      formData.append('senha', formValue.novaSenha);
     }
 
     await this.service.atualizarPerfil(formData).subscribe({
-        next: (res: any) => {
-            debugger
-            if (res.blOk === true) {
-                this.toastr.success(res.message);
-                this.avaliacaoForm.reset();
-                this.informacoes();
-                this.voltar();
-            } else {
-                this.toastr.error(res.message);
-            }
-        },
-        error: (error) => {
-            console.error('Error during getAval:', error);
-            this.toastr.warning('Ocorreu um erro durante o carregamento da tela. Por favor, recarregue a página!', 'ATENÇÃO:');
+      next: (res: any) => {
+        debugger
+        if (res.blOk === true) {
+          this.toastr.success(res.message);
+          this.avaliacaoForm.reset();
+          this.informacoes();
+          this.voltar();
+        } else {
+          this.toastr.error(res.message);
         }
+      },
+      error: (error) => {
+        console.error('Error during getAval:', error);
+        this.toastr.warning('Ocorreu um erro durante o carregamento da tela. Por favor, recarregue a página!', 'ATENÇÃO:');
+      }
     });
   }
 

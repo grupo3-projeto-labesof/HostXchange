@@ -49,6 +49,7 @@ export class ExchangeDetailsComponent implements OnInit {
     private async loadExchangeDetails(id: number): Promise<void> {
         await this.exchangeService.getExchangeById({ id }).subscribe({
             next: (response: any) => {
+                console.log('Detalhes do intercâmbio:', response);
                 this.selectedExchange = response;
     
                 // Carregar imagens
@@ -65,6 +66,7 @@ export class ExchangeDetailsComponent implements OnInit {
                     response.img10,
                 ].filter((img) => img); // Filtrar imagens não nulas
     
+                console.log('Host: ', response.idhost);
                 // Carregar avaliações do host
                 this.avaliacoes = response.contatoHost?.usuario?.avaliacoesComoAvaliado || [];
             },
@@ -85,7 +87,7 @@ export class ExchangeDetailsComponent implements OnInit {
         const data = {idviajante: Number(localStorage.getItem("id")), idinterc: this.selectedExchange.idinterc };
         debugger
         if(data.idviajante === this.selectedExchange.contatoHost.usuario.idusuario) {
-            this.toastr.warning("Você é o host e não pode se canditar!")
+            this.toastr.warning("Você é o host e não pode se candidatar!")
         } else {
             await this.exchangeService.seCandidatar(data).subscribe({
                 next: (res: any) => {
