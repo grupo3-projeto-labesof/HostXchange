@@ -8,6 +8,26 @@ body {
     max-width: 800px;
 }
 
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Garante que a tela ocupe toda a altura da janela */
+}
+
+main {
+    flex: 1; /* Faz o conteúdo ocupar o espaço disponível */
+    display: flex;
+    flex-direction: column;
+}
+
+#avaliacoes, #avaliar-usuario {
+    margin-bottom: auto; /* Garante que as seções dentro do main fiquem no topo se o conteúdo for pequeno */
+}
+
+app-menu, app-footer {
+    flex-shrink: 0; /* Evita que o menu ou footer sejam redimensionados */
+}
+
 .cover-card {
     overflow: visible;
     padding: 0;
