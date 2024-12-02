@@ -36,4 +36,22 @@ const criarMatch = async (idviajante, idinterc) => {
   }
 };
 
-module.exports = { buscarUsuario, buscarIntercambio, criarMatch, };
+const criarAvaliacao = async ({ avaliadoId, avaliadorId, avaliacao, descricao, snaval }) => {
+  try {
+    const novaAvaliacao = await prisma.avaliacao.create({
+      data: {
+        avaliadoId,
+        avaliadorId,
+        avaliacao,
+        descricao,
+        snaval,
+      },
+    });
+    return { success: true, avaliacao: novaAvaliacao };
+  } catch (error) {
+    console.error('Erro ao criar avaliação:', error);
+    throw new Error('Erro ao criar avaliação.');
+  }
+};
+
+module.exports = { buscarUsuario, buscarIntercambio, criarMatch, criarAvaliacao };
