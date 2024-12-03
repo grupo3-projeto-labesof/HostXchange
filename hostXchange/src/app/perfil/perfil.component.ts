@@ -243,7 +243,6 @@ export class PerfilComponent implements OnInit {
 
       await this.service.salvarAvaliacao(avaliacao).subscribe({
         next: (res: any) => {
-          debugger
           if (res.blOk === true) {
             this.toastr.success('Avaliação salva com sucesso!');
             this.avaliacaoForm.reset();
@@ -262,7 +261,6 @@ export class PerfilComponent implements OnInit {
   }
 
   acaoAvaliarUsuario(idAvaliacao: string) {
-    debugger
     this.avaliacao = idAvaliacao;
     //this.avaliacaoPendenteEspecifica = this.AvaliacaoPendente.find(avaliacao => avaliacao.idAvaliar === idAvaliacao);
     this.view = 4;
@@ -483,7 +481,6 @@ export class PerfilComponent implements OnInit {
 
 
   async salvarAlteracoes() {
-    debugger
     const formValue = this.perfilForm.value;
     const formData = new FormData();
 
@@ -527,7 +524,6 @@ export class PerfilComponent implements OnInit {
 
     await this.service.atualizarPerfil(formData).subscribe({
       next: (res: any) => {
-        debugger
         if (res.blOk === true) {
           this.toastr.success(res.message);
           this.avaliacaoForm.reset();

@@ -85,7 +85,6 @@ export class ExchangeDetailsComponent implements OnInit {
 
     async applyForExchange(): Promise<void> {
         const data = {idviajante: Number(localStorage.getItem("id")), idinterc: this.selectedExchange.idinterc };
-        debugger
         if(data.idviajante === this.selectedExchange.contatoHost.usuario.idusuario) {
             this.toastr.warning("Você é o host e não pode se candidatar!")
         } else {

@@ -244,10 +244,8 @@ export class FormHostComponent implements OnInit {
       let data = this.formHost.value;
       
       data.idUsuario = localStorage.getItem("id");
-      debugger
       await this.hostService.enviarFormulario(data).subscribe({
         next: (res: any) => {
-          debugger
           if(res.success) {
             console.log('Dados enviados com sucesso!');
             localStorage.setItem("idHost", res.idHost);

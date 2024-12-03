@@ -125,7 +125,6 @@ export class LoginComponent implements OnInit {
         next: (res: any) => {
           if (res.blOk === true) {
             const user = res.user[0];
-            debugger
             localStorage.setItem('id', user.idusuario);
             localStorage.setItem('nome', user.nome);
             localStorage.setItem('logado', "true");
