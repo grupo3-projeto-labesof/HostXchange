@@ -76,8 +76,8 @@ export class PerfilComponent implements OnInit {
   // mostrarAvaliacoes = false;
   avaliacao: any;
 
-  private fotoPerfilPreviewUrl: string = '';
-  private fotoCapaPreviewUrl: string = '';
+  fotoPerfilPreviewUrl: string = '';
+  fotoCapaPreviewUrl: string = '';
 
 
   todasRedesSociais: string[] = ['LinkedIn', 'Twitter', 'Facebook', 'Instagram'];
@@ -430,7 +430,6 @@ export class PerfilComponent implements OnInit {
             this.usuario.fotoCapa = previewUrl;
           }
 
-          import { ChangeDetectorRef } from '@angular/core';
           // Atualizar o formulário
           this.perfilForm.patchValue({
             [tipo === 'perfil' ? 'fotoPerfil' : 'fotoCapa']: file
@@ -447,35 +446,26 @@ export class PerfilComponent implements OnInit {
     }
   }
 
-  getFotoPreviewUrl(file: File | null): string {
-    if (file === this.fotoPerfilFile) {
-      return this.fotoPerfilPreviewUrl;
-    } else if (file === this.fotoCapaFile) {
-      return this.fotoCapaPreviewUrl;
-    }
-    return '';
-  }
-
   removerFoto(tipo: 'perfil' | 'capa') {
     if (tipo === 'perfil') {
       if (this.fotoPerfilFile) {
         URL.revokeObjectURL(this.fotoPerfilPreviewUrl);
         this.fotoPerfilFile = undefined;
         this.fotoPerfilPreviewUrl = '';
-        this.usuario.fotoPerfil = 'assets/images/perfil/perfil.jpg';
+        //this.usuario.fotoPerfil = 'assets/images/perfil/perfil.jpg';
       }
     } else {
       if (this.fotoCapaFile) {
         URL.revokeObjectURL(this.fotoCapaPreviewUrl);
         this.fotoCapaFile = undefined;
         this.fotoCapaPreviewUrl = '';
-        this.usuario.fotoCapa = 'assets/images/perfil/capa.jpg';
+        //this.usuario.fotoCapa = 'assets/images/perfil/capa.jpg';
       }
     }
 
-    this.perfilForm.patchValue({
-      [tipo === 'perfil' ? 'fotoPerfil' : 'fotoCapa']: ''
-    });
+    //this.perfilForm.patchValue({
+    //  [tipo === 'perfil' ? 'fotoPerfil' : 'fotoCapa']: ''
+    //});
 
     this.toastr.success(`Foto de ${tipo} removida com sucesso.`);
   }

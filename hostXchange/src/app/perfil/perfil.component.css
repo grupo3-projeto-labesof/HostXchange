@@ -1,4 +1,3 @@
-
 body {
     background-color: #ffffff;
     color: #333333;
@@ -11,21 +10,27 @@ body {
 :host {
     display: flex;
     flex-direction: column;
-    height: 100vh; /* Garante que a tela ocupe toda a altura da janela */
+    height: 100vh;
+    /* Garante que a tela ocupe toda a altura da janela */
 }
 
 main {
-    flex: 1; /* Faz o conteúdo ocupar o espaço disponível */
+    flex: 1;
+    /* Faz o conteúdo ocupar o espaço disponível */
     display: flex;
     flex-direction: column;
 }
 
-#avaliacoes, #avaliar-usuario {
-    margin-bottom: auto; /* Garante que as seções dentro do main fiquem no topo se o conteúdo for pequeno */
+#avaliacoes,
+#avaliar-usuario {
+    margin-bottom: auto;
+    /* Garante que as seções dentro do main fiquem no topo se o conteúdo for pequeno */
 }
 
-app-menu, app-footer {
-    flex-shrink: 0; /* Evita que o menu ou footer sejam redimensionados */
+app-menu,
+app-footer {
+    flex-shrink: 0;
+    /* Evita que o menu ou footer sejam redimensionados */
 }
 
 .cover-card {
@@ -185,7 +190,21 @@ app-menu, app-footer {
     height: 100%;
     object-fit: cover;
     object-position: center;
-  }
+}
+
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+}
+
+.rounded {
+    border-radius: 10px;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
 
 /* Estilos para telas menores */
 @media (max-width: 767px) {

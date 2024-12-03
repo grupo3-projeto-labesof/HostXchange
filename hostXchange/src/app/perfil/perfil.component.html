@@ -32,8 +32,7 @@
         <div class="card-body">
           <h2 class="card-title">
             Informações Pessoais
-            <button *ngIf="verPerfil == 0" class="btn btn-outline-light float-end"
-              (click)="editar()">
+            <button *ngIf="verPerfil == 0" class="btn btn-outline-light float-end" (click)="editar()">
               <i class="fas fa-edit"></i> Editar
             </button>
           </h2>
@@ -116,58 +115,53 @@
           <h3>Fotos</h3>
           <div class="mb-3">
             <label for="fotoPerfil" class="form-label">Foto de Perfil</label>
-            <input type="file" id="fotoPerfil" (change)="onFileSelected($event, 'perfil')" class="form-control bg-secondary text-white" accept="image/*">
+            <input type="file" id="fotoPerfil" (change)="onFileSelected($event, 'perfil')"
+              class="form-control bg-secondary text-white" accept="image/*">
           </div>
           <div class="mb-3">
             <label for="fotoCapa" class="form-label">Foto de Capa</label>
-            <input type="file" id="fotoCapa" (change)="onFileSelected($event, 'capa')" class="form-control bg-secondary text-white" accept="image/*">
+            <input type="file" id="fotoCapa" (change)="onFileSelected($event, 'capa')"
+              class="form-control bg-secondary text-white" accept="image/*">
           </div>
         </div>
 
         <!-- Previews das Fotos -->
         <div class="row mb-4">
+          <!-- Preview Foto de Perfil -->
           <div class="col-md-6">
             <div class="card bg-secondary">
-              <div class="card-body">
+              <div class="card-body text-center">
                 <h4>Preview Foto de Perfil</h4>
-                <div class="preview-container position-relative">
-                  @if (fotoPerfilFile) {
-                  <div class="preview-image-wrapper">
-                    <div class="preview-image">
-                      <img class="preview-img"
-                      [src]="previewURLPerfil"
-                      alt="Preview da foto de perfil">
-                    </div>
-                    <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1"
-                      (click)="removerFoto('perfil')">×</button>
-                  </div>
-                  <ng-template #noImagePerfil>
-                    <div class="preview-placeholder d-flex align-items-center justify-content-center">
-                      Nenhuma imagem selecionada
-                    </div>
-                  </ng-template>
+                <div *ngIf="fotoPerfilPreviewUrl; else noImagePerfil">
+                  <img [src]="fotoPerfilPreviewUrl" alt="Foto de Perfil" class="img-fluid rounded">
+                  <button type="button" class="btn btn-danger btn-sm mt-2"
+                    (click)="removerFoto('perfil')">Remover</button>
                 </div>
+                <ng-template #noImagePerfil>
+                  <p class="text-white">Nenhuma imagem selecionada</p>
+                </ng-template>
               </div>
             </div>
           </div>
+
+          <!-- Preview Foto de Capa -->
           <div class="col-md-6">
             <div class="card bg-secondary">
-              <div class="card-body">
+              <div class="card-body text-center">
                 <h4>Preview Foto de Capa</h4>
-                <div class="preview-container position-relative">
-                  @if (fotoCapaFile) {
-                  <div class="preview-image-wrapper">
-                    <div class="preview-image">
-                      <img class="preview-img"
-                      [src]="previewURLCapa"
-                      alt="Preview da foto de capa">
-                    </div>
-                  </ng-template>
+                <div *ngIf="fotoCapaPreviewUrl; else noImageCapa">
+                  <img [src]="fotoCapaPreviewUrl" alt="Foto de Capa" class="img-fluid rounded">
+                  <button type="button" class="btn btn-danger btn-sm mt-2"
+                    (click)="removerFoto('capa')">Remover</button>
                 </div>
+                <ng-template #noImageCapa>
+                  <p class="text-white">Nenhuma imagem selecionada</p>
+                </ng-template>
               </div>
             </div>
           </div>
         </div>
+
 
         <!-- Campos de Edição do Usuário -->
         <div class="mb-3">
@@ -186,8 +180,7 @@
         </div>
         <div class="mb-3">
           <label for="email" class="form-label">Email:<span class="text-danger">*</span></label>
-          <input type="text" id="email" formControlName="email" class="form-control bg-secondary text-white"
-            required>
+          <input type="text" id="email" formControlName="email" class="form-control bg-secondary text-white" required>
           <div *ngIf="perfilForm.get('email')?.errors?.['required'] && perfilForm.get('email')?.touched"
             class="text-danger mt-1">
             <small>O email é obrigatório.</small>
@@ -198,8 +191,8 @@
         </div>
         <div class="mb-3">
           <label for="rg" class="form-label">RG:<span class="text-danger">*</span></label>
-          <input type="text" id="rg" formControlName="rg" mask="00.000.000"
-            class="form-control bg-secondary text-white" required>
+          <input type="text" id="rg" formControlName="rg" mask="00.000.000" class="form-control bg-secondary text-white"
+            required>
           <div *ngIf="perfilForm.get('rg')?.errors?.['required'] && perfilForm.get('rg')?.touched"
             class="text-danger mt-1">
             <small>O RG é obrigatório.</small>
@@ -365,7 +358,9 @@
         </div>
 
         <!-- Botões de Ação -->
-        <button type="button" class="btn btn-primary" (click)="salvarAlteracoes()" [disabled]="!perfilForm.valid || (!perfilForm.dirty && !redesSociaisForamAlteradas())" >Salvar Alterações</button>
+        <button type="button" class="btn btn-primary" (click)="salvarAlteracoes()"
+          [disabled]="!perfilForm.valid || (!perfilForm.dirty && !redesSociaisForamAlteradas())">Salvar
+          Alterações</button>
         <button type="button" class="btn btn-secondary ms-2" (click)="cancelarAlteracoes()">Cancelar</button>
       </div> <!-- Fim de card-body -->
     </form>
@@ -426,21 +421,17 @@
             <i class="fas fa-times"></i> Fechar
           </button>
         </div>
-        <div class="mb-3">
-          <h4>Olá, {{ usuarioLogado.nome }}! Você está avaliando: {{ avaliacaoPendenteEspecifica.nomeUsuario }}</h4>
-        </div>
         <form [formGroup]="avaliacaoForm" (ngSubmit)="salvarAvaliacao()">
           <div class="mb-3">
             <label for="avaliacao" class="form-label">Avaliação:</label>
             <div class="d-flex align-items-center">
               <div class="stars text-secondary me-2">
-                <i *ngFor="let star of [1, 2, 3, 4, 5]" class="fas fa-star" 
-                 [class.text-warning]="star <= (avaliacaoForm.get('avaliacao')?.value || 1)"
-                 (click)="avaliacaoForm.get('avaliacao')?.setValue(star)" 
-                 style="cursor: pointer">
+                <i *ngFor="let star of [1, 2, 3, 4, 5]" class="fas fa-star"
+                  [class.text-warning]="star <= avaliacaoForm.get('avaliacao')?.value"
+                  (click)="avaliacaoForm.get('avaliacao')?.setValue(star)" style="cursor: pointer">
                 </i>
-                </div>
-                <span>{{avaliacaoForm.get('avaliacao')?.value || 1}} estrela(s).</span>
+              </div>
+              <span>{{avaliacaoForm.get('avaliacao')?.value || 1}}/5</span>
             </div>
           </div>
           <div class="mb-3">
@@ -454,6 +445,6 @@
       </div>
     </div>
   </section>
-  
+
 </main>
 <app-footer></app-footer>
