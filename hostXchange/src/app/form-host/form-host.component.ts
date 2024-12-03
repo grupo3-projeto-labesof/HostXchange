@@ -6,6 +6,8 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 import { HostService } from '../services/host.service';
 import { MenuComponent } from '../components/menu/menu.component';
 import { FooterComponent } from '../components/footer/footer.component';
+import { ToastrService } from 'ngx-toastr';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -24,8 +26,13 @@ export class FormHostComponent implements OnInit {
   cidadeNome: string = '';
   estadoNome: string = '';
 
-  constructor(private fb: FormBuilder, private http: HttpClient, private hostService: HostService) { }
-
+  constructor(
+      private fb         : FormBuilder
+    , private http       : HttpClient
+    , private hostService: HostService
+    , private toastr     : ToastrService
+    , private router     : Router
+  ) { }
 
   ngOnInit(): void {
     this.inicializarFormulario();
@@ -35,17 +42,17 @@ export class FormHostComponent implements OnInit {
   inicializarFormulario() {
     this.formHost = this.fb.group({
       nomePropriedade: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(60)]],
-      rua: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(60)]],
-      numero: ['', Validators.required],
-      complemento: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(20)]],
-      cidade: ['', Validators.required],
-      estado: ['', Validators.required],
-      cep: ['', Validators.required],
+      rua            : ['', [Validators.required, Validators.minLength(5), Validators.maxLength(60)]],
+      numero         : ['', Validators.required],
+      complemento    : ['', [Validators.required, Validators.minLength(4), Validators.maxLength(20)]],
+      cidade         : ['', Validators.required],
+      estado         : ['', Validators.required],
+      cep            : ['', Validators.required],
       tipoPropriedade: ['', Validators.required],
-      telefone: ['', Validators.required],
-      email: ['', [Validators.email]],
-      latitude: '',
-      longitude: ''
+      telefone       : ['', Validators.required],
+      email          : ['', [Validators.email]],
+      latitude       : '',
+      longitude      : ''
     });
   }
 
@@ -237,19 +244,26 @@ export class FormHostComponent implements OnInit {
       let data = this.formHost.value;
       
       data.idUsuario = localStorage.getItem("id");
-      
-      this.hostService.enviarFormulario(data).subscribe({
-        next: (response) => {
-          console.log('Dados enviados com sucesso: ', response);
-          alert('Dados enviados com sucesso!');
+      await this.hostService.enviarFormulario(data).subscribe({
+        next: (res: any) => {
+          if(res.success) {
+            console.log('Dados enviados com sucesso!');
+            localStorage.setItem("idHost", res.idHost);
+            localStorage.setItem("tipo_user", "H");
+            this.router.navigate(['/cadastrar-intercambio']);
+            this.toastr.success(res.message);
+          } else {
+            this.toastr.error(res.message);
+          }
         },
         error: (err) => {
-          alert('Erro ao enviar dados, tente novamente mais tarde! ' + err);
+          console.log("Erro: ", err);
+          this.toastr.error('Erro ao enviar dados, tente novamente mais tarde! ' + err);
         }
       });
       
     } else {
-      alert('Formulário inválido!');
+      this.toastr.warning('Formulário inválido!');
     }
   }
 

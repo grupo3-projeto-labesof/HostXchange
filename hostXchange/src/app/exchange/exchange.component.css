@@ -7,37 +7,31 @@
 
 /* Barra de pesquisa */
 .search-bar {
+    position: relative;
     display: flex;
     justify-content: center;
     margin-bottom: 20px;
-    gap: 10px;
 }
 
 .search-bar input {
     flex: 1;
-    max-width: 600px;
-    /* Define a largura máxima da barra de pesquisa */
+    max-width: 400px;
     padding: 10px;
+    padding-right: 40px; /* Espaço para a lupa */
     font-size: 16px;
     border: 1px solid #ccc;
-    border-radius: 4px 0 0 4px;
+    border-radius: 4px;
 }
 
-.search-bar button {
-    padding: 10px 20px;
-    font-size: 16px;
-    border: none;
-    background-color: #007BFF;
-    color: white;
-    cursor: pointer;
-    border-radius: 0 4px 4px 0;
+.search-icon {
+    position: absolute;
+    right: 25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #333; /* Cor do ícone */
+    font-size: 20px; /* Tamanho do ícone */
 }
 
-.search-bar button:hover {
-    background-color: #0056b3;
-}
-
-/* Filtros */
 .filters {
     margin-bottom: 20px;
     text-align: center;
@@ -56,14 +50,12 @@
     border: 1px solid #ccc;
     border-radius: 4px;
     min-width: 200px;
-    /* Largura mínima para melhor acomodação dos textos */
 }
 
 /* Cards */
 .exchange-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    /* Garante responsividade */
     gap: 20px;
     justify-content: center;
 }
@@ -76,16 +68,13 @@
     padding: 20px;
     text-align: center;
     max-width: 300px;
-    /* Limita a largura dos cards */
     margin: 0 auto;
-    /* Centraliza cards menores */
 }
 
 .exchange-card img {
     width: 100%;
     border-radius: 4px;
     height: 150px;
-    /* Define altura fixa para imagens consistentes */
     object-fit: cover;
 }
 
@@ -105,7 +94,6 @@
     display: flex;
     flex-direction: column;
     gap: 5px;
-    /* Espaçamento entre os detalhes */
 }
 
 .exchange-card .details span {

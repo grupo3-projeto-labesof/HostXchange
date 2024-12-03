@@ -11,7 +11,6 @@ const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         const hostFolder = path.join(uploadsDir, `host_${req.body.idhost}`);
         if (!fs.existsSync(hostFolder)) {
-            
             fs.mkdirSync(hostFolder, { recursive: true });
         }
         cb(null, hostFolder);
@@ -29,10 +28,27 @@ const upload = multer({
 const buscar = async (req, res) => {
     try {
         const intercambios = await intercambiosDAO.buscar();
+        console.log(intercambios)
         res.status(200).json(intercambios);
     } catch (error) {
         console.error('Erro ao buscar intercâmbios:', error);
         res.status(500).json({ blOk: false, message: 'Erro ao buscar intercâmbios!' });
+    }
+};
+
+const buscarPorId = async (req, res) => {
+    try {
+        const { id } = req.params; // Pega o ID da URL
+        const intercambio = await intercambiosDAO.buscarPorId(id);
+
+        if (!intercambio) {
+            return res.status(404).json({ blOk: false, message: 'Intercâmbio não encontrado!' });
+        }
+
+        res.status(200).json(intercambio);
+    } catch (error) {
+        console.error('Erro ao buscar intercâmbio por ID:', error);
+        res.status(500).json({ blOk: false, message: 'Erro ao buscar intercâmbio por ID!' });
     }
 };
 
@@ -48,7 +64,7 @@ const cadastrar = async (req, res) => {
 
             // Montando as referências das imagens
             const imagens = req.files.map((file) => ({
-                path: file.path
+                path: `/assets/intercambios/host_${idhost}/${file.filename}` // Construir a rota correta
             }));
 
             // Salvar o intercâmbio no banco de dados
@@ -60,7 +76,7 @@ const cadastrar = async (req, res) => {
                 beneficios,
                 duracao,
                 idhost,
-                imagens
+                imagens // Passa as imagens como referências de caminho
             });
 
             res.status(201).json({ blOk: true, message: 'Intercâmbio cadastrado com sucesso!', intercambio });
@@ -71,4 +87,4 @@ const cadastrar = async (req, res) => {
     });
 };
 
-module.exports = { buscar, cadastrar };
+module.exports = { buscar, buscarPorId, cadastrar };

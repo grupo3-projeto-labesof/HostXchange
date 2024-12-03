@@ -17,9 +17,15 @@ CREATE TABLE `USUARIO` (
     `twitter` VARCHAR(255) NULL,
     `instagram` VARCHAR(255) NULL,
     `linkedin` VARCHAR(255) NULL,
+    `fotoPerfil` LONGBLOB NULL,
+    `fotoCapa` LONGBLOB NULL,
     `CDRESET` VARCHAR(6) NULL,
+    `idhost` INTEGER NULL,
+    `idavaliacao` INTEGER NULL,
 
     UNIQUE INDEX `USUARIO_email_key`(`email`),
+    UNIQUE INDEX `USUARIO_idhost_key`(`idhost`),
+    INDEX `IDHOST_idx`(`idhost`),
     PRIMARY KEY (`idusuario`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -36,6 +42,8 @@ CREATE TABLE `CONTATO_HOST` (
     `nrtel` VARCHAR(100) NULL,
     `tipoProp` VARCHAR(40) NULL,
     `email` VARCHAR(100) NULL,
+    `latitude` VARCHAR(100) NULL,
+    `longitude` VARCHAR(100) NULL,
     `stcadast` VARCHAR(10) NULL,
     `dtcadast` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
@@ -67,5 +75,44 @@ CREATE TABLE `INTERCAMBIOS` (
     PRIMARY KEY (`idinterc`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+-- CreateTable
+CREATE TABLE `AVALIACAO` (
+    `idavaliacao` INTEGER NOT NULL AUTO_INCREMENT,
+    `avaliadoId` INTEGER NOT NULL,
+    `avaliadorId` INTEGER NOT NULL,
+    `avaliacao` INTEGER NOT NULL DEFAULT 0,
+    `snaval` BOOLEAN NULL,
+    `descricao` TEXT NULL,
+    `dtaval` TIMESTAMP(6) NULL,
+    `dtcadast` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`idavaliacao`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `MATCH` (
+    `idmatch` INTEGER NOT NULL AUTO_INCREMENT,
+    `idviajante` INTEGER NOT NULL,
+    `idinterc` INTEGER NOT NULL,
+    `dtcria` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`idmatch`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- AddForeignKey
+ALTER TABLE `USUARIO` ADD CONSTRAINT `USUARIO_idhost_fkey` FOREIGN KEY (`idhost`) REFERENCES `CONTATO_HOST`(`idctt`) ON DELETE CASCADE ON UPDATE CASCADE;
+
 -- AddForeignKey
 ALTER TABLE `INTERCAMBIOS` ADD CONSTRAINT `INTERCAMBIOS_idhost_fkey` FOREIGN KEY (`idhost`) REFERENCES `CONTATO_HOST`(`idctt`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `AVALIACAO` ADD CONSTRAINT `AVALIACAO_avaliadoId_fkey` FOREIGN KEY (`avaliadoId`) REFERENCES `USUARIO`(`idusuario`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `AVALIACAO` ADD CONSTRAINT `AVALIACAO_avaliadorId_fkey` FOREIGN KEY (`avaliadorId`) REFERENCES `USUARIO`(`idusuario`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `MATCH` ADD CONSTRAINT `MATCH_idviajante_fkey` FOREIGN KEY (`idviajante`) REFERENCES `USUARIO`(`idusuario`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `MATCH` ADD CONSTRAINT `MATCH_idinterc_fkey` FOREIGN KEY (`idinterc`) REFERENCES `INTERCAMBIOS`(`idinterc`) ON DELETE CASCADE ON UPDATE CASCADE;

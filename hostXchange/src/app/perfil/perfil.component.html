@@ -1,12 +1,12 @@
 <app-menu></app-menu>
 <main class="container mt-5 mb-5">
   <!-- Seção de Visualização do Perfil -->
-  <section *ngIf="!editMode && !mostrarAvaliacoes && !avaliarUsuario" id="profile-view" class="mb-5">
+  <section *ngIf="view === 1" id="profile-view" class="mb-5">
     <article class="card bg-dark text-white">
       <div class="card cover-card mt-4 mb-4 mx-3">
-        <div class="cover-photo" [style.backgroundImage]="'url(' + usuario?.fotoCapa + ')'">
+        <div class="cover-photo" [style.backgroundImage]="'url(' + usuario.fotoCapa + ')'">
           <div class="profile-picture-container">
-            <img [src]="usuario?.fotoPerfil" alt="Foto de Perfil" class="rounded-circle profile-picture">
+            <img [src]="usuario.fotoPerfil" alt="Foto de Perfil" class="rounded-circle profile-picture">
           </div>
         </div>
       </div>
@@ -23,7 +23,7 @@
             <span class="ms-2">{{ notaAvaliacaoUsuario > 0 ? getNotaFormatada() + '/5' : 'O usuário ' + usuario?.nome +
               ' ainda não foi avaliado' }}</span>
           </div>
-          <button class="btn btn-outline-light mt-2" (click)="mostrarAvaliacoes = true">Ver mais</button>
+          <button class="btn btn-outline-light mt-2" (click)="mostrarAvaliacoes()">Ver mais</button>
         </div>
 
       </div>
@@ -32,8 +32,8 @@
         <div class="card-body">
           <h2 class="card-title">
             Informações Pessoais
-            <button *ngIf="usuario?.idusuario === usuarioLogado?.idusuario" class="btn btn-outline-light float-end"
-              (click)="editMode = true">
+            <button *ngIf="verPerfil == 0" class="btn btn-outline-light float-end"
+              (click)="editar()">
               <i class="fas fa-edit"></i> Editar
             </button>
           </h2>
@@ -44,7 +44,7 @@
             </li>
             <li class="list-group-item bg-secondary text-white d-flex align-items-center">
               <i class="fas fa-at me-3 icon-fixed-width"></i>
-              Username: {{ usuario?.username }}
+              Email: {{ usuario?.email }}
             </li>
             <li class="list-group-item bg-secondary text-white d-flex align-items-center">
               <i class="fas fa-id-card me-3 icon-fixed-width"></i>
@@ -65,9 +65,9 @@
       <div class="card bg-secondary mb-4 mx-4">
         <div class="card-body">
           <h2 class="card-title">Redes Sociais</h2>
-          @if (hasRedesSociais()) {
+          @if (redesSociais.length > 0) {
           <div class="row row-cols-2 row-cols-md-4 g-2 mt-3">
-            <div *ngFor="let rede of usuario?.redesSociais" class="col">
+            <div *ngFor="let rede of redesSociais" class="col">
               <a [href]="rede.url" target="_blank" class="btn btn-outline-light w-100 social-btn">
                 <i [class]="'fab fa-' + rede.nome.toLowerCase()"></i> {{ rede.nome }}
               </a>
@@ -81,21 +81,21 @@
         </div>
       </div>
 
-      <div class="card bg-secondary mb-4 mx-4" *ngIf="temAvaliacaoPendente()">
+      <div class="card bg-secondary mb-4 mx-4" *ngIf="verPerfil == 0 && userLogado && avaliacoesPendentes.length > 0">
         <div class="card-body">
           <h2 class="card-title">Avaliações Pendentes</h2>
           <div class="avaliacoes-pendentes-lista">
-            <div *ngFor="let avaliacao of AvaliacaoPendente" class="card bg-secondary mb-3">
+            <div *ngFor="let avaliacao of avaliacoesPendentes" class="card bg-secondary mb-3">
               <div class="card-body">
                 <div class="d-flex justify-content-between align-items-start">
                   <div class="d-flex align-items-center">
                     <i class="fas fa-user-circle fa-2x me-2"></i>
                     <div>
-                      <h5 class="mb-0">{{ avaliacao.nomeUsuario }}</h5>
+                      <h5 class="mb-0">{{ avaliacao.avaliado.nome }}</h5>
                     </div>
                   </div>
                   <button class="btn btn-outline-light"
-                    (click)="acaoAvaliarUsuario(avaliacao.idAvaliar)">Avaliar</button>
+                    (click)="acaoAvaliarUsuario(avaliacao.idavaliacao)">Avaliar</button>
                 </div>
               </div>
             </div>
@@ -106,8 +106,8 @@
   </section>
 
   <!-- Seção de Edição do Perfil -->
-  <section *ngIf="editMode" id="profile-edit">
-    <form [formGroup]="perfilForm" (ngSubmit)="salvarAlteracoes()" class="card bg-dark text-white">
+  <section *ngIf="view === 2" id="profile-edit">
+    <form [formGroup]="perfilForm" class="card bg-dark text-white">
       <div class="card-body">
         <h2 class="card-title mb-4">Editar Perfil</h2>
 
@@ -116,13 +116,11 @@
           <h3>Fotos</h3>
           <div class="mb-3">
             <label for="fotoPerfil" class="form-label">Foto de Perfil</label>
-            <input type="file" id="fotoPerfil" (change)="onFileSelected($event, 'perfil')"
-              class="form-control bg-secondary text-white" accept="image/*">
+            <input type="file" id="fotoPerfil" (change)="onFileSelected($event, 'perfil')" class="form-control bg-secondary text-white" accept="image/*">
           </div>
           <div class="mb-3">
             <label for="fotoCapa" class="form-label">Foto de Capa</label>
-            <input type="file" id="fotoCapa" (change)="onFileSelected($event, 'capa')"
-              class="form-control bg-secondary text-white" accept="image/*">
+            <input type="file" id="fotoCapa" (change)="onFileSelected($event, 'capa')" class="form-control bg-secondary text-white" accept="image/*">
           </div>
         </div>
 
@@ -143,16 +141,15 @@
                     <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1"
                       (click)="removerFoto('perfil')">×</button>
                   </div>
-                  } @else {
-                  <div class="preview-placeholder d-flex align-items-center justify-content-center">
-                    Nenhuma imagem selecionada
-                  </div>
-                  }
+                  <ng-template #noImagePerfil>
+                    <div class="preview-placeholder d-flex align-items-center justify-content-center">
+                      Nenhuma imagem selecionada
+                    </div>
+                  </ng-template>
                 </div>
               </div>
             </div>
           </div>
-
           <div class="col-md-6">
             <div class="card bg-secondary">
               <div class="card-body">
@@ -165,14 +162,7 @@
                       [src]="previewURLCapa"
                       alt="Preview da foto de capa">
                     </div>
-                    <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1"
-                      (click)="removerFoto('capa')">×</button>
-                  </div>
-                  } @else {
-                  <div class="preview-placeholder d-flex align-items-center justify-content-center">
-                    Nenhuma imagem selecionada
-                  </div>
-                  }
+                  </ng-template>
                 </div>
               </div>
             </div>
@@ -195,23 +185,20 @@
           </div>
         </div>
         <div class="mb-3">
-          <label for="username" class="form-label">Username:<span class="text-danger">*</span></label>
-          <input type="text" id="username" formControlName="username" class="form-control bg-secondary text-white"
+          <label for="email" class="form-label">Email:<span class="text-danger">*</span></label>
+          <input type="text" id="email" formControlName="email" class="form-control bg-secondary text-white"
             required>
-          <div *ngIf="perfilForm.get('username')?.errors?.['required'] && perfilForm.get('username')?.touched"
+          <div *ngIf="perfilForm.get('email')?.errors?.['required'] && perfilForm.get('email')?.touched"
             class="text-danger mt-1">
-            <small>O nome de usuário é obrigatório.</small>
+            <small>O email é obrigatório.</small>
           </div>
-          <div *ngIf="perfilForm.get('username')?.errors?.['minlength']" class="text-danger mt-1">
-            <small>O nome de usuário deve ter no mínimo 5 caracteres.</small>
-          </div>
-          <div *ngIf="perfilForm.get('username')?.errors?.['maxlength']" class="text-danger mt-1">
-            <small>O nome de usuário deve ter no máximo 20 caracteres.</small>
+          <div *ngIf="perfilForm.get('email')?.errors?.['email']" class="text-danger mt-1">
+            <small>O email fornecido deve ser válido.</small>
           </div>
         </div>
         <div class="mb-3">
           <label for="rg" class="form-label">RG:<span class="text-danger">*</span></label>
-          <input type="text" id="rg" formControlName="rg" mask="00.000.000-0"
+          <input type="text" id="rg" formControlName="rg" mask="00.000.000"
             class="form-control bg-secondary text-white" required>
           <div *ngIf="perfilForm.get('rg')?.errors?.['required'] && perfilForm.get('rg')?.touched"
             class="text-danger mt-1">
@@ -258,8 +245,8 @@
 
                 <!-- Listagem das redes sociais com nome, URL e botão de remover -->
                 <div formArrayName="redesSociais">
-                  @for (rede of usuarioEditando?.redesSociais; track $index; let i = $index) {
-                  <div [formGroupName]="i" class="social-media-item mb-2 pb-2 border-bottom border-light">
+                  @for (rede of redesSociais; track $index; let i = $index) {
+                  <div class="social-media-item mb-2 pb-2 border-bottom border-light">
                     <div class="row g-2 align-items-center">
                       <div class="col-3 border-end">
                         <span class="badge bg-primary d-inline-block">
@@ -378,34 +365,33 @@
         </div>
 
         <!-- Botões de Ação -->
-        <button type="submit" class="btn btn-primary" [disabled]="!perfilForm.valid || !perfilForm.dirty">Salvar
-          Alterações</button>
+        <button type="button" class="btn btn-primary" (click)="salvarAlteracoes()" [disabled]="!perfilForm.valid || (!perfilForm.dirty && !redesSociaisForamAlteradas())" >Salvar Alterações</button>
         <button type="button" class="btn btn-secondary ms-2" (click)="cancelarAlteracoes()">Cancelar</button>
       </div> <!-- Fim de card-body -->
     </form>
   </section>
 
   <!-- Seção de Avaliações -->
-  <section *ngIf="mostrarAvaliacoes" id="avaliacoes" class="mb-5">
+  <section *ngIf="view === 3" id="avaliacoes" class="mb-5">
     <div class="card bg-dark text-white">
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-4">
           <h2>Avaliações</h2>
-          <button class="btn btn-outline-light" (click)="mostrarAvaliacoes = false">
+          <button class="btn btn-outline-light" (click)="voltar()">
             <i class="fas fa-times"></i> Fechar
           </button>
         </div>
 
-        @if (Avaliacao.length) {
+        @if (avaliacoesRecebidas.length > 0) {
         <div class="avaliacoes-lista">
-          @for (avaliacao of Avaliacao; track avaliacao.idAvaliacao) {
+          @for (avaliacao of avaliacoesRecebidas; track avaliacao.idAvaliacao) {
           <div class="card bg-secondary mb-3">
             <div class="card-body">
               <div class="d-flex justify-content-between align-items-start">
                 <div class="d-flex align-items-center">
                   <i class="fas fa-user-circle fa-2x me-2"></i>
                   <div>
-                    <h5 class="mb-0">{{ avaliacao.nomeAvaliador }}</h5>
+                    <h5 class="mb-0">{{ avaliacao.avaliador.nome }}</h5>
                     <div class="stars">
                       @for (star of [1,2,3,4,5]; track star) {
                       <i class="fas fa-star" [class.text-warning]="star <= avaliacao.avaliacao"></i>
@@ -414,7 +400,7 @@
                     </div>
                   </div>
                 </div>
-                <small class="text-light">{{ avaliacao.data | date:'dd/MM/yyyy' }}</small>
+                <small class="text-light">{{ avaliacao.dtaval | date:'dd/MM/yyyy' }}</small>
               </div>
               <p *ngIf="avaliacao.descricao" class="mt-3 mb-0">{{ avaliacao.descricao }}</p>
             </div>
@@ -431,12 +417,12 @@
   </section>
 
   <!-- Seção de Avaliação do Usuário -->
-  <section *ngIf="avaliarUsuario" id="avaliar-usuario" class="mb-5">
+  <section *ngIf="view === 4" id="avaliar-usuario" class="mb-5">
     <div class="card bg-dark text-white">
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-4">
-          <h2>Avaliar Usuário.</h2>
-          <button class="btn btn-outline-light" (click)="avaliarUsuario = false">
+          <h2>Avaliar Usuário</h2>
+          <button class="btn btn-outline-light" (click)="voltar()">
             <i class="fas fa-times"></i> Fechar
           </button>
         </div>
@@ -468,6 +454,6 @@
       </div>
     </div>
   </section>
-
+  
 </main>
 <app-footer></app-footer>

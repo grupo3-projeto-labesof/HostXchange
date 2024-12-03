@@ -15,15 +15,20 @@ const criaAvaliacao = async (req, res) => {
 }
 
 const listaAvaliacoes = async (req, res) => {
-    const { idusuario } = req.body;
+    const { idUser } = req.body;
 
     try {
-        const result = await avaliacaoDAO.listaAvaliacoes(idusuario);
-        if (result.success) {
-            res.status(200).json(result);
-        } else {
-            res.status(404).json(result);
+        const result = await avaliacaoDAO.listaAvaliacoes(idUser);
+        if (result.blOk === true) {
+            const avaliacoesValidas = result.avaliacoes.avaliado.filter(m => m.snaval === true).map(m => m.avaliacao); 
+        
+            // Calcula a média das avaliações válidas
+            const media = avaliacoesValidas.length > 0
+                ? avaliacoesValidas.reduce((soma, valor) => soma + valor, 0) / avaliacoesValidas.length
+                : 0; 
+            result.avaliacoes.media = media;
         }
+        res.status(200).json(result);
     } catch (error) {
         console.error('Erro ao listar avaliações:', error);
         res.status(500).json({ success: false, message: 'Erro ao listar avaliações!' });
@@ -35,11 +40,7 @@ const atualizaAvaliacao = async (req, res) => {
 
     try {
         const result = await avaliacaoDAO.atualizaAvaliacao(idavaliacao, avaliacao, descricao);
-        if (result.success) {
-            res.status(200).json(result);
-        } else {
-            res.status(404).json(result);
-        }
+        res.status(200).json(result);
     } catch (error) {
         console.error('Erro ao atualizar avaliação:', error);
         res.status(500).json({ success: false, message: 'Erro ao atualizar avaliação!' });

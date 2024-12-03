@@ -5,11 +5,13 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LoginService } from '../services/login.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
+import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, CommonModule, ReactiveFormsModule],
+  imports: [NgxMaskDirective, FormsModule, CommonModule, ReactiveFormsModule],
+  providers: [provideNgxMask()],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -54,7 +56,7 @@ export class LoginComponent implements OnInit {
     this.formCadastro = this.fb.group({
       nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
       email: ['', [Validators.required, Validators.email]],
-      cpf: ['', [Validators.required, Validators.pattern(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/)]],
+      cpf: ['', [Validators.required, Validators.minLength(11)]],
       rg: ['', Validators.required],
       sexo: ['', Validators.required],
       passaporte: ['', Validators.required],
@@ -123,11 +125,13 @@ export class LoginComponent implements OnInit {
         next: (res: any) => {
           if (res.blOk === true) {
             const user = res.user[0];
-            debugger
             localStorage.setItem('id', user.idusuario);
             localStorage.setItem('nome', user.nome);
             localStorage.setItem('logado', "true");
             localStorage.setItem('tipo_user', user.tpusuario);
+            localStorage.setItem('idHost', "0");
+            localStorage.setItem('verPerfil', "0");
+            localStorage.setItem('verIntercambio', "0");
             this.toastr.success(res.message, 'SUCESSO:');
             this.router.navigate(['/home']);
           } else {
@@ -159,7 +163,7 @@ export class LoginComponent implements OnInit {
           this.toastr.warning('Ocorreu um erro durante o cadastro. Por favor, tente novamente!', 'ATENÇÃO:');
         }
       });
-    }
+    } else { this.toastr.warning("Existem campos que não foram preenchidos corretamente.", "ATENÇÃO:"); }
   }
 
   confirmarCodigo(): void {

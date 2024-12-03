@@ -8,11 +8,11 @@ const atualizarPerfil = async (userId, data) => {
   try {
     // Atualiza o usuário no banco de dados, incluindo a senha criptografada se houver
     const updatedUser = await prisma.usuario.update({
-      where: { id: parseInt(userId) },
+      where: { idusuario: parseInt(userId) },
       data,
     });
 
-    return updatedUser;
+    return { blOk: true, message: "Perfil atualizado!" };
   } catch (error) {
     console.error('Erro ao atualizar o perfil:', error);
     throw error;
@@ -22,11 +22,11 @@ const atualizarPerfil = async (userId, data) => {
 const perfil = async (userId) => {
 
   try {
-    const buscaPerfil = await prisma.usuario.findUnique({
-      where: { id: parseInt(userId) }, include: {contatoHost: true }
+    const dados = await prisma.usuario.findUnique({
+      where: { idusuario: parseInt(userId) }, include: {contatoHost: true }
     });
 
-    return buscaPerfil;
+    return { blOk: true, dados };
   } catch (error) {
     console.error('Erro ao buscar perfil:', error);
     throw error;

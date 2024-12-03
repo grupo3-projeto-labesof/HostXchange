@@ -1,7 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-const cadastroUsuario = async (nome, email, password, cpf, rg, sexo, nacionalidade, passaporte) => {
+const cadastroUsuario = async (nome, email, password, cpf, rg, sexo, passaporte, nacionalidade) => {
   try {
     await prisma.usuario.create({
       data: {
@@ -10,9 +10,10 @@ const cadastroUsuario = async (nome, email, password, cpf, rg, sexo, nacionalida
         senha: password,
         cpf,
         rg,
-        sexo,
+        sexo: sexo,
         nrpassa: passaporte,
         nacional: nacionalidade,
+        nacionali: nacionalidade,
         stusuario: 'A',  // Usuário
         tpusuario: 'V'   // Tipo de usuário padrão viajante
       }
@@ -24,21 +25,23 @@ const cadastroUsuario = async (nome, email, password, cpf, rg, sexo, nacionalida
   }
 };
 
-const cadastroHost = async (nomePropriedade, rua, numero, complemento, cidade, estado, cep, telefone, tipoPropriedade, email) => {
+const cadastroHost = async (nomePropriedade, rua, numero, complemento, cidade, estado, cep, telefone, tipoPropriedade, email, latitude, longitude) => {
   try {
     const host = await prisma.contatoHost.create({
       data: {
-        nmprop: nomePropriedade,
-        endereco: rua,
-        numero,
-        complem: complemento,
-        cidade,
-        cdestado: estado,
-        nrcep: cep,
-        nrtel: telefone,
-        tipoProp: tipoPropriedade,
-        email,
-        stcadast: 'A'
+        nmprop   : nomePropriedade,
+        endereco : rua,
+        numero   : numero,
+        complem  : complemento,
+        cidade   : cidade,
+        cdestado : estado,
+        nrcep    : cep,
+        nrtel    : telefone,
+        tipoProp : tipoPropriedade,
+        email    : email,
+        stcadast : 'A',
+        latitude : latitude,
+        longitude: longitude
       }
     });
     return { success: true, idHost: host.idctt };
@@ -50,17 +53,26 @@ const cadastroHost = async (nomePropriedade, rua, numero, complemento, cidade, e
 
 const updateTipoUsuario = async (idUsuario, idHost) => {
   try {
+    const usuario = await prisma.usuario.findUnique({
+      where: { idusuario: Number(idUsuario) },
+    });
+
+    if (!usuario) {
+      return { success: false, message: 'Usuário não encontrado!' };
+    }
+
     await prisma.usuario.update({
-      where: { idusuario: idUsuario },
+      where: { idusuario: Number(idUsuario) },
       data: {
         tpusuario: 'H',
-        contatoHostId: idHost
-      }
+        idhost: Number(idHost),
+      },
     });
-    return { success: true, message: 'Tipo de usuário atualizado para Host!' };
+
+    return { success: true, message: 'Seu perfil foi atualizado para Host!' };
   } catch (error) {
     console.error('Erro ao atualizar tipo de usuário:', error);
-    return { success: false, message: 'Erro ao atualizar tipo de usuário!' };
+    return { success: false, message: 'Erro ao atualizar tipo do usuário para Host!' };
   }
 };
 

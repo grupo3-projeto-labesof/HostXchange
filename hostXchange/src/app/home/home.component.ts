@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FooterComponent } from '../components/footer/footer.component';
 import { MenuComponent } from '../components/menu/menu.component';
 
@@ -9,6 +9,10 @@ import { MenuComponent } from '../components/menu/menu.component';
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
-export class HomeComponent {
-
+export class HomeComponent implements OnInit {
+  ngOnInit() {
+    localStorage.setItem('verIntercambio', "0");
+    localStorage.setItem('verPerfil'     , "0");
+    localStorage.setItem('idHost'        , "0");
+  }
 }

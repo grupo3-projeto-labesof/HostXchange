@@ -7,14 +7,15 @@
   </div>
   <div class="navbar-links">
     <button *ngIf="logado == false" (click)="login()">Entrar</button>
-    <a *ngIf="logado" href="/tornar-host">
+    <a *ngIf="logado && tipo_user === 'V'" href="/tornar-host">
       <button>Tornar-se Host</button>
     </a>
-    <button *ngIf="logado" (click)="logout()">Sair</button>
+
+    <button *ngIf="logado == true" (click)="logout()">Sair</button>
 
     <!-- Ícone de perfil que redireciona para a página de perfil -->
-    <a *ngIf="logado" href="/perfil" class="profile-icon">
-      <i class="fa-light fa-user"></i>
+    <a *ngIf="logado == true" href="/perfil" class="profile-icon border-4 btn btn-outline-light ms-3">
+      <i class="fa fa-user"></i>
     </a>
   </div>
 </nav>

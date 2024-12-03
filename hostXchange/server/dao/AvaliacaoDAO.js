@@ -24,12 +24,14 @@ const criaAvaliacao = async (avaliadoId, avaliadorId) => {
 
 const listaAvaliacoes = async (idusuario) => {
   try {
-    const avaliacoes = await prisma.avaliacao.findMany({ where: { avaliadoId: idusuario }});
+    const avaliado = await prisma.avaliacao.findMany({ where: { avaliadoId: Number(idusuario) }, include: { avaliado: true, avaliador: true }});
+    const avaliador = await prisma.avaliacao.findMany({ where: { avaliadorId: Number(idusuario) }, include: { avaliado: true, avaliador: true }});
 
-    if (avaliacoes.length > 0) {
-      return { success: true, message: 'Avaliações encontradas!', avaliacoes };
+    if (avaliado.length > 0 || avaliador.length > 0) {
+      const avaliacoes = { avaliado, avaliador }; 
+      return { blOk: true, message: 'Avaliações encontradas!', avaliacoes };
     } else {
-      return { success: false, message: 'Nenhuma avaliação encontrada!' };
+      return { blOk: false, message: 'Nenhuma avaliação encontrada!' };
     }
   } catch (error) {
     console.error('Erro ao listar avaliações:', error);
@@ -40,7 +42,7 @@ const listaAvaliacoes = async (idusuario) => {
 const atualizaAvaliacao = async (idavaliacao, avaliacao, descricao) => {
   try {
     const avaliacaoAtualizada = await prisma.avaliacao.update({
-      where: { idavaliacao },
+      where: { idavaliacao: idavaliacao },
       data: {
         avaliacao,
         snaval: true,
@@ -48,10 +50,10 @@ const atualizaAvaliacao = async (idavaliacao, avaliacao, descricao) => {
       },
     });
 
-    return { success: true, message: 'Avaliação atualizada com sucesso!', avaliacaoAtualizada };
+    return { blOk: true, message: 'Avaliação atualizada com sucesso!', avaliacaoAtualizada };
   } catch (error) {
     console.error('Erro ao atualizar avaliação:', error);
-    return { success: false, message: 'Erro ao atualizar avaliação!' };
+    return { blOk: false, message: 'Erro ao atualizar avaliação!' };
   }
 };
 

@@ -25,6 +25,8 @@ model Usuario {
   twitter   String?  @db.VarChar(255)
   instagram String?  @db.VarChar(255)
   linkedin  String?  @db.VarChar(255)
+  fotoPerfil String?
+  fotoCapa   String?
   CDRESET   String?  @db.VarChar(6)
   idhost    Int?     @unique // Campo único para relação 1-1
 
@@ -32,27 +34,36 @@ model Usuario {
 
   idavaliacao Int? // Referência ao ID da Avaliacao (opcional)
 
+  // Relações bidirecionais com Avaliacao
+  avaliacoesComoAvaliado  Avaliacao[] @relation("avaliado_relation")
+  avaliacoesComoAvaliador Avaliacao[] @relation("avaliador_relation")
+
+  // Relação biderecional com Match
+  matches Match[] @relation("viajante_relation")
+
   @@index([idhost], name: "IDHOST_idx")
   @@map("USUARIO")
 }
 
 model ContatoHost {
-  idctt    Int      @id @default(autoincrement())
-  nmprop   String?  @db.VarChar(100)
-  endereco String?  @db.VarChar(100)
-  numero   String?  @db.VarChar(10)
-  complem  String?  @db.VarChar(100)
-  cdestado String?  @db.VarChar(100)
-  cidade   String?  @db.VarChar(100)
-  nrcep    String?  @db.VarChar(100)
-  nrtel    String?  @db.VarChar(100)
-  tipoProp String?  @db.VarChar(40)
-  email    String?  @db.VarChar(100)
-  stcadast String?  @db.VarChar(10)
-  dtcadast DateTime @default(now())
+  idctt     Int @id  @default(autoincrement())
+  nmprop    String?  @db.VarChar(100)
+  endereco  String?  @db.VarChar(100)
+  numero    String?  @db.VarChar(10)
+  complem   String?  @db.VarChar(100)
+  cdestado  String?  @db.VarChar(100)
+  cidade    String?  @db.VarChar(100)
+  nrcep     String?  @db.VarChar(100)
+  nrtel     String?  @db.VarChar(100)
+  tipoProp  String?  @db.VarChar(40)
+  email     String?  @db.VarChar(100)
+  latitude  Float?
+  longitude Float?
+  stcadast  String?  @db.VarChar(10)
+  dtcadast  DateTime @default(now())
 
   usuario Usuario? @relation
-
+  
   intercambio Intercambio[]
 
   @@map("CONTATO_HOST")
@@ -66,19 +77,21 @@ model Intercambio {
   servicos   String @db.VarChar(250)
   beneficios String @db.VarChar(250)
   duracao    String @db.VarChar(100)
-  img1       Bytes
-  img2       Bytes?
-  img3       Bytes?
-  img4       Bytes?
-  img5       Bytes?
-  img6       Bytes?
-  img7       Bytes?
-  img8       Bytes?
-  img9       Bytes?
-  img10      Bytes?
+  img1       String  // Alterado para String
+  img2       String? // Alterado para String
+  img3       String? // Alterado para String
+  img4       String? // Alterado para String
+  img5       String? // Alterado para String
+  img6       String? // Alterado para String
+  img7       String? // Alterado para String
+  img8       String? // Alterado para String
+  img9       String? // Alterado para String
+  img10      String? // Alterado para String
   idhost     Int
 
   contatoHost ContatoHost @relation(fields: [idhost], references: [idctt], onDelete: Cascade, onUpdate: Cascade)
+  
+  matches Match[] @relation("iterc_relation")
 
   @@index([idhost], name: "IDHOST_idx")
   @@map("INTERCAMBIOS")
@@ -90,10 +103,24 @@ model Avaliacao {
   avaliadorId Int
   avaliacao   Int      @default(0) // Nota da avaliação (ex: 1 a 5)
   snaval      Boolean? // Sim ou não para algo
-  descricao   String?  @db.Text
+  descricao   String?   @db.Text
+  dtaval      DateTime? @db.Timestamp(6)
+  dtcadast    DateTime @default(now())
 
- // avaliado  Usuario @relation(fields: [avaliadoId], references: [idusuario], onDelete: Cascade)
- // avaliador Usuario @relation(fields: [avaliadorId], references: [idusuario], onDelete: Cascade)
+  avaliado  Usuario @relation("avaliado_relation" , fields: [avaliadoId] , references: [idusuario], onDelete: Cascade)
+  avaliador Usuario @relation("avaliador_relation", fields: [avaliadorId], references: [idusuario], onDelete: Cascade)
 
   @@map("AVALIACAO")
+}
+
+model Match {
+  idmatch    Int      @id @default(autoincrement())
+  idviajante Int 
+  idinterc   Int 
+  dtcria     DateTime @default(now())
+  
+  viajante Usuario     @relation("viajante_relation", fields: [idviajante], references: [idusuario], onDelete: Cascade)
+  iterc    Intercambio @relation("iterc_relation"   , fields: [idinterc]  , references: [idinterc] , onDelete: Cascade)
+  
+  @@map("MATCH")
 }

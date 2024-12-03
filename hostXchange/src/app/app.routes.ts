@@ -7,16 +7,18 @@ import { ExchangeComponent } from './exchange/exchange.component';
 import { MapComponent } from './map/map.component';
 import { PerfilComponent } from './perfil/perfil.component';
 import { PesquisarUsuarioComponent } from './pesquisar-usuario/pesquisar-usuario.component';
+import { ExchangeDetailsComponent } from './exchange-details/exchange-details.component';
 
 export const routes: Routes = [
-  { path: 'home', component: HomeComponent }
-  , { path: 'login', component: LoginComponent }
-  , { path: 'tornar-host', component: FormHostComponent }
-  , { path: 'cadastrar-intercambio', component: FormExchangeComponent }
-  , { path: 'perfil', component: PerfilComponent }
-  , { path: 'exchange', component: ExchangeComponent }
-  , { path: 'map', component: MapComponent }
-  , { path: 'pesquisar-usuario', component: PesquisarUsuarioComponent}
-  , { path: '', redirectTo: 'home', pathMatch: 'full' }
-  , { path: '**', redirectTo: 'home' }
+    { path: 'home'                  , component: HomeComponent            }
+  , { path: 'login'                 , component: LoginComponent           }
+  , { path: 'tornar-host'           , component: FormHostComponent        }
+  , { path: 'cadastrar-intercambio' , component: FormExchangeComponent    }
+  , { path: 'perfil'                , component: PerfilComponent          }
+  , { path: 'pesquisar-usuario'     , component: PesquisarUsuarioComponent}
+  , { path: 'intercambios'          , component: ExchangeComponent        }
+  , { path: 'mapa'                  , component: MapComponent             }
+  , { path: 'intercambio'           , component: ExchangeDetailsComponent }
+  , { path: ''  , redirectTo: 'home', pathMatch: 'full'                   }
+  , { path: '**', redirectTo: 'home'                                      }
 ];

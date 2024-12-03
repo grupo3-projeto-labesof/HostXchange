@@ -8,7 +8,7 @@ export class HostService {
 
   constructor(private http: HttpClient) { }
 
-  enviarFormulario (formHostData: any){
+  enviarFormulario (formHostData: Object){
     return this.http.post('http://localhost:3000/cadastro/tornaHost', formHostData);
   }
 }
