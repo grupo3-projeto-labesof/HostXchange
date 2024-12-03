@@ -15,6 +15,9 @@ a {
     text-decoration: none;
 }
 
+.full-width {
+  width: 100%;
+}
 
 form {
     max-width: 800px; 

@@ -8,18 +8,22 @@
                 <form [formGroup]="formLogin" (ngSubmit)="entrar()">
                     <div class="form-group p-2">
                         <label for="email" class="form-label">E-mail:<span class="text-danger">*</span></label>
-                        <input type="text" id="email" formControlName="email" class="form-control mt-2" placeholder="Digite seu email">
+                        <input type="text" id="email" formControlName="email" class="form-control mt-2"
+                            placeholder="Digite seu email">
                     </div>
                     <div class="form-group p-2">
                         <label for="password" class="form-label">Senha:<span class="text-danger">*</span></label>
-                        <input type="password" id="password" formControlName="password" class="form-control mt-2" placeholder="Digite sua senha">
+                        <input type="password" id="password" formControlName="password" class="form-control mt-2"
+                            placeholder="Digite sua senha">
                     </div>
                     <a (click)="redefir()" class="text-black">
                         <p class="ms-2">Esqueceu sua senha?</p>
                     </a>
                     <div class="form-group d-flex justify-content-between p-2 mt-3">
-                        <button class="btn btn-dark align-self-center" type="submit" [disabled]="formLogin.invalid">Entrar</button>
-                        <button class="btn btn-outline-dark align-self-center" type="button" (click)="cadastro()">Cadastrar</button>
+                        <button class="btn btn-dark align-self-center" type="submit"
+                            [disabled]="formLogin.invalid">Entrar</button>
+                        <button class="btn btn-outline-dark align-self-center" type="button"
+                            (click)="cadastro()">Cadastrar</button>
                     </div>
                 </form>
             </div>
@@ -37,49 +41,141 @@
                 <form [formGroup]="formCadastro" (ngSubmit)="cadastrar()">
                     <div class="form-group p-2 col">
                         <label for="nome" class="form-label">Nome:<span class="text-danger">*</span></label>
-                        <input type="text" id="nome" formControlName="nome" class="form-control mt-2" placeholder="Digite seu nome">
+                        <input type="text" id="nome" formControlName="nome" class="form-control mt-2"
+                            placeholder="Digite seu nome">
+                        <div *ngIf="formCadastro.get('nome')?.errors?.['required'] && formCadastro.get('nome')?.touched"
+                            class="text-danger mt-1">
+                            <small>Nome é obrigatório.</small>
+                        </div>
+                        <div *ngIf="formCadastro.get('nome')?.errors?.['minlength'] && formCadastro.get('nome')?.touched"
+                            class="text-danger mt-1">
+                            <small>Nome deve ter no mínimo 5 caracteres.</small>
+                        </div>
+                        <div *ngIf="formCadastro.get('nome')?.errors?.['maxlength'] && formCadastro.get('nome')?.touched"
+                            class="text-danger mt-1">
+                            <small>Nome deve ter no máximo 60 caracteres.</small>
+                        </div>
                     </div>
                     <div class="form-group p-2 col">
                         <label for="email" class="form-label">E-mail:<span class="text-danger">*</span></label>
-                        <input type="text" id="email" formControlName="email" class="form-control mt-2" placeholder="Digite seu email">
+                        <input type="text" id="email" formControlName="email" class="form-control mt-2"
+                            placeholder="Digite seu email">
+                        <div *ngIf="formCadastro.get('email')?.errors?.['required'] && formCadastro.get('email')?.touched"
+                            class="text-danger mt-1">
+                            <small>Email é obrigatório.</small>
+                        </div>
+                        <div *ngIf="formCadastro.get('email')?.errors?.['email'] && formCadastro.get('email')?.touched"
+                            class="text-danger mt-1">
+                            <small>Email inválido.</small>
+                        </div>
                     </div>
                     <div class="d-flex">
                         <div class="form-group p-2 col">
                             <label for="cpf" class="form-label">CPF:<span class="text-danger">*</span></label>
-                            <input type="text" id="cpf" formControlName="cpf" mask="000.000.000-00" class="form-control mt-2" placeholder="000.000.000-00">
+                            <input type="text" id="cpf" formControlName="cpf" mask="000.000.000-00"
+                                class="form-control mt-2" placeholder="000.000.000-00">
+                            <div *ngIf="formCadastro.get('cpf')?.errors?.['required'] && formCadastro.get('cpf')?.touched"
+                                class="text-danger mt-1">
+                                <small>CPF é obrigatório.</small>
+                            </div>
                         </div>
                         <div class="form-group p-2 col">
                             <label for="rg" class="form-label">RG:<span class="text-danger">*</span></label>
-                            <input type="text" id="rg" formControlName="rg" class="form-control mt-2" placeholder="Digite seu RG">
+                            <input type="text" id="rg" formControlName="rg" mask="00.000.000" data-bs-toggle="tooltip"
+                                title="Exemplo de entrada: 00.000.000" class="form-control mt-2"
+                                placeholder="Digite seu RG.">
+                            <div *ngIf="formCadastro.get('rg')?.errors?.['required'] && formCadastro.get('rg')?.touched"
+                                class="text-danger mt-1">
+                                <small>RG é obrigatório.</small>
+                            </div>
                         </div>
                     </div>
                     <div class="d-flex">
                         <div class="form-group p-2 col-3">
                             <label for="sexo" class="form-label">Sexo:<span class="text-danger">*</span></label>
-                            <input type="text" id="sexo" formControlName="sexo" class="form-control mt-2" placeholder="Digite seu sexo">
+                            <select id="sexo" formControlName="sexo" class="form-select mt-2">
+                                <option value="" disabled selected>Escolha</option>
+                                <option value="Masculino">Masculino</option>
+                                <option value="Feminino">Feminino</option>
+                                <option value="Outro">Outro</option>
+                            </select>
+                            <div *ngIf="formCadastro.get('sexo')?.errors?.['required'] && formCadastro.get('sexo')?.touched"
+                                class="text-danger mt-1">
+                                <small>Sexo é obrigatório.</small>
+                            </div>
                         </div>
                         <div class="form-group p-2 col">
-                            <label for="passaporte" class="form-label">Passaporte:<span class="text-danger">*</span></label>
-                            <input type="text" id="passaporte" formControlName="passaporte" class="form-control mt-2" placeholder="Digite seu passaporte">
+                            <label for="passaporte" class="form-label">Passaporte:<span
+                                    class="text-danger">*</span></label>
+                            <input type="text" id="passaporte" formControlName="passaporte" data-bs-toggle="tooltip"
+                                title="Exemplo de entrada: AA00000, são 2 (duas) letras seguidas de 6 (seis) números."
+                                mask="AA000000" class="form-control mt-2" placeholder="Digite seu passaporte">
+                            <div *ngIf="formCadastro.get('passaporte')?.errors?.['required'] && formCadastro.get('passaporte')?.touched"
+                                class="text-danger mt-1">
+                                <small>Passaporte é obrigatório.</small>
+                            </div>
                         </div>
                         <div class="form-group p-2 col">
-                            <label for="nacionalidade" class="form-label">Nacionalidade:<span class="text-danger">*</span></label>
-                            <input type="text" id="nacionalidade" formControlName="nacionalidade" class="form-control mt-2" placeholder="Digite sua nacionalidade">
+                            <label for="nacionalidade" class="form-label">Nacionalidade:<span
+                                    class="text-danger">*</span></label>
+                            <input type="text" id="nacionalidade" formControlName="nacionalidade"
+                                class="form-control mt-2" placeholder="Digite sua nacionalidade">
+                            <div *ngIf="formCadastro.get('nacionalidade')?.errors?.['required'] && formCadastro.get('nacionalidade')?.touched"
+                                class="text-danger mt-1">
+                                <small>Nacionalidade é obrigatório.</small>
+                            </div>
                         </div>
                     </div>
                     <div class="d-flex">
                         <div class="form-group p-2 col">
                             <label for="password" class="form-label">Senha:<span class="text-danger">*</span></label>
-                            <input type="password" id="password" formControlName="password" class="form-control mt-2" placeholder="Digite sua senha">
+                            <div class="input-group mt-2">
+                                <input type="{{ senhaVisivel.senha ? 'text' : 'password' }}" id="password"
+                                    formControlName="password" class="form-control" placeholder="Digite sua senha">
+                                <button type="button" class="btn btn-outline-secondary"
+                                    (click)="mudarSenhaVisivel('senha')">
+                                    <i [class]="senhaVisivel.senha ? 'fas fa-eye-slash' : 'fas fa-eye' "></i>
+                                </button>
+                            </div>
                         </div>
                         <div class="form-group p-2 col">
-                            <label for="confirmPassword" class="form-label">Confirmar Senha:<span class="text-danger">*</span></label>
-                            <input type="password" id="confirmPassword" formControlName="confirmPassword" class="form-control mt-2" placeholder="Digite sua senha">
+                            <label for="confirmPassword" class="form-label">Confirmar Senha:<span
+                                    class="text-danger">*</span></label>
+                            <div class="input-group mt-2">
+                                <input type="{{ senhaVisivel.confirmarSenha ? 'text' : 'password' }}"
+                                    id="confirmPassword" formControlName="confirmPassword" class="form-control"
+                                    placeholder="Confirme a sua senha">
+                                <button type="button" class="btn btn-outline-secondary"
+                                    (click)="mudarSenhaVisivel('confirmarSenha')">
+                                    <i [class]="senhaVisivel.confirmarSenha ? 'fas fa-eye-slash' : 'fas fa-eye' "></i>
+                                </button>
+                            </div>
+                            <div *ngIf="!verificarSenhasIguais()" class="text-danger mt-1">
+                                <small>As senhas não coincidem.</small>
+                            </div>
                         </div>
                     </div>
+                    <div class="form-group p-2 col">
+                        <label for="passwordStrength" class="form-label">Força da Senha:</label>
+                        <div class="progress mt-2">
+                            <div class="progress-bar full-width" role="progressbar" [ngClass]="{
+                              'bg-danger': !SenhaForte(formCadastro.get('password')?.value, { comprimentoMinimo: 8, temMaiusculas: true, temMinusculas: true, temNumeros: false }),
+                              'bg-warning': SenhaForte(formCadastro.get('password')?.value, { comprimentoMinimo: 8, temMaiusculas: true, temMinusculas: true, temNumeros: false }) && !SenhaForte(formCadastro.get('password')?.value, { comprimentoMinimo: 8, temMaiusculas: true, temMinusculas: true, temNumeros: true }),
+                              'bg-success': SenhaForte(formCadastro.get('password')?.value, { comprimentoMinimo: 8, temMaiusculas: true, temMinusculas: true, temNumeros: true })
+                            }">
+                            </div>
+                        </div>
+                        <small
+                            *ngIf="!SenhaForte(formCadastro.get('password')?.value, { comprimentoMinimo: 8, temMaiusculas: true, temMinusculas: true, temNumeros: true })"
+                            class="text-muted">
+                            A senha deve ter no mínimo 8 caracteres, incluindo letras maiúsculas, minúsculas e números.
+                        </small>
+                    </div>
                     <div class="form-group d-flex justify-content-between p-2 mt-3">
-                        <button class="btn btn-dark align-self-center" type="submit" [disabled]="formCadastro.invalid">Cadastrar</button>
-                        <button class="btn btn-outline-dark align-self-center" type="button" (click)="login()">Login</button>
+                        <button class="btn btn-dark align-self-center" type="submit"
+                            [disabled]="formCadastro.invalid">Cadastrar</button>
+                        <button class="btn btn-outline-dark align-self-center" type="button"
+                            (click)="login()">Login</button>
                     </div>
                 </form>
             </div>
@@ -96,10 +192,12 @@
             <div class="p-3 border-dark-subtle formulario login">
                 <form [formGroup]="formRedefinicao" (ngSubmit)="enviarEmail()">
                     <div class="form-group p-2">
-                        <input type="text" id="email" formControlName="email" class="form-control mt-2" placeholder="Digite aqui">
+                        <input type="text" id="email" formControlName="email" class="form-control mt-2"
+                            placeholder="Digite aqui">
                     </div>
                     <div class="form-group text-end p-2 mt-3">
-                        <button class="btn btn-dark align-self-center" type="submit" [disabled]="formRedefinicao.invalid">Enviar Redefinição</button>
+                        <button class="btn btn-dark align-self-center" type="submit"
+                            [disabled]="formRedefinicao.invalid">Enviar Redefinição</button>
                     </div>
                 </form>
             </div>
@@ -116,10 +214,12 @@
             <div class="p-3 border-dark-subtle formulario login">
                 <form [formGroup]="formCodigo" (ngSubmit)="confirmarCodigo()">
                     <div class="form-group p-2">
-                        <input type="text" id="codigo" formControlName="codigo" class="form-control mt-2" placeholder="Digite aqui">
+                        <input type="text" id="codigo" formControlName="codigo" class="form-control mt-2"
+                            placeholder="Digite aqui">
                     </div>
                     <div class="form-group text-end p-2 mt-3">
-                        <button class="btn btn-dark align-self-center" type="submit" [disabled]="formCodigo.invalid">Confirmar</button>
+                        <button class="btn btn-dark align-self-center" type="submit"
+                            [disabled]="formCodigo.invalid">Confirmar</button>
                     </div>
                 </form>
             </div>
@@ -137,16 +237,20 @@
                 <form [formGroup]="formCadastro" (ngSubmit)="salvarSenha()">
                     <div class="form-group p-2 col">
                         <label for="password" class="form-label">Senha:<span class="text-danger">*</span></label>
-                        <input type="password" id="password" name="password" formControlName="password" class="form-control mt-2" placeholder="Digite sua senha">
+                        <input type="password" id="password" name="password" formControlName="password"
+                            class="form-control mt-2" placeholder="Digite sua senha">
                     </div>
 
                     <div class="form-group p-2 col">
-                        <label for="confirmPassword" class="form-label">Confirmar Senha:<span class="text-danger">*</span></label>
-                        <input type="password" id="confirmPassword" name="confirmPassword" formControlName="confirmPassword" class="form-control mt-2" placeholder="Digite sua senha">
+                        <label for="confirmPassword" class="form-label">Confirmar Senha:<span
+                                class="text-danger">*</span></label>
+                        <input type="password" id="confirmPassword" name="confirmPassword"
+                            formControlName="confirmPassword" class="form-control mt-2" placeholder="Digite sua senha">
                     </div>
 
                     <div class="form-group text-end p-2 mt-3">
-                        <button class="btn btn-dark  align-self-center" type="submit" (click)="salvarSenha()" [disabled]="formCadastro.invalid">Salvar</button>
+                        <button class="btn btn-dark  align-self-center" type="submit" (click)="salvarSenha()"
+                            [disabled]="formCadastro.invalid">Salvar</button>
                     </div>
                 </form>
             </div>

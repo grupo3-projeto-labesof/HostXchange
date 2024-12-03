@@ -7,6 +7,11 @@ import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 
+interface SenhaVisivel {
+  senha: boolean;
+  confirmarSenha: boolean;
+}
+
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -34,6 +39,11 @@ export class LoginComponent implements OnInit {
   public formRedefinicao!: FormGroup;
   public formCodigo!: FormGroup;
 
+  senhaVisivel: SenhaVisivel = {
+    senha: false,
+    confirmarSenha: false
+  }
+
   constructor(
       private service: LoginService
     , private toastr : ToastrService
@@ -54,13 +64,13 @@ export class LoginComponent implements OnInit {
 
     // Formulário de Cadastro
     this.formCadastro = this.fb.group({
-      nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
+      nome: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(60)]],
       email: ['', [Validators.required, Validators.email]],
       cpf: ['', [Validators.required, Validators.minLength(11)]],
-      rg: ['', Validators.required],
+      rg: ['', [Validators.required, Validators.minLength(7)]],
       sexo: ['', Validators.required],
-      passaporte: ['', Validators.required],
-      nacionalidade: ['', Validators.required],
+      passaporte: ['', [Validators.required, Validators.minLength(8)]],
+      nacionalidade: ['', [Validators.required, Validators.minLength(4)]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', Validators.required]
     });
@@ -97,6 +107,33 @@ export class LoginComponent implements OnInit {
 
   redefir() {
     this.view = 3;
+  }
+
+  SenhaForte(senha: string, criterios?: { comprimentoMinimo?: number, temMaiusculas?: boolean, temMinusculas?: boolean, temNumeros?: boolean, temCaracteresEspeciais?: boolean }): boolean {
+    const criteriosPadrao = {
+      comprimentoMinimo: 8,
+      temMaiusculas: true,
+      temMinusculas: true,
+      temNumeros: true,
+      temCaracteresEspeciais: true
+    };
+
+    const { comprimentoMinimo, temMaiusculas, temMinusculas, temNumeros } = { ...criteriosPadrao, ...criterios };
+
+    const padraoMaiusculas = temMaiusculas ? /[A-Z]/ : /.*/;
+    const padraoMinusculas = temMinusculas ? /[a-z]/ : /.*/;
+    const padraoNumeros = temNumeros ? /[0-9]/ : /.*/;
+
+    return senha.length >= comprimentoMinimo &&
+           padraoMaiusculas.test(senha) &&
+           padraoMinusculas.test(senha) &&
+           padraoNumeros.test(senha);
+  }
+
+  verificarSenhasIguais(): boolean {
+    const senha = this.formCadastro.get('password')?.value;
+    const confirmarSenha = this.formCadastro.get('confirmPassword')?.value;
+    return senha === confirmarSenha;
   }
 
   enviarEmail(): void {
@@ -183,6 +220,10 @@ export class LoginComponent implements OnInit {
         }
       });
     }
+  }
+
+  mudarSenhaVisivel(campo: keyof SenhaVisivel){
+    this.senhaVisivel[campo] = !this.senhaVisivel[campo];
   }
 
   salvarSenha(): void {
