@@ -32,7 +32,7 @@
 </div>
 
 <div *ngIf="view === 2">
-    <div class="d-flex flex-column justify-content-center container">
+    <div class="flex-column justify-content-center container">
         <div class="p-4 text-center">
             <h5>Faça seu cadastro:</h5>
         </div>
@@ -171,6 +171,9 @@
                             A senha deve ter no mínimo 8 caracteres, incluindo letras maiúsculas, minúsculas e números.
                         </small>
                     </div>
+
+                    <span class="text-danger">(*) Campos marcados com asterisco são de preenchimento obrigatório.</span>
+
                     <div class="form-group d-flex justify-content-between p-2 mt-3">
                         <button class="btn btn-dark align-self-center" type="submit"
                             [disabled]="formCadastro.invalid">Cadastrar</button>
