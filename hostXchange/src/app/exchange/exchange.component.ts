@@ -43,6 +43,7 @@ export class ExchangeComponent implements OnInit {
     exchanges: Exchange[] = [];
     filteredExchanges: Exchange[] = [];
     searchMessage: string = '';
+    media: number = 0;
 
     constructor(private router: Router, private exchangeService: ExchangeService) { }
 
@@ -96,6 +97,7 @@ export class ExchangeComponent implements OnInit {
         if (avaliacoes.length === 0) return '☆☆☆☆☆';
         const soma = avaliacoes.reduce((acc, val) => acc + val.avaliacao, 0);
         const media = soma / avaliacoes.length;
+        this.media = media;
         return '★'.repeat(Math.round(media)) + '☆'.repeat(5 - Math.round(media));
     }
 

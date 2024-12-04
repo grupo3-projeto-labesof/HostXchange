@@ -28,10 +28,16 @@
                                 <h5 class="card-title">{{ exchange.titulo }}</h5>
                                 <p class="card-text">{{ exchange.contatoHost.nmprop }}</p>
                                 <div class="card-text mb-2">
-                                    <small class="text-muted d-block">Local: {{ exchange.contatoHost.cidade }} - {{ exchange.contatoHost.cdestado }}</small>
-                                    <small class="text-muted d-block">Duração: {{ exchange.duracao }}</small>
-                                    <small class="text-muted d-block">Serviços: {{ exchange.servicos }}</small>
-                                    <small class="text-muted d-block">Avaliações: {{ calcularMediaAvaliacoes(exchange.contatoHost.usuario.avaliacoesComoAvaliado) }}</small>
+                                    <small class="text-muted d-block"><strong>Local:</strong> {{ exchange.contatoHost.cidade }} - {{ exchange.contatoHost.cdestado }}</small>
+                                    <small class="text-muted d-block"><strong>Duração:</strong> {{ exchange.duracao }}</small>
+                                    <small class="text-muted d-block"><strong>Serviços:</strong> {{ exchange.servicos }}</small>
+                                    <small class="text-muted d-block">
+                                        <strong>Avaliação do Intercâmbio:</strong>
+                                        <ng-container *ngIf="exchange.contatoHost.usuario.avaliacoesComoAvaliado && exchange.contatoHost.usuario.avaliacoesComoAvaliado.length > 0; else noAvaliacoes">
+                                            {{ calcularMediaAvaliacoes(exchange.contatoHost.usuario.avaliacoesComoAvaliado) }} {{ media }}/5
+                                        </ng-container>
+                                        <ng-template #noAvaliacoes> O intercâmbio ainda não foi avaliado</ng-template>
+                                    </small>
                                 </div>
                                 <button class="btn btn-primary mt-auto" (click)="verDetalhes(exchange.idinterc)">
                                     <i class="fas fa-info-circle me-2"></i> Ver Detalhes

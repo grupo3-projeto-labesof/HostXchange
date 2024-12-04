@@ -66,16 +66,19 @@
     <section *ngIf="selectedExchange" class="exchange-details">
         <div class="d-flex justify-content-center text-center mt-5 mb-5">
             <div class="col-6">
+
+
                 <h2>{{ selectedExchange.titulo }}</h2>
-                <p class="description">
+                <p class="description"> Descrição do Intercâmbio: 
                     {{ selectedExchange.descricao }}
                 </p>
             </div>
         </div>
         <div class="row d-flex justify-content-around">
             <div class="col-md-5">
-                <h3>Informações do Intercâmbio</h3>
-                <p><strong>Nome da Propriedade:</strong> {{ selectedExchange.contatoHost.nmprop }}</p>
+                <h3><i class="fas fa-info-circle"></i> Informações do Intercâmbio</h3>
+
+                <p class="mt-4"><strong>Nome da Propriedade:</strong> {{ selectedExchange.contatoHost.nmprop }}</p>
                 <p class="text-capitalize"><strong>tipo de propriedade:</strong> {{
                     selectedExchange.contatoHost.tipoProp }}</p>
                 <p><strong>Serviços:</strong> {{ selectedExchange.servicos }}</p>
@@ -83,20 +86,25 @@
                 <p><strong>Duração:</strong> {{ selectedExchange.duracao }}</p>
             </div>
             <div class="col-md-5">
-                <h3>Informações do Host</h3>
+                <h3><i class="fas fa-user"></i> Informações do Host</h3>
+
                 <p class="mt-4"><strong>Proprietário:</strong> {{ selectedExchange.contatoHost.usuario.nome }}</p>
                 <p><strong>Endereço:</strong> {{ selectedExchange.contatoHost.endereco }}, {{
                     selectedExchange.contatoHost.numero }}, {{ selectedExchange.contatoHost?.complem }} </p>
                 <p><strong>Local:</strong> {{ selectedExchange.contatoHost.cidade }} - {{
                     selectedExchange.contatoHost.cdestado }} </p>
-                <p><strong>Email:</strong> {{ selectedExchange.contatoHost.email }}</p>
+                <p *ngIf="selectedExchange.contatoHost.email; else noEmail"><strong>Email:</strong> {{
+                    selectedExchange.contatoHost.email }}</p>
+                <ng-template #noEmail>
+                    <p><strong>Email:</strong> Não informado</p>
+                </ng-template>
             </div>
         </div>
     </section>
 
     <!-- Botões -->
     <div class="actions d-flex justify-content-center mt-5 mb-5">
-        
+
         <button class="btn btn-secondary me-3" (click)="goBack()">
             <i class="fas fa-arrow-left"></i> Voltar
         </button>
