@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FooterComponent } from '../components/footer/footer.component';
 import { MenuComponent } from '../components/menu/menu.component';
 import { ToastrService } from 'ngx-toastr';
+import { Location } from '@angular/common';
 
 @Component({
     selector: 'app-exchange-details',
@@ -30,7 +31,10 @@ export class ExchangeDetailsComponent implements OnInit {
         navText: ['<', '>'], // Botões de navegação
     };
 
-    constructor(private exchangeService: ExchangeService, private router: Router, private toastr: ToastrService) {}
+    constructor(private exchangeService: ExchangeService
+              , private toastr: ToastrService
+              , private location: Location
+            ) {}
 
     ngOnInit(): void {
         localStorage.setItem('verPerfil', "0");
@@ -80,7 +84,7 @@ export class ExchangeDetailsComponent implements OnInit {
 
     goBack(): void {
         localStorage.setItem('verIntercambio', "0");
-        this.router.navigate(['/']); // Redirecionar para a página inicial
+        this.location.back();
     }
 
     async applyForExchange(): Promise<void> {

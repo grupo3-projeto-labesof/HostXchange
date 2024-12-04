@@ -13,11 +13,13 @@
                         <img [src]="image" class="d-block w-100 gallery-image" alt="Imagem do Intercâmbio">
                     </div>
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#exchangeCarousel" data-bs-slide="prev">
+                <button class="carousel-control-prev" type="button" data-bs-target="#exchangeCarousel"
+                    data-bs-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                     <span class="visually-hidden">Anterior</span>
                 </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#exchangeCarousel" data-bs-slide="next">
+                <button class="carousel-control-next" type="button" data-bs-target="#exchangeCarousel"
+                    data-bs-slide="next">
                     <span class="carousel-control-next-icon" aria-hidden="true"></span>
                     <span class="visually-hidden">Próximo</span>
                 </button>
@@ -74,7 +76,8 @@
             <div class="col-md-5">
                 <h3>Informações do Intercâmbio</h3>
                 <p><strong>Nome da Propriedade:</strong> {{ selectedExchange.contatoHost.nmprop }}</p>
-                <p class="text-capitalize"><strong>tipo de propriedade:</strong> {{ selectedExchange.contatoHost.tipoProp }}</p>
+                <p class="text-capitalize"><strong>tipo de propriedade:</strong> {{
+                    selectedExchange.contatoHost.tipoProp }}</p>
                 <p><strong>Serviços:</strong> {{ selectedExchange.servicos }}</p>
                 <p><strong>Benefícios:</strong> {{ selectedExchange.beneficios }}</p>
                 <p><strong>Duração:</strong> {{ selectedExchange.duracao }}</p>
@@ -82,8 +85,10 @@
             <div class="col-md-5">
                 <h3>Informações do Host</h3>
                 <p class="mt-4"><strong>Proprietário:</strong> {{ selectedExchange.contatoHost.usuario.nome }}</p>
-                <p><strong>Endereço:</strong> {{ selectedExchange.contatoHost.endereco }}, {{ selectedExchange.contatoHost.numero }}, {{ selectedExchange.contatoHost?.complem }} </p>
-                <p><strong>Local:</strong> {{ selectedExchange.contatoHost.cidade }} - {{ selectedExchange.contatoHost.cdestado }} </p>
+                <p><strong>Endereço:</strong> {{ selectedExchange.contatoHost.endereco }}, {{
+                    selectedExchange.contatoHost.numero }}, {{ selectedExchange.contatoHost?.complem }} </p>
+                <p><strong>Local:</strong> {{ selectedExchange.contatoHost.cidade }} - {{
+                    selectedExchange.contatoHost.cdestado }} </p>
                 <p><strong>Email:</strong> {{ selectedExchange.contatoHost.email }}</p>
             </div>
         </div>
@@ -91,8 +96,14 @@
 
     <!-- Botões -->
     <div class="actions d-flex justify-content-center mt-5 mb-5">
-        <button class="back-button btn btn-secondary me-3" (click)="goBack()">Voltar</button>
-        <button class="apply-button btn btn-dark" (click)="applyForExchange()">Se Candidatar</button>
+        
+        <button class="btn btn-secondary me-3" (click)="goBack()">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </button>
+
+        <button class="apply-button btn btn-dark" (click)="applyForExchange()">
+            <i class="fas fa-check"></i> Se Candidatar
+        </button>
     </div>
 </main>
 

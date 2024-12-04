@@ -115,3 +115,48 @@
 .exchange-card .details-button:hover {
     background-color: #218838;
 }
+
+/* Cards */
+.exchange-cards .card {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.exchange-cards .card img {
+    border-radius: 8px 0 0 8px;
+    object-fit: cover;
+    height: 100%;
+}
+
+.exchange-cards .card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.exchange-cards .card-title {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.exchange-cards .card-text {
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.exchange-cards .card-text small {
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.exchange-cards .btn-primary {
+    background-color: #ff5722;
+    border-color: #ff5722;
+}
+
+.exchange-cards .btn-primary:hover {
+    background-color: #e64a19;
+    border-color: #d84315;
+}

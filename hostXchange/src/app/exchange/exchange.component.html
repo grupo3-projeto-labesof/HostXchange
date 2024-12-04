@@ -4,53 +4,44 @@
     <header>
         <h1 class="text-center">Busque seu Intercâmbio</h1>
         <div class="search-bar mt-4 mb-5">
-            <input type="text" placeholder="Buscar intercâmbio" #searchInput (input)="buscarIntercambios(searchInput.value)" />
+            <input type="text" placeholder="Buscar intercâmbio" #searchInput
+                (input)="buscarIntercambios(searchInput.value)" />
             <span class="search-icon"><i class="fa fa-search"></i></span>
         </div>
     </header>
 
-    <!-- <section class="filters">
-        <h2>Filtros</h2>
-        <div class="filter-options">
-            <select>
-                <option value="">Localização</option>
-                <option value="brasil">Brasil</option>
-                <option value="europa">Europa</option>
-            </select>
-            <select>
-                <option value="">Duração</option>
-                <option value="curto">Curto prazo</option>
-                <option value="longo">Longo prazo</option>
-            </select>
-            <select>
-                <option value="">Tipo de Trabalho</option>
-                <option value="cultural">Cultural</option>
-                <option value="social">Social</option>
-            </select>
-            <select>
-                <option value="">Horas Semanais</option>
-                <option value="menos20">Menos de 20h</option>
-                <option value="mais20">Mais de 20h</option>
-            </select>
-        </div>
-    </section> -->
+
 
     <section class="exchange-cards mb-4">
         <div *ngIf="searchMessage" class="text-center">
             <p>{{ searchMessage }}</p>
         </div>
-        <article *ngFor="let exchange of filteredExchanges" class="exchange-card">
-            <img [src]="exchange.localImage[0]" alt="Imagem do intercâmbio" />
-            <h3>{{ exchange.titulo }}</h3>  <!-- Titulo do Card -->
-            <p>{{ exchange.contatoHost.nmprop }}</p>  <!-- Nome do Local -->
-            <div class="details">
-                <span>Local: {{ exchange.contatoHost.cidade }} - {{ exchange.contatoHost.cdestado }}</span>
-                <span>Duração: {{ exchange.duracao }}</span>
-                <span>Serviços: {{ exchange.servicos }}</span>
-                <span>Avaliações: {{ calcularMediaAvaliacoes(exchange.contatoHost.usuario.avaliacoesComoAvaliado) }}</span>
+        <div class="row">
+            <div *ngFor="let exchange of filteredExchanges" class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img [src]="exchange.localImage[0]" class="img-fluid rounded-start" alt="Imagem do intercâmbio">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">{{ exchange.titulo }}</h5>
+                                <p class="card-text">{{ exchange.contatoHost.nmprop }}</p>
+                                <div class="card-text mb-2">
+                                    <small class="text-muted d-block">Local: {{ exchange.contatoHost.cidade }} - {{ exchange.contatoHost.cdestado }}</small>
+                                    <small class="text-muted d-block">Duração: {{ exchange.duracao }}</small>
+                                    <small class="text-muted d-block">Serviços: {{ exchange.servicos }}</small>
+                                    <small class="text-muted d-block">Avaliações: {{ calcularMediaAvaliacoes(exchange.contatoHost.usuario.avaliacoesComoAvaliado) }}</small>
+                                </div>
+                                <button class="btn btn-primary mt-auto" (click)="verDetalhes(exchange.idinterc)">
+                                    <i class="fas fa-info-circle me-2"></i> Ver Detalhes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <button class="details-button" (click)="verDetalhes(exchange.idinterc)">Ver detalhes</button>
-        </article>
+        </div>
     </section>
 </main>
 
