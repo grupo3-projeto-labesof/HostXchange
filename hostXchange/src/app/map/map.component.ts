@@ -16,26 +16,37 @@ import { Router } from '@angular/router';
 export class MapComponent implements OnInit {
     private map: any;
 
-    constructor(private mapService: MapService, private router: Router) {}
+    constructor(private mapService: MapService, private router: Router) { }
 
     ngOnInit(): void {
         localStorage.setItem('verIntercambio', "0");
-        localStorage.setItem('verPerfil'     , "0");
-        localStorage.setItem('idHost'        , "0");
+        localStorage.setItem('verPerfil', "0");
+        localStorage.setItem('idHost', "0");
         this.initMap();
         this.loadMarkers();
     }
 
     private initMap(): void {
         this.map = L.map('map', {
-            center: [-14.235, -51.9253], // Centro do Brasil
-            zoom: 4,
-        });
+            zoomControl: false,
+        }).setView([-14.235, -51.9253], 4);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            // Removido o parâmetro de attribution para evitar o rodapé padrão
+            attribution: '&copy; OpenStreetMap contributors',
         }).addTo(this.map);
+
+        const bounds = L.latLngBounds(
+            L.latLng(-33.742, -73.982), 
+            L.latLng(5.271, -34.793)
+        );
+        this.map.setMaxBounds(bounds);
+        this.map.fitBounds(bounds);
+        this.map.on('drag', () => {
+            this.map.panInsideBounds(bounds, { animate: true });
+        });
     }
+
+
 
     private loadMarkers(): void {
         this.mapService.getIntercambios().subscribe({
@@ -58,58 +69,84 @@ export class MapComponent implements OnInit {
             }
         });
     }
-    
+
     private addMarker(
         coords: [number, number],
         name: string,
         rating: string,
         intercambioId: number
     ): void {
-        console.log('Adicionando marcador para ID:', intercambioId); // Verificar se o ID está correto
+        const customIcon = L.icon({
+            iconUrl: 'assets/custom-marker.png',
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
+            popupAnchor: [0, -32]
+        });
     
+        // Estilização do popup
         const popupContent = document.createElement('div');
         popupContent.style.fontFamily = 'Arial, sans-serif';
         popupContent.style.fontSize = '14px';
+        popupContent.style.border = '1px solid #ccc';
+        popupContent.style.borderRadius = '8px';
+        popupContent.style.padding = '15px';
+        popupContent.style.backgroundColor = '#ffffff';
+        popupContent.style.boxShadow = '0px 4px 6px rgba(0, 0, 0, 0.1)';
     
+        // Conteúdo do popup
         popupContent.innerHTML = `
-            <strong>${name}</strong><br>
-            Avaliação: <span style="color: goldenrod;">&#9733; ${rating}</span><br>
+            <div style="text-align: center;">
+                <strong style="font-size: 16px; color: #333;">${name}</strong>
+                <div style="margin: 8px 0; color: goldenrod;">
+                    &#9733; Avaliação: ${rating}
+                </div>
+                <hr style="border: none; border-top: 1px solid #ddd; margin: 10px 0;">
+            </div>
         `;
     
         const button = document.createElement('button');
-        button.textContent = 'Ver Mais';
-        button.style.color = '#007BFF';
-        button.style.background = 'none';
+        button.innerHTML = `<i class="fas fa-info-circle" style="margin-right: 8px;"></i> Ver Mais`; // Ícone e texto
+        button.style.padding = '10px 20px';
+        button.style.backgroundColor = '#007BFF';
+        button.style.color = '#fff';
         button.style.border = 'none';
+        button.style.borderRadius = '4px';
         button.style.cursor = 'pointer';
-        button.style.textDecoration = 'underline';
+        button.style.fontSize = '14px';
+        button.style.transition = 'background-color 0.3s';
     
-        // Garanta que o ID existe antes de anexar o evento
-        if (intercambioId) {
-            button.addEventListener('click', () => this.handleVerMais(intercambioId));
-        } else {
-            console.error('Erro: intercambioId está undefined para este marcador.');
-        }
+        // Hover no botão
+        button.addEventListener('mouseover', () => {
+            button.style.backgroundColor = '#0056b3';
+        });
+        button.addEventListener('mouseout', () => {
+            button.style.backgroundColor = '#007BFF';
+        });
+    
+        button.addEventListener('click', () => this.handleVerMais(intercambioId));
     
         popupContent.appendChild(button);
     
-        L.marker(coords)
+        L.marker(coords, { icon: customIcon })
             .addTo(this.map)
-            .bindPopup(popupContent, { maxWidth: 250, closeButton: true });
-    }    
+            .bindPopup(popupContent, { maxWidth: 300, closeButton: true });
+    }
+    
+    
+
 
     private handleVerMais(intercambioId: number): void {
         if (!intercambioId) {
             console.error('Erro: intercambioId é inválido.');
             return;
         }
-    
+
         // Armazena o ID no localStorage
         console.log('Armazenando ID no localStorage:', intercambioId);
         localStorage.setItem('verIntercambio', intercambioId.toString());
-    
+
         // Redireciona para a rota de detalhes
         this.router.navigate(['/intercambio']);
     }
-    
+
 }

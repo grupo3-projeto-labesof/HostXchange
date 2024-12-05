@@ -90,19 +90,19 @@ export class ExchangeDetailsComponent implements OnInit {
     async applyForExchange(): Promise<void> {
         const data = {idviajante: Number(localStorage.getItem("id")), idinterc: this.selectedExchange.idinterc };
         if(data.idviajante === this.selectedExchange.contatoHost.usuario.idusuario) {
-            this.toastr.warning("Você é o host e não pode se candidatar!")
+            this.toastr.warning("Você é o host deste intercâmbio e não pode se candidatar!", "ATENÇÃO: ", {positionClass: 'toast-center-center'})
         } else {
             await this.exchangeService.seCandidatar(data).subscribe({
                 next: (res: any) => {
                     if(res.success === true) {
-                        this.toastr.success('Você se candidatou ao intercâmbio com sucesso!');
+                        this.toastr.success('Você se candidatou ao intercâmbio com sucesso!', 'PARABÉNS: ', {positionClass: 'toast-center-center'});
                     } else {
                         this.toastr.success(res.message);
                     }
                 },
                 error: (err) => {
                     console.error('Erro ao carregar detalhes do intercâmbio:', err);
-                    this.toastr.error('Erro ao carregar detalhes do intercâmbio.');
+                    this.toastr.error('Erro ao carregar detalhes do intercâmbio.', 'ERRO: ', {positionClass: 'toast-center-center'});
                 },
             })
         }
