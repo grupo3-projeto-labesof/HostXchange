@@ -30,11 +30,27 @@
 
       <div class="card bg-secondary mb-4 mx-3">
         <div class="card-body">
-          <h2 class="card-title">
-            Informações Pessoais
-            <button *ngIf="verPerfil == 0" class="btn btn-outline-light float-end" (click)="editar()">
+          <div class="btn-group float-end">
+            <button *ngIf="verPerfil == 0 && avaliacoesFeitas.length > 0" 
+                    class="btn btn-outline-light me-2" 
+                    (click)="mostrarAvaliacoesFeitas()">
+              <i class="fas fa-star me-1"></i> Avaliações Feitas
+            </button>
+            
+            <button *ngIf="verPerfil == 0 && usuario.idhost != null" 
+                    class="btn btn-outline-light me-2" 
+                    (click)="verIntercambio()">
+              <i class="fas fa-home me-1"></i> Seu Intercâmbio
+            </button>
+            
+            <button *ngIf="verPerfil == 0" 
+                    class="btn btn-outline-light" 
+                    (click)="editar()">
               <i class="fas fa-edit"></i> Editar
             </button>
+          </div>
+          <h2 class="card-title">
+            Informações Pessoais:
           </h2>
           <ul class="list-group list-group-flush">
             <li class="list-group-item bg-secondary text-white d-flex align-items-center">
@@ -63,7 +79,7 @@
 
       <div class="card bg-secondary mb-4 mx-4">
         <div class="card-body">
-          <h2 class="card-title">Redes Sociais</h2>
+          <h2 class="card-title">Redes Sociais:</h2>
           @if (redesSociais.length > 0) {
           <div class="row row-cols-2 row-cols-md-4 g-2 mt-3">
             <div *ngFor="let rede of redesSociais" class="col">

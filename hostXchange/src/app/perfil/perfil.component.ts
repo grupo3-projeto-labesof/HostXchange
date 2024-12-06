@@ -120,6 +120,7 @@ export class PerfilComponent implements OnInit {
       next: async (res: any) => {
         if (res.blOk === true) {
           this.usuario = res.dados;
+          console.log(res.dados);
           const { fotoCapa, fotoPerfil } = res.dados;
 
           this.perfilForm.patchValue({
@@ -264,6 +265,13 @@ export class PerfilComponent implements OnInit {
     this.avaliacao = idAvaliacao;
     //this.avaliacaoPendenteEspecifica = this.AvaliacaoPendente.find(avaliacao => avaliacao.idAvaliar === idAvaliacao);
     this.view = 4;
+  }
+
+  mostrarAvaliacoesFeitas() {
+  }
+
+  verIntercambio() {
+
   }
 
   getNotaFormatada(): string {
