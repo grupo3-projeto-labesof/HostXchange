@@ -22,8 +22,14 @@
             </ng-container>
             <span class="ms-2">{{ notaAvaliacaoUsuario > 0 ? getNotaFormatada() + '/5' : 'O usuário ' + usuario?.nome +
               ' ainda não foi avaliado' }}</span>
-          </div>
-          <button class="btn btn-outline-light mt-2" (click)="mostrarAvaliacoes()">Ver mais</button>
+            </div>
+            <button class="btn btn-outline-light mt-2 me-2" (click)="mostrarAvaliacoes()">
+            <i class="fas fa-angle-double-up"></i> Veja as avaliações para este usuário
+            </button>
+          <button *ngIf="verPerfil == 0 && avaliacoesFeitas.length > 0" 
+            class="btn btn-outline-light mt-2" (click)="mostrarAvaliacoesFeitas()">
+      <i class="fas fa-star me-1"></i> Suas avaliações já feitas
+    </button>
         </div>
 
       </div>
@@ -31,16 +37,10 @@
       <div class="card bg-secondary mb-4 mx-3">
         <div class="card-body">
           <div class="btn-group float-end">
-            <button *ngIf="verPerfil == 0 && avaliacoesFeitas.length > 0" 
-                    class="btn btn-outline-light me-2" 
-                    (click)="mostrarAvaliacoesFeitas()">
-              <i class="fas fa-star me-1"></i> Avaliações Feitas
-            </button>
-            
             <button *ngIf="verPerfil == 0 && usuario.idhost != null" 
                     class="btn btn-outline-light me-2" 
                     (click)="verIntercambio()">
-              <i class="fas fa-home me-1"></i> Seu Intercâmbio
+              <i class="fas fa-home me-1"></i> Veja aqui seu Intercâmbio
             </button>
             
             <button *ngIf="verPerfil == 0" 
