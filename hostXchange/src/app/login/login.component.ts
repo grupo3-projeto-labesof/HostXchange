@@ -44,6 +44,13 @@ export class LoginComponent implements OnInit {
     confirmarSenha: false
   }
 
+  forcaSenha = {
+    valor: 0,
+    mensagem: '',
+    classe: '',
+    criteriosFaltantes: [] as string[]
+  };
+
   constructor(
       private service: LoginService
     , private toastr : ToastrService
@@ -109,25 +116,59 @@ export class LoginComponent implements OnInit {
     this.view = 3;
   }
 
-  SenhaForte(senha: string, criterios?: { comprimentoMinimo?: number, temMaiusculas?: boolean, temMinusculas?: boolean, temNumeros?: boolean, temCaracteresEspeciais?: boolean }): boolean {
-    const criteriosPadrao = {
-      comprimentoMinimo: 8,
-      temMaiusculas: true,
-      temMinusculas: true,
-      temNumeros: true,
-      temCaracteresEspeciais: true
+  calcularForcaSenha(senha: string): void {
+    const criterios = [
+      { regex: /.{8,}/, mensagem: 'Mínimo de 8 caracteres', peso: 25 },
+      { regex: /[A-Z]/, mensagem: 'Uma letra maiúscula', peso: 25 },
+      { regex: /[a-z]/, mensagem: 'Uma letra minúscula', peso: 25 },
+      { regex: /[0-9]/, mensagem: 'Um número', peso: 25 }
+    ];
+
+    if (!senha) {
+      this.forcaSenha = {
+        valor: 0,
+        mensagem: '',
+        classe: '',
+        criteriosFaltantes: criterios.map(c => c.mensagem)
+      };
+      return;
+    }
+
+    let forca = 0;
+    this.forcaSenha.criteriosFaltantes = [];
+
+    criterios.forEach(criterio => {
+      if (criterio.regex.test(senha)) {
+        forca += criterio.peso;
+      } else {
+        this.forcaSenha.criteriosFaltantes.push(criterio.mensagem);
+      }
+    });
+
+    this.forcaSenha = {
+      valor: forca,
+      ...this.getClasseEMensagem(forca),
+      criteriosFaltantes: this.forcaSenha.criteriosFaltantes
     };
+  }
 
-    const { comprimentoMinimo, temMaiusculas, temMinusculas, temNumeros } = { ...criteriosPadrao, ...criterios };
+  getClasseEMensagem(forca: number): { classe: string, mensagem: string } {
+    if (forca <= 25) {
+      return { mensagem: 'Muito fraca', classe: 'bg-danger' };
+    } else if (forca <= 50) {
+      return { mensagem: 'Fraca', classe: 'bg-warning' };
+    } else if (forca <= 75) {
+      return { mensagem: 'Média', classe: 'bg-info' };
+    } else if (forca < 100) {
+      return { mensagem: 'Forte', classe: 'bg-primary' };
+    } else {
+      return { mensagem: 'Muito forte', classe: 'bg-success' };
+    }
+  }
 
-    const padraoMaiusculas = temMaiusculas ? /[A-Z]/ : /.*/;
-    const padraoMinusculas = temMinusculas ? /[a-z]/ : /.*/;
-    const padraoNumeros = temNumeros ? /[0-9]/ : /.*/;
-
-    return senha.length >= comprimentoMinimo &&
-           padraoMaiusculas.test(senha) &&
-           padraoMinusculas.test(senha) &&
-           padraoNumeros.test(senha);
+  onPasswordChange(): void {
+    const senha = this.formCadastro.get('password')?.value;
+    this.calcularForcaSenha(senha);
   }
 
   verificarSenhasIguais(): boolean {

@@ -131,7 +131,8 @@
                             <label for="password" class="form-label">Senha:<span class="text-danger">*</span></label>
                             <div class="input-group mt-2">
                                 <input type="{{ senhaVisivel.senha ? 'text' : 'password' }}" id="password"
-                                    formControlName="password" class="form-control" placeholder="Digite sua senha">
+                                    formControlName="password" (input)="onPasswordChange()" class="form-control"
+                                    placeholder="Digite sua senha">
                                 <button type="button" class="btn btn-outline-secondary"
                                     (click)="mudarSenhaVisivel('senha')">
                                     <i [class]="senhaVisivel.senha ? 'fas fa-eye-slash' : 'fas fa-eye' "></i>
@@ -155,28 +156,37 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="form-group p-2 col">
                         <label for="passwordStrength" class="form-label">Força da Senha:</label>
                         <div class="progress mt-2">
-                            <div class="progress-bar full-width" role="progressbar" [ngClass]="{
-                              'bg-danger': !SenhaForte(formCadastro.get('password')?.value, { comprimentoMinimo: 8, temMaiusculas: true, temMinusculas: true, temNumeros: false }),
-                              'bg-warning': SenhaForte(formCadastro.get('password')?.value, { comprimentoMinimo: 8, temMaiusculas: true, temMinusculas: true, temNumeros: false }) && !SenhaForte(formCadastro.get('password')?.value, { comprimentoMinimo: 8, temMaiusculas: true, temMinusculas: true, temNumeros: true }),
-                              'bg-success': SenhaForte(formCadastro.get('password')?.value, { comprimentoMinimo: 8, temMaiusculas: true, temMinusculas: true, temNumeros: true })
-                            }">
+                            <div class="progress-bar" role="progressbar" [ngClass]="forcaSenha.classe"
+                                [style.width.%]="forcaSenha.valor">
+                                {{forcaSenha.mensagem}}
                             </div>
                         </div>
-                        <small
-                            *ngIf="!SenhaForte(formCadastro.get('password')?.value, { comprimentoMinimo: 8, temMaiusculas: true, temMinusculas: true, temNumeros: true })"
-                            class="text-muted">
-                            A senha deve ter no mínimo 8 caracteres, incluindo letras maiúsculas, minúsculas e números.
-                        </small>
+
+                        <!-- Critérios Faltantes -->
+                        <div class="mt-2" *ngIf="forcaSenha.criteriosFaltantes.length > 0">
+                            <small class="text-warning">
+                                Critérios faltantes:
+                                <ul class="mb-0 ps-3">
+                                    <li *ngFor="let criterio of forcaSenha.criteriosFaltantes">
+                                        {{criterio}}
+                                    </li>
+                                </ul>
+                            </small>
+                        </div>
                     </div>
 
                     <span class="text-danger">(*) Campos marcados com asterisco são de preenchimento obrigatório.</span>
 
                     <div class="form-group d-flex justify-content-between p-2 mt-3">
                         <button class="btn btn-dark align-self-center" type="submit"
-                            [disabled]="formCadastro.invalid">Cadastrar</button>
+                            [disabled]="formCadastro.invalid
+                                        || !verificarSenhasIguais()
+                                        || forcaSenha.valor < 75
+                                        ">Cadastrar</button>
                         <button class="btn btn-outline-dark align-self-center" type="button"
                             (click)="login()">Login</button>
                     </div>
