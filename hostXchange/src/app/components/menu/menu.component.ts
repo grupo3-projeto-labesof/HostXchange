@@ -13,6 +13,7 @@ export class MenuComponent {
 
   public logado:boolean = localStorage.getItem("logado") === "true" ? true : false;
   public tipo_user      = localStorage.getItem("tipo_user");
+  public intercambio    = localStorage.getItem("idIntercambio");
 
   constructor(private router: Router) { }
 

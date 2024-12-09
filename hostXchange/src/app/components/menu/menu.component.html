@@ -7,8 +7,13 @@
   </div>
   <div class="navbar-links">
     <button *ngIf="logado == false" (click)="login()">Entrar</button>
+
     <a *ngIf="logado && tipo_user === 'V'" href="/tornar-host">
       <button>Tornar-se Host</button>
+    </a>
+
+    <a *ngIf="logado && tipo_user === 'H' && intercambio === '0'" href="/cadastrar-intercambio">
+      <button>Cadastrar Intercâmbio</button>
     </a>
 
     <button *ngIf="logado == true" (click)="logout()">Sair</button>
