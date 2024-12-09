@@ -204,7 +204,7 @@ export class LoginComponent implements OnInit {
           if (res.blOk === true) {
             const user = res.user[0];
             let intercambio;
-            user.contatoHost.intercambio[0].idinterc ? intercambio = user.contatoHost.intercambio[0].idinterc : intercambio = "0";
+            user.contatoHost?.intercambio[0]?.idinterc ? intercambio = user.contatoHost.intercambio[0].idinterc : intercambio = "0";
             localStorage.setItem('id', user.idusuario);
             localStorage.setItem('nome', user.nome);
             localStorage.setItem('logado', "true");
