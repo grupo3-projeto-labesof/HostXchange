@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 const login = async (email, callback) => {
   try {
     const user = await prisma.usuario.findUnique({
-      where: { email: email },
+      where: { email: email }, include: {contatoHost: { include: { intercambio: true } } }
     });
     callback(null, user ? [user] : []);
   } catch (error) {

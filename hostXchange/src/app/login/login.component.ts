@@ -203,11 +203,14 @@ export class LoginComponent implements OnInit {
         next: (res: any) => {
           if (res.blOk === true) {
             const user = res.user[0];
+            let intercambio;
+            user.contatoHost.intercambio[0].idinterc ? intercambio = user.contatoHost.intercambio[0].idinterc : intercambio = "0";
             localStorage.setItem('id', user.idusuario);
             localStorage.setItem('nome', user.nome);
             localStorage.setItem('logado', "true");
             localStorage.setItem('tipo_user', user.tpusuario);
             localStorage.setItem('idHost', "0");
+            localStorage.setItem('idIntercambio', intercambio);
             localStorage.setItem('verPerfil', "0");
             localStorage.setItem('verIntercambio', "0");
             this.toastr.success(res.message, 'SUCESSO:', {positionClass: 'toast-center-center'});

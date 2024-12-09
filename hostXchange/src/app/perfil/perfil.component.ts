@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { MenuComponent } from '../components/menu/menu.component';
 import { FooterComponent } from '../components/footer/footer.component';
 import { ToastrService } from 'ngx-toastr';
+import { Router } from '@angular/router';
 
 
 // interface RedeSocial {
@@ -97,9 +98,10 @@ export class PerfilComponent implements OnInit {
   constructor(
     private toastr: ToastrService
     , private service: PerfilService
-    , private fb: FormBuilder
-    , private cdr: ChangeDetectorRef
+    , private fb    : FormBuilder
+    , private cdr   : ChangeDetectorRef
     , private ngZone: NgZone
+    , private router: Router
   ) { }
 
 
@@ -273,7 +275,13 @@ export class PerfilComponent implements OnInit {
   }
 
   verIntercambio() {
-
+    const intercambio = localStorage.getItem("idIntercambio") || "0";
+    if(intercambio != "0") {
+      localStorage.setItem('verIntercambio', intercambio);
+      this.router.navigate(['/intercambio']);
+    } else {
+      this.toastr.warning("Cadastre seu intercâmbio!");
+    }
   }
 
   forcaDaSenha: number = 0;
