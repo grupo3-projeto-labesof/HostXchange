@@ -392,9 +392,12 @@
 
         </div>
 
+
+        
         <!-- Botões de Ação -->
         <button type="button" class="btn btn-primary" (click)="salvarAlteracoes()"
-          [disabled]="!perfilForm.valid || (!perfilForm.dirty && !redesSociaisForamAlteradas())
+          [disabled]="!perfilForm.valid || (!perfilForm.dirty && !redesSociaisForamAlteradas()
+          && !fotoPerfilFile && !fotoCapaFile)
           || (perfilForm.get('novaSenha')?.value && forcaDaSenha < 75)
           || (perfilForm.get('novaSenha')?.value && perfilForm.hasError('senhaAtualIncorreta')) 
           || (perfilForm.get('novaSenha')?.value && perfilForm.hasError('senhasNaoCompativeis'))

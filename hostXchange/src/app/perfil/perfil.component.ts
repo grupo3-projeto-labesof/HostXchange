@@ -7,6 +7,7 @@ import { MenuComponent } from '../components/menu/menu.component';
 import { FooterComponent } from '../components/footer/footer.component';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
+import * as bcrypt from 'bcryptjs';
 
 
 // interface RedeSocial {
@@ -454,8 +455,12 @@ export class PerfilComponent implements OnInit {
   passwordRequiredValidator(control: AbstractControl): ValidationErrors | null {
     const senhaAtual = control.get('senhaAtual')?.value;
     const senhaAtualCorreta = this.senhaAtualCorreta; // Deve ser passada do componente
-    if (senhaAtual && senhaAtual !== senhaAtualCorreta) {
-      return { senhaAtualIncorreta: true };
+
+    if (senhaAtual && senhaAtualCorreta) {
+      const isMatch = bcrypt.compareSync(senhaAtual, senhaAtualCorreta);
+      if (!isMatch) {
+        return { senhaAtualIncorreta: true };
+      }
     }
     return null;
   }
