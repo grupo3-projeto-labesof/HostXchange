@@ -88,4 +88,14 @@ const perfil = async (req, res) => {
     }
 };
 
-module.exports = { atualizarPerfil, perfil };
+const perfis = async (req, res) => {
+    try {
+        const dados = await perfilDAO.perfis(req);
+        res.status(200).json(dados);
+    } catch (error) {
+        console.error('Erro ao buscar perfis:', error);
+        res.status(500).json({ blOk: false, message: 'Erro ao buscar perfis!' });
+    }
+};
+
+module.exports = { atualizarPerfil, perfil, perfis };

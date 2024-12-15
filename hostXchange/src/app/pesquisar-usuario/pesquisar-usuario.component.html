@@ -14,7 +14,7 @@
             </div>
         </div>
 
-        <div *ngIf="pesquisado">
+        <div>
 
             <div *ngIf="hasResultados; else noResults" id="searchResults" class="row row-cols-1 g-4 mt-4">
                 <div *ngFor="let resultado of resultados" class="col r-card">
@@ -24,9 +24,9 @@
                                 <i class="user-icon fas fa-user-circle me-3"></i>
                                 <h5 class="card-title mb-0">{{ resultado.nome }}</h5>
                             </div>
-                            <a [href]="resultado.linkPerfil" class="btn btn-success">
+                            <button (click)="perfil(resultado.id)" class="btn btn-success">
                                 <i class="fas fa-user"></i> Ver Perfil <i class="fa-solid fa-arrow-right"></i>
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -36,7 +36,11 @@
                     <p>Nenhum resultado encontrado para a busca: <strong class="text-danger">{{ argumento }}</strong> </p>
                 </div>
             </ng-template>
-
+            <ng-template *ngIf="resultados.length === 0">
+                <div class="text-center justify-content-center alert alert-warning" role="alert">
+                    <p>Sem Usuários cadastrados!</p>
+                </div>
+            </ng-template>
         </div>
     </section>
 </main>

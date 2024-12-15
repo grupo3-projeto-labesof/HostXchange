@@ -204,24 +204,27 @@ export class LoginComponent implements OnInit {
           if (res.blOk === true) {
             const user = res.user[0];
             let intercambio;
+            let host;
+            debugger
             user.contatoHost?.intercambio[0]?.idinterc ? intercambio = user.contatoHost.intercambio[0].idinterc : intercambio = "0";
+            intercambio === "0" && user.tpusuario === 'H' ? host = user.idhost : host = "0";
             localStorage.setItem('id', user.idusuario);
             localStorage.setItem('nome', user.nome);
             localStorage.setItem('logado', "true");
             localStorage.setItem('tipo_user', user.tpusuario);
-            localStorage.setItem('idHost', "0");
+            localStorage.setItem('idHost', host);
             localStorage.setItem('idIntercambio', intercambio);
             localStorage.setItem('verPerfil', "0");
             localStorage.setItem('verIntercambio', "0");
-            this.toastr.success(res.message, 'SUCESSO:', {positionClass: 'toast-center-center'});
+            this.toastr.success(res.message, 'SUCESSO:');
             this.router.navigate(['/home']);
           } else {
-            this.toastr.error(res.message, 'ERRO:', {positionClass: 'toast-center-center'});
+            this.toastr.error(res.message, 'ERRO:');
           }
         },
         error: (error) => {
           console.error('Error during login:', error);
-          this.toastr.warning('Ocorreu um erro durante o login. Por favor, tente novamente!', 'ATENÇÃO:', {positionClass: 'toast-center-center'});
+          this.toastr.warning('Ocorreu um erro durante o login. Por favor, tente novamente!', 'ATENÇÃO:');
         }
       });
     }
@@ -233,18 +236,18 @@ export class LoginComponent implements OnInit {
       this.service.cadastrar(data).subscribe({
         next: (res: any) => {
           if (res.success === true) {
-            this.toastr.success(res.message, 'SUCESSO:', {positionClass: 'toast-center-center'});
+            this.toastr.success(res.message, 'SUCESSO:');
             this.view = 1;
           } else {
-            this.toastr.error(res.message, 'ERRO:', {positionClass: 'toast-center-center'});
+            this.toastr.error(res.message, 'ERRO:');
           }
         },
         error: (error) => {
           console.error('Error during registration:', error);
-          this.toastr.warning('Ocorreu um erro durante o cadastro. Por favor, tente novamente!', 'ATENÇÃO:', {positionClass: 'toast-center-center'});
+          this.toastr.warning('Ocorreu um erro durante o cadastro. Por favor, tente novamente!', 'ATENÇÃO:');
         }
       });
-    } else { this.toastr.warning("Existem campos que não foram preenchidos corretamente.", "ATENÇÃO:", {positionClass: 'toast-center-center'}); }
+    } else { this.toastr.warning("Existem campos que não foram preenchidos corretamente.", "ATENÇÃO:"); }
   }
 
   confirmarCodigo(): void {
@@ -252,10 +255,10 @@ export class LoginComponent implements OnInit {
       this.service.enviarEmail(this.formCodigo.value.codigo).subscribe({
         next: (res: any) => {
           if (res.blOk === true) {
-            this.toastr.success(res.message, 'SUCESSO:', {positionClass: 'toast-center-center'});
+            this.toastr.success(res.message, 'SUCESSO:');
             this.view = 5;
           } else {
-            this.toastr.error(res.message, 'ERRO:', {positionClass: 'toast-center-center'});
+            this.toastr.error(res.message, 'ERRO:');
           }
         },
         error: (error) => {

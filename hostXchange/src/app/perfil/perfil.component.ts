@@ -32,7 +32,7 @@ interface PasswordVisibility {
 
 export class PerfilComponent implements OnInit {
   public userLogado: any = localStorage.getItem("id");
-  public verPerfil: any = 0;//Number(localStorage.getItem("verPerfil"));
+  public verPerfil: any = Number(localStorage.getItem("verPerfil"));
 
   public avaliacoesPendentes: any = [];
   public avaliacoesRecebidas: any = [];
@@ -47,26 +47,6 @@ export class PerfilComponent implements OnInit {
   public redesSociais: Array<any> = [];
   public redesSociaisOriginais: Array<any> = [];
 
-  //isso aqui só existe para simular o backend
-  // usuarioLogado: Usuario = {
-  //   idusuario: '1',
-  //   nome: 'Jax',
-  //   username: 'jaxtoplaner',
-  //   rg: '54.921.572-9',
-  //   cpf: '493.216.345.44',
-  //   senha: '995501',
-  //   nrpassa: 'AB12496',
-  //   fotoCapa: 'assets/images/perfil/capa.jpg',
-  //   fotoPerfil: 'assets/images/perfil/perfil.jpg',
-  //   redesSociais: [
-  //     { nome: 'LinkedIn', url: 'https://www.linkedin.com/in/jaxtoplaner' },
-  //     { nome: 'Twitter', url: 'https://www.twitter.com/jaxtoplaner' },
-  //   ]
-  // };
-
-  //isso aqui deve ser mudado para o tipo que for recebido na service, provavel any(?)
-  // usuarioEditando: Usuario | null = null;
-  // editMode = false;
   perfilForm!: FormGroup;
   avaliacaoForm!: FormGroup;
   novaRedeForm!: FormGroup;
@@ -85,10 +65,6 @@ export class PerfilComponent implements OnInit {
 
   todasRedesSociais: string[] = ['LinkedIn', 'Twitter', 'Facebook', 'Instagram'];
   redesSociaisDisponiveis: string[] = ['LinkedIn', 'Twitter', 'Facebook', 'Instagram'];
-
-  // Avaliacao: any[] = [];
-  // AvaliacaoPendente: any[] = [];
-  // avaliacaoPendenteEspecifica: any;
 
   passwordVisible: PasswordVisibility = {
     current: false,
@@ -376,34 +352,6 @@ export class PerfilComponent implements OnInit {
   hasRedesSociais(): boolean {
     return this.usuario && this.usuario.redesSociais ? this.usuario.redesSociais.length > 0 : false;
   }
-
-  // setRedesSociais() {
-  //   const formArray = this.perfilForm.get('redesSociais') as FormArray;
-
-  //   if (this.usuario?.redesSociais?.length) {
-  //     this.usuario.redesSociais.forEach((rede: RedeSocial) => {
-  //       formArray.push(
-  //         this.fb.group({
-  //           nome: [rede.nome],
-  //           url: [rede.url]
-  //         })
-  //       );
-  //     });
-  //   }
-  //   this.atualizarRedesSociaisDisponiveis();
-  // }
-
-  // temAvaliacao(): boolean {
-  //   return this.Avaliacao.length > 0;
-  // }
-
-  // temAvaliacaoPendente(): boolean {
-  //   return this.AvaliacaoPendente.length > 0;
-  // }
-
-  // get redesSociais(): FormArray {
-  //   return this.perfilForm.get('redesSociais') as FormArray;
-  // }
 
   get novaRedeSocial(): FormGroup {
     return this.perfilForm.get('novaRedeSocial') as FormGroup;

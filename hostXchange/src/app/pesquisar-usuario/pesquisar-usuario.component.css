@@ -1,11 +1,25 @@
-.container {
-    max-width: 800px;
-}
-
 body {
     font-family: 'Arial', sans-serif;
     background-color: #f8f9fa;
     color: #333;
+}
+
+.container {
+    max-width: 800px;
+}
+
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    /* Garante que a tela ocupe toda a altura da janela */
+}
+
+main {
+    flex: 1;
+    /* Faz o conteúdo ocupar o espaço disponível */
+    display: flex;
+    flex-direction: column;
 }
 
 .r-card {

@@ -98,6 +98,7 @@ export class FormExchangeComponent implements OnInit {
                 next: (res: any) => {
                     if (res.blOk === true) {
                         localStorage.setItem("idHost", "0");
+                        localStorage.setItem("idIntercambio", res.intercambio.idinterc);
                         this.router.navigate(['/home']);
                         this.toastr.success(res.message);
                     } else {

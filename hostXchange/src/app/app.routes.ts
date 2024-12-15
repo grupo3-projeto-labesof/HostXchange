@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { AuthGuard } from './auth.guard';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { FormHostComponent } from './form-host/form-host.component';
@@ -12,8 +13,8 @@ import { ExchangeDetailsComponent } from './exchange-details/exchange-details.co
 export const routes: Routes = [
     { path: 'home'                  , component: HomeComponent            }
   , { path: 'login'                 , component: LoginComponent           }
-  , { path: 'tornar-host'           , component: FormHostComponent        }
-  , { path: 'cadastrar-intercambio' , component: FormExchangeComponent    }
+  , { path: 'tornar-host'           , component: FormHostComponent    , canActivate: [AuthGuard] }
+  , { path: 'cadastrar-intercambio' , component: FormExchangeComponent, canActivate: [AuthGuard] }
   , { path: 'perfil'                , component: PerfilComponent          }
   , { path: 'pesquisar-usuario'     , component: PesquisarUsuarioComponent}
   , { path: 'intercambios'          , component: ExchangeComponent        }

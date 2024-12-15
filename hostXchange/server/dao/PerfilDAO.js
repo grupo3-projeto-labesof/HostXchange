@@ -20,7 +20,6 @@ const atualizarPerfil = async (userId, data) => {
 };
 
 const perfil = async (userId) => {
-
   try {
     const dados = await prisma.usuario.findUnique({
       where: { idusuario: parseInt(userId) }, include: {contatoHost: true }
@@ -33,4 +32,14 @@ const perfil = async (userId) => {
   }
 }
 
-module.exports = { atualizarPerfil, perfil };
+const perfis = async (req) => {
+  try {
+    const dados = await prisma.usuario.findMany({ include: {contatoHost: true } });
+    return { blOk: true, dados };
+  } catch (error) {
+    console.error('Erro ao buscar perfis:', error);
+    throw error;
+  }
+}
+
+module.exports = { atualizarPerfil, perfil, perfis };

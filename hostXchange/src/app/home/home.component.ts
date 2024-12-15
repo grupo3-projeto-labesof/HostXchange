@@ -13,6 +13,5 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
     localStorage.setItem('verIntercambio', "0");
     localStorage.setItem('verPerfil'     , "0");
-    localStorage.setItem('idHost'        , "0");
   }
 }

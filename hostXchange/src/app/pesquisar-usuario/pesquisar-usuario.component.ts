@@ -4,6 +4,9 @@ import { OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MenuComponent } from '../components/menu/menu.component';
 import { FooterComponent } from '../components/footer/footer.component';
+import { PerfilService } from '../services/perfil.service';
+import { ToastrService } from 'ngx-toastr';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-pesquisar-usuario',
@@ -16,16 +19,35 @@ import { FooterComponent } from '../components/footer/footer.component';
 export class PesquisarUsuarioComponent implements OnInit {
   formularioPesquisa: FormGroup;
   resultados: any[] = [];
+  usuarios  : any[] = [];
   pesquisado: boolean = false;
-  argumento: string = '';
+  argumento : string = '';
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private service: PerfilService, private toastr: ToastrService, private router: Router) {
     this.formularioPesquisa = this.fb.group({
       nomePesquisado: ['']
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.service.getTodosPerfis().subscribe({
+      next: async (res: any) => {
+        if(res.blOk === true) {
+          this.usuarios = res.dados;
+          this.resultados = this.usuarios.map(u => { 
+            return {
+                id  : u.idusuario
+              , nome: u.nome 
+            };
+          });
+        }
+      },
+      error: (error) => {
+        console.error('Error during getPerfis:', error);
+        this.toastr.warning('Ocorreu um erro durante o carregamento da tela. Por favor, recarregue a página!', 'ATENÇÃO:');
+      }
+    });
+  }
 
   get hasResultados(): boolean {
     return this.resultados.length > 0;
@@ -35,9 +57,11 @@ export class PesquisarUsuarioComponent implements OnInit {
     this.argumento = this.formularioPesquisa.get('nomePesquisado')?.value;
     this.pesquisado = true;
     const pesquisa = this.formularioPesquisa.get('nomePesquisado')?.value;
-    if (pesquisa) {
-      
+    debugger
+    if (pesquisa && pesquisa != "") {
       this.resultados = this.buscaPerfil(pesquisa);
+    } else if(pesquisa === "") {
+      this.resultados = this.usuarios;
     }
   }
 
@@ -47,12 +71,20 @@ export class PesquisarUsuarioComponent implements OnInit {
     //link para o perfil é a rota perfil + o id do usuario encontrado
     //OBS: apenas imaginando que seja assim que será a busca
 
-    const usuarios = [
-      { nome: 'John Doe', linkPerfil: '/perfil/3' },
-      { nome: 'Jane Smith', linkPerfil: '/perfil/20' },
-      { nome: 'Luis Garcia', linkPerfil: '/perfil/5' },
-      { nome: 'Luis Alberto', linkPerfil: '/perfil/7' },
-    ];
+    const usuarios = this.usuarios.map(u => { 
+      return {
+          id  : u.idusuario
+        , nome: u.nome 
+      };
+    });
+
     return usuarios.filter(usuario => usuario.nome.toLowerCase().includes(idUsuario.toLowerCase()));
+  }
+
+  perfil(id:any) {
+    debugger
+    this.resultados
+    localStorage.setItem("verPerfil", id);
+    this.router.navigate(["/perfil"]);
   }
 }

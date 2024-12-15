@@ -23,7 +23,7 @@
             <span class="ms-2">{{ notaAvaliacaoUsuario > 0 ? getNotaFormatada() + '/5' : 'O usuário ' + usuario?.nome +
               ' ainda não foi avaliado' }}</span>
           </div>
-          <button class="btn btn-outline-light mt-2 me-2" (click)="mostrarAvaliacoes()">
+          <button *ngIf="notaAvaliacaoUsuario > 0" class="btn btn-outline-light mt-2 me-2" (click)="mostrarAvaliacoes()">
             <i class="fas fa-angle-double-up"></i> Veja as avaliações sobre este usuário
           </button>
           <button *ngIf="verPerfil == 0 && avaliacoesFeitas.length > 0" class="btn btn-outline-light mt-2"
