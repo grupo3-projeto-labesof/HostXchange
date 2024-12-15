@@ -247,7 +247,6 @@ export class FormHostComponent implements OnInit {
       await this.hostService.enviarFormulario(data).subscribe({
         next: (res: any) => {
           if(res.success) {
-            console.log('Dados enviados com sucesso!');
             localStorage.setItem("idHost", res.idHost);
             localStorage.setItem("tipo_user", "H");
             this.router.navigate(['/cadastrar-intercambio']);

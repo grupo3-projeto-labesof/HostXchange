@@ -28,7 +28,6 @@ const upload = multer({
 const buscar = async (req, res) => {
     try {
         const intercambios = await intercambiosDAO.buscar();
-        console.log(intercambios)
         res.status(200).json(intercambios);
     } catch (error) {
         console.error('Erro ao buscar intercâmbios:', error);

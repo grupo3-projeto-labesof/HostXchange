@@ -53,9 +53,7 @@ export class ExchangeDetailsComponent implements OnInit {
     private async loadExchangeDetails(id: number): Promise<void> {
         await this.exchangeService.getExchangeById({ id }).subscribe({
             next: (response: any) => {
-                console.log('Detalhes do intercâmbio:', response);
                 this.selectedExchange = response;
-    
                 // Carregar imagens
                 this.images = [
                     response.img1,
@@ -69,8 +67,6 @@ export class ExchangeDetailsComponent implements OnInit {
                     response.img9,
                     response.img10,
                 ].filter((img) => img); // Filtrar imagens não nulas
-    
-                console.log('Host: ', response.idhost);
                 // Carregar avaliações do host
                 this.avaliacoes = response.contatoHost?.usuario?.avaliacoesComoAvaliado || [];
             },

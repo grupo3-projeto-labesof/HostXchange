@@ -51,10 +51,8 @@ export class MapComponent implements OnInit {
     private loadMarkers(): void {
         this.mapService.getIntercambios().subscribe({
             next: (response: any) => {
-                console.log('Intercambios recebidos:', response); // Log para verificar os dados
                 if (response.blOk) {
                     response.data.forEach((intercambio: any) => {
-                        console.log('Intercambio individual:', intercambio); // Verificar o objeto individual
                         this.addMarker(
                             [intercambio.latitude, intercambio.longitude],
                             intercambio.titulo,
@@ -142,7 +140,6 @@ export class MapComponent implements OnInit {
         }
 
         // Armazena o ID no localStorage
-        console.log('Armazenando ID no localStorage:', intercambioId);
         localStorage.setItem('verIntercambio', intercambioId.toString());
 
         // Redireciona para a rota de detalhes

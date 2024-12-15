@@ -67,7 +67,6 @@ export class FormExchangeComponent implements OnInit {
         }
 
         this.selectedImages = files; // Armazena os arquivos selecionados
-        console.log('Imagens selecionadas:', this.selectedImages.map(file => file.name));
     }
 
     async onSubmit(): Promise<void> {
