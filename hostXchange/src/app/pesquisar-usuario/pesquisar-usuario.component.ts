@@ -57,7 +57,6 @@ export class PesquisarUsuarioComponent implements OnInit {
     this.argumento = this.formularioPesquisa.get('nomePesquisado')?.value;
     this.pesquisado = true;
     const pesquisa = this.formularioPesquisa.get('nomePesquisado')?.value;
-    debugger
     if (pesquisa && pesquisa != "") {
       this.resultados = this.buscaPerfil(pesquisa);
     } else if(pesquisa === "") {
@@ -82,7 +81,6 @@ export class PesquisarUsuarioComponent implements OnInit {
   }
 
   perfil(id:any) {
-    debugger
     this.resultados
     localStorage.setItem("verPerfil", id);
     this.router.navigate(["/perfil"]);

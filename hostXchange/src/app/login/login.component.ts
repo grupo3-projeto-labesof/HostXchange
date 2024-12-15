@@ -205,7 +205,6 @@ export class LoginComponent implements OnInit {
             const user = res.user[0];
             let intercambio;
             let host;
-            debugger
             user.contatoHost?.intercambio[0]?.idinterc ? intercambio = user.contatoHost.intercambio[0].idinterc : intercambio = "0";
             intercambio === "0" && user.tpusuario === 'H' ? host = user.idhost : host = "0";
             localStorage.setItem('id', user.idusuario);

@@ -90,6 +90,7 @@ export class PerfilComponent implements OnInit {
   async informacoes() {
     localStorage.setItem('verIntercambio', "0");
     localStorage.setItem('idHost', "0");
+    this.verPerfil == this.userLogado ? this.verPerfil = 0 : null;
     const perfil = this.verPerfil != 0 ? this.verPerfil : this.userLogado;
     this.usuario = [];
     this.avaliacoesFeitas = [];
