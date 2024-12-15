@@ -73,6 +73,7 @@ export class ExchangeComponent implements OnInit {
                     ].filter(Boolean) // Filtra imagens não nulas
                 }));
                 this.filteredExchanges = this.exchanges;
+                this.searchMessage = '';
             },
             error: (err) => {
                 console.error('Erro ao buscar intercâmbios:', err);

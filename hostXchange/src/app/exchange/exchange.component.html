@@ -13,10 +13,11 @@
 
 
     <section class="exchange-cards mb-4">
-        <div *ngIf="searchMessage" class="text-center">
-            <p>{{ searchMessage }}</p>
-        </div>
+        
         <div class="row">
+            <div *ngIf="filteredExchanges.length === 0" class="no-exchanges-message">
+                <p>{{ searchMessage || 'Nenhum intercâmbio cadastrado.' }}</p>
+            </div>
             <div *ngFor="let exchange of filteredExchanges" class="col-md-6 mb-4">
                 <div class="card h-100">
                     <div class="row g-0">

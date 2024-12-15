@@ -160,3 +160,18 @@
     background-color: #e64a19;
     border-color: #d84315;
 }
+
+/* Mensagem de nenhum intercâmbio */
+.no-exchanges-message {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    font-size: 18px;
+    color: #ff5722; /* Cor do texto */
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ff5722; /* Borda */
+    border-radius: 8px;
+    background-color: #fff3e0; /* Fundo */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra */
+}
