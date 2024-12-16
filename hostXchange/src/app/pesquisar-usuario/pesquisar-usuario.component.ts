@@ -60,7 +60,12 @@ export class PesquisarUsuarioComponent implements OnInit {
     if (pesquisa && pesquisa != "") {
       this.resultados = this.buscaPerfil(pesquisa);
     } else if(pesquisa === "") {
-      this.resultados = this.usuarios;
+      this.resultados = this.usuarios.map(u => { 
+        return {
+            id  : u.idusuario
+          , nome: u.nome 
+        };
+      });
     }
   }
 
